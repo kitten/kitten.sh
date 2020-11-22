@@ -1,0 +1,62 @@
+{
+  "name": "kitten.sh",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "start": "next start",
+    "build": "next build"
+  },
+  "babel": {
+    "presets": [
+      [
+        "next/babel",
+        {
+          "preset-env": {
+            "loose": true,
+            "modules": false,
+            "targets": {
+              "esmodules": true
+            },
+            "exclude": [
+              "transform-async-to-generator",
+              "transform-regenerator"
+            ]
+          },
+          "transform-runtime": {
+            "regenerator": false
+          }
+        }
+      ]
+    ],
+    "plugins": [
+      "babel-plugin-transform-async-to-promises",
+      "babel-plugin-import-glob-array"
+    ]
+  },
+  "dependencies": {
+    "focus-visible": "^5.2.0",
+    "goober": "^2.0.15",
+    "goober-autoprefixer": "^1.2.1",
+    "next": "^10.0.2",
+    "preact": "^10.5.7",
+    "preact-render-to-string": "^5.1.12",
+    "react": "npm:@preact/compat",
+    "react-dom": "npm:@preact/compat"
+  },
+  "devDependencies": {
+    "@mapbox/rehype-prism": "^0.5.0",
+    "@silvenon/remark-smartypants": "^1.0.0",
+    "babel-plugin-import-glob-array": "^0.2.0",
+    "babel-plugin-transform-async-to-promises": "^0.8.15",
+    "file-loader": "^6.2.0",
+    "imagemin-mozjpeg": "^9.0.0",
+    "imagemin-optipng": "^8.0.0",
+    "next-compose-plugins": "^2.2.1",
+    "next-mdx-enhanced": "^5.0.0",
+    "next-plugin-preact": "^3.0.3",
+    "remark-numbered-footnote-labels": "^1.1.0",
+    "remark-squeeze-paragraphs": "^4.0.0",
+    "remark-unwrap-images": "^2.0.0",
+    "responsive-loader": "^2.2.0"
+  }
+}
