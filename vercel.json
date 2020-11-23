@@ -1,0 +1,40 @@
+{
+  "headers": [
+    {
+      "source": "/covers/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, stale-while-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/avatars/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, stale-while-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/_next/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/:slug",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=7200, stale-while-revalidate"
+        }
+      ]
+    }
+  ]
+}
