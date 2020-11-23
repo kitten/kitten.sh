@@ -188,8 +188,9 @@ export const blockquote = styled(props => {
       float: right;
       max-width: 70%;
       margin-right: calc(-0.5 * (1200px - 65ch + 10ch));
-      margin-top: 0.8rem;
-      padding-left: 2em;
+      padding: 1.5rem 0 1.5rem 2ch;
+      shape-outside: padding-box;
+      margin-top: 0;
     }
 
     &[data-quote] {
