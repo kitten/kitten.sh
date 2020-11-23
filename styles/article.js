@@ -236,6 +236,12 @@ export const a = styled(props => {
     var(--color-active) 100%
   );
 
+  @media (prefers-reduced-motion) {
+    &, &:hover {
+      transition: none;
+    }
+  }
+
   @media (hover: hover) {
     &:hover {
       background-size: 100% 1.1em;

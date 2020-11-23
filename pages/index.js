@@ -86,6 +86,12 @@ const Title = styled('h2')`
     var(--color-active) 100%
   );
 
+  @media (prefers-reduced-motion) {
+    &, &:hover {
+      transition: none;
+    }
+  }
+
   @media (hover: hover) {
     ${PostLink}:hover & {
       background-size: 100% 1.2em;

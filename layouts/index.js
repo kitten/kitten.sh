@@ -39,6 +39,12 @@ const MoreArticles = styled('span')`
       transition: filter 0.3s ease;
       filter: invert(0.8);
     }
+
+    @media (prefers-reduced-motion) {
+      &, &:hover {
+        transition: none;
+      }
+    }
   `}
 
   &:before {
