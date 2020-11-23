@@ -139,7 +139,14 @@ const Cover = styled('div')`
     -1px -7px 21px rgba(255, 255, 255, 0.09);
 `;
 
-const Index = ({ docsPages }) => (
+const docsPages = [...frontMatter].sort((a, b) => {
+  if (!a.published || !a.published.date) return -1;
+  if (!b.published || !b.published.date) return 1;
+  return new Date(b.published.date).valueOf() -
+    new Date(a.published.date).valueOf();
+});
+
+const Index = () => (
   <>
     <Head>
       <title>Latest Posts | Kitten</title>
@@ -185,16 +192,5 @@ const Index = ({ docsPages }) => (
     <Footer />
   </>
 );
-
-export const getStaticProps = () => ({
-  props: {
-    docsPages: [...frontMatter].sort((a, b) => {
-      if (!a.published || !a.published.date) return -1;
-      if (!b.published || !b.published.date) return 1;
-      return new Date(b.published.date).valueOf() -
-        new Date(a.published.date).valueOf();
-    }),
-  },
-});
 
 export default Index;
