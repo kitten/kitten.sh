@@ -38,6 +38,8 @@
     "goober": "^2.0.15",
     "goober-autoprefixer": "^1.2.1",
     "next": "^10.0.2",
+    "playwright-aws-lambda": "^0.6.0",
+    "playwright-core": "^1.6.2",
     "preact": "^10.5.7",
     "preact-render-to-string": "^5.1.12",
     "react": "npm:@preact/compat",

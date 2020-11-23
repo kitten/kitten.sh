@@ -4,6 +4,7 @@ import { styled } from 'goober';
 
 import { toDateString, getPath } from '../styles/util';
 import { sizes, tablet, mobile } from '../styles/theme';
+import { Avatar } from '../styles/layout';
 import Footer from '../styles/footer';
 
 import { frontMatter } from './**/*.md';
@@ -115,17 +116,9 @@ const Excerpt = styled('p')`
   color: var(--color-text);
 `;
 
-const Avatar = styled('img')`
-  display: inline-block;
-  margin-top: -0.3rem;
-  margin-right: 1rem;
+const FloatyAvatar = styled(Avatar)`
+  margin: -0.3rem 1rem 0 0;
   float: left;
-
-  width: 3rem;
-  height: 3rem;
-  object-fit: cover;
-  border-radius: 50%;
-  border: 2px solid var(--color-active);
 `;
 
 const Cover = styled('div')`
@@ -146,14 +139,7 @@ const Cover = styled('div')`
     -1px -7px 21px rgba(255, 255, 255, 0.09);
 `;
 
-const docsPages = [...frontMatter].sort((a, b) => {
-  if (!a.published || !a.published.date) return -1;
-  if (!b.published || !b.published.date) return 1;
-  return new Date(b.published.date).valueOf() -
-    new Date(a.published.date).valueOf();
-});
-
-const Index = () => (
+const Index = ({ docsPages }) => (
   <>
     <Head>
       <title>Latest Posts | Kitten</title>
@@ -185,7 +171,7 @@ const Index = () => (
                   </div>
                 ) : null}
                 {page.published && page.published.avatar ? (
-                  <Avatar src={page.published.avatar} alt="" />
+                  <FloatyAvatar src={page.published.avatar} alt="" />
                 ) : null}
                 <Excerpt>{page.excerpt || page.subtitle}</Excerpt>
               </PostLink>
@@ -199,5 +185,16 @@ const Index = () => (
     <Footer />
   </>
 );
+
+export const getStaticProps = () => ({
+  props: {
+    docsPages: [...frontMatter].sort((a, b) => {
+      if (!a.published || !a.published.date) return -1;
+      if (!b.published || !b.published.date) return 1;
+      return new Date(b.published.date).valueOf() -
+        new Date(a.published.date).valueOf();
+    }),
+  },
+});
 
 export default Index;
