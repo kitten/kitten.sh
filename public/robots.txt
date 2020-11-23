@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Sitemap: https://kitten.sh/api/sitemap
+Host: https://kitten.sh

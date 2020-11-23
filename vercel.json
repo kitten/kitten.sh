@@ -1,5 +1,20 @@
 {
+  "rewrites": [
+    {
+      "source": "/sitemap.xml",
+      "destination": "/api/sitemap"
+    }
+  ],
   "headers": [
+    {
+      "source": "/robots.txt",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, stale-while-revalidate"
+        }
+      ]
+    },
     {
       "source": "/covers/(.*)",
       "headers": [
