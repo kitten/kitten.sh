@@ -29,7 +29,7 @@ const ImageDescription = styled('span')`
   max-width: 65ch;
   text-align: center;
   font-size: 0.75em;
-  margin: 1rem auto 0 auto;
+  margin: 1rem auto 1.5rem auto;
   padding: 0 2ch;
   opacity: 0.8;
 

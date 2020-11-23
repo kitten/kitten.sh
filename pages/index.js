@@ -12,7 +12,7 @@ const PostsHeading = styled('h1')`
   text-transform: capitalize;
   font-size: 4.5rem;
   padding: 3rem 0 2rem 0;
-  color: var(--color-passive);
+  color: var(--color-active);
 `;
 
 const PostList = styled('ul')`
@@ -44,7 +44,7 @@ const Post = styled('li')`
     display: inline-block;
     background-color: var(--color-active);
     width: 4ch;
-    height: 0.7em;
+    height: 0.4em;
     margin-top: 0.8ch;
     vertical-align: baseline;
     content: '';

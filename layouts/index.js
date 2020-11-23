@@ -33,10 +33,12 @@ const MoreArticles = styled('span')`
     font-size: 0.8em;
   `}
 
-  &:hover {
-    transition: filter 0.3s ease;
-    filter: invert(0.8);
-  }
+  ${desktop`
+    &:hover {
+      transition: filter 0.3s ease;
+      filter: invert(0.8);
+    }
+  `}
 
   &:before {
     position: absolute;
