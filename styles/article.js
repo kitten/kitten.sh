@@ -313,7 +313,7 @@ export const ul = styled('ul')`
 `;
 
 export const pre = styled('pre')`
-  margin: 1.6rem 0;
+  margin: 2.2rem 0;
   font-size: 1.1rem;
   white-space: pre;
   word-wrap: normal;
