@@ -4,7 +4,7 @@ import { MDXProvider } from '@mdx-js/react';
 import { styled } from 'goober';
 
 import { sizes, mobile, tablet, desktop } from '../styles/theme';
-import { toDateString, getPath, getCoverURL } from '../styles/util';
+import { toDateString, getPath, getAbsoluteURL, getCoverURL } from '../styles/util';
 import { Header, Avatar } from '../styles/layout';
 import Footer from '../styles/footer';
 import ThemeToggle from '../styles/theme-toggle';
@@ -115,14 +115,23 @@ const Layout = ({ children, frontMatter }) => {
     <>
       <Head>
         <title>{frontMatter.title}</title>
+        <meta name="og:title" content={frontMatter.title} />
+        <meta property="og:image" content={coverURL} />
+        <meta property="og:image:width" content="610" />
+        <meta property="og:image:height" content="385" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content={coverURL} />
         <meta name="twitter:title" content={frontMatter.title} />
         {frontMatter.published && frontMatter.published.handle ? (
           <meta name="twitter:creator" content={frontMatter.published.handle} />
         ) : null}
-        <meta name="og:title" content={frontMatter.title} />
-        <meta property="og:image" content={coverURL} />
-        <meta name="twitter:image" content={coverURL} />
-        <link rel="canonical" href={frontMatter.canonical || `https://kitten.sh/${getPath(frontMatter)}`} />
+        {frontMatter.excerpt ? (
+          <meta name="description" content={frontMatter.excerpt} />
+        ) : null}
+        {frontMatter.excerpt ? (
+          <meta name="og:description" content={frontMatter.excerpt} />
+        ) : null}
+        <link rel="canonical" href={frontMatter.canonical || getAbsoluteURL(getPath(frontMatter))} />
       </Head>
 
       <Article>

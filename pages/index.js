@@ -139,6 +139,8 @@ const Cover = styled('div')`
     -1px -7px 21px rgba(255, 255, 255, 0.09);
 `;
 
+const description = 'Random and hopefully useful thoughts and posts around JS, React, GraphQL, and more.';
+
 const docsPages = [...frontMatter].sort((a, b) => {
   if (!a.published || !a.published.date) return -1;
   if (!b.published || !b.published.date) return 1;
@@ -153,6 +155,8 @@ const Index = () => (
       <meta name="twitter:title" content="Kitten" />
       <meta name="twitter:creator" content="@_philpl" />
       <meta name="og:title" content="Kitten" />
+      <meta name="description" content={description} />
+      <meta name="og:description" content={description} />
       <link rel="canonical" href="https://kitten.sh" />
     </Head>
 

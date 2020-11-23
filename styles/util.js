@@ -1,4 +1,5 @@
 export const getAbsoluteURL = path => {
+  if (!path.startsWith('/')) path = '/' + path;
   const baseURL = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://kitten.sh';
   return baseURL + path
 };

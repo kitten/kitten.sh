@@ -3,9 +3,9 @@ title: In-depth Guide to Exchanges in urql
 subtitle: Writing & Learning Exchanges from scratch
 cover: /covers/interchange.jpg
 excerpt: >-
-  When your car has an odd noise at a specific speed in inclement weather, it’s frustrating yet
-  forgettable. When the car won’t start in the morning, though — or, perhaps worse, when it randomly
-  won’t start even after repairs for seemingly no reason — it’s maddening.
+  Like many Open Source projects that deal with complex state management or data fetching, no week goes
+  by without usage questions or requests for help or advice — how to fix a bug or an error, how to work
+  with some of our documented features, or how something actually works.
 published:
   date: 2020-11-24
   handle: '_philpl'
