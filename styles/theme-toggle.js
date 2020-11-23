@@ -69,11 +69,13 @@ const ThemeToggle = () => {
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('prefers-theme', theme);
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme(theme => theme === 'light' ? 'dark' : 'light');
+    setTheme(theme => {
+      localStorage.setItem('prefers-theme', theme);
+      return theme === 'light' ? 'dark' : 'light';
+    });
   };
 
   return (
