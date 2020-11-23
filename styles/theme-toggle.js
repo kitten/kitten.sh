@@ -73,8 +73,9 @@ const ThemeToggle = () => {
 
   const toggleTheme = () => {
     setTheme(theme => {
-      localStorage.setItem('prefers-theme', theme);
-      return theme === 'light' ? 'dark' : 'light';
+      const newTheme = theme === 'light' ? 'dark' : 'light';
+      localStorage.setItem('prefers-theme', newTheme);
+      return newTheme;
     });
   };
 
