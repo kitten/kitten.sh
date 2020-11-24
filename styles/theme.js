@@ -1,9 +1,16 @@
 export const sizes = {
+  mobile: 700,
   page: 1200
 };
 
 export const mobile = css => `
-  @media (max-width: 699px) {
+  @media (max-width: ${sizes.mobile - 1}px) {
+    ${css}
+  }
+`;
+
+export const notMobile = css => `
+  @media (min-width: ${sizes.mobile}px) {
     ${css}
   }
 `;

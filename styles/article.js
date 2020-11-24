@@ -2,7 +2,7 @@ import { Children } from 'react';
 import { styled } from 'goober';
 
 import { emphasisPath, emphasisSvg } from './emphasis';
-import { sizes, tablet, mobile, desktop } from './theme';
+import { sizes, notMobile, tablet, mobile, desktop } from './theme';
 
 import arrow1Svg from '../assets/arrow-1.svg';
 import arrow2Svg from '../assets/arrow-2.svg';
@@ -197,6 +197,12 @@ export const blockquote = styled(props => {
   hanging-punctuation: initial;
 
   ${desktop`
+    &[data-quote] {
+      padding: 0.8em 0 0 2ch;
+    }
+  `}
+
+  ${notMobile`
     &:not([data-quote]) {
       font-size: 1.2em;
       float: right;
@@ -206,9 +212,18 @@ export const blockquote = styled(props => {
       shape-outside: padding-box;
       margin-top: 0;
     }
+  `}
 
-    &[data-quote] {
-      padding: 0.8em 0 0 2ch;
+  ${tablet`
+    &:not([data-quote]) {
+      max-width: 50%;
+      margin-right: calc(-0.5 * (100vw - 65ch + 10ch));
+    }
+  `}
+
+  ${mobile`
+    &:not([data-quote]) {
+      display: none;
     }
   `}
 
