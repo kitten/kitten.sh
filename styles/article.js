@@ -173,9 +173,14 @@ const toText = children => Children.toArray(children).reduce((acc, child) => {
 
 export const blockquote = styled(props => {
   const text = toText(props.children);
-  const startsWithQuote = /^["“]/.test(text);
-  const isShort = text.length < 47;
-  return <blockquote {...props} data-quote={startsWithQuote || isShort} />;
+  const isPullQuote = text.length >= 47 && !/^["“]/.test(text);
+  return (
+    <blockquote
+      {...props}
+      role={isPullQuote ? 'presentation' : null}
+      data-quote={!isPullQuote}
+    />
+  );
 })`
   color: var(--color-passive);
   line-height: 0.8;
