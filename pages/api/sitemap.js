@@ -1,14 +1,17 @@
 import { SitemapStream, streamToPromise } from 'sitemap';
 
 import { getPath, getCoverURL, getAbsoluteURL } from '../../styles/util';
-import { frontMatter } from '../**/*.md';
 
-const docsPages = [...frontMatter].sort((a, b) => {
-  if (!a.published || !a.published.date) return -1;
-  if (!b.published || !b.published.date) return 1;
-  return new Date(b.published.date).valueOf() -
-    new Date(a.published.date).valueOf();
-});
+const page = require.context('..', true, /\.md$/);
+const docsPages = page.keys()
+  .map(key => page(key).frontMatter)
+  .filter(page => page.published && page.published.live)
+  .sort((a, b) => {
+    if (!a.published || !a.published.date) return -1;
+    if (!b.published || !b.published.date) return 1;
+    return new Date(b.published.date).valueOf() -
+      new Date(a.published.date).valueOf();
+  });
 
 const generateSitemap = async (req, res) => {
   const smStream = new SitemapStream({
@@ -37,7 +40,9 @@ const generateSitemap = async (req, res) => {
       element.lastmod = new Date(page.published.date);
     }
 
-    smStream.write(element);
+    if (page.published && page.published.live) {
+      smStream.write(element);
+    }
   });
 
   smStream.end();

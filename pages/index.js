@@ -7,8 +7,6 @@ import { sizes, tablet, mobile } from '../styles/theme';
 import { Avatar } from '../styles/layout';
 import Footer from '../styles/footer';
 
-import { frontMatter } from './**/*.md';
-
 const PostsHeading = styled('h1')`
   text-transform: capitalize;
   font-size: 4.5rem;
@@ -147,12 +145,16 @@ const Cover = styled('div')`
 
 const description = 'Random and hopefully useful thoughts and posts around JS, React, GraphQL, and more.';
 
-const docsPages = [...frontMatter].sort((a, b) => {
-  if (!a.published || !a.published.date) return -1;
-  if (!b.published || !b.published.date) return 1;
-  return new Date(b.published.date).valueOf() -
-    new Date(a.published.date).valueOf();
-});
+const page = require.context('.', true, /\.md$/);
+const docsPages = page.keys()
+  .map(key => page(key).frontMatter)
+  .filter(page => page.published && page.published.live)
+  .sort((a, b) => {
+    if (!a.published || !a.published.date) return -1;
+    if (!b.published || !b.published.date) return 1;
+    return new Date(b.published.date).valueOf() -
+      new Date(a.published.date).valueOf();
+  });
 
 const Index = () => (
   <>

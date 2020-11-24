@@ -5,8 +5,6 @@ import { Header, Avatar } from '../../../styles/layout';
 import { getPath } from '../../../styles/util';
 import * as components from '../../../styles/article';
 
-import { frontMatter } from '../../**/*.md';
-
 const Wrapper = styled('div')`
   display: flex;
   flex-direction: column;
@@ -33,6 +31,9 @@ const Handle = styled(components.a)`
   margin-left: 2ch;
 `;
 
+const page = require.context('../..', true, /\.md$/);
+const frontMatter = page.keys().map(key => page(key).frontMatter);
+
 const Cover = ({ page }) => (
   <>
     <Head>
@@ -52,10 +53,11 @@ const Cover = ({ page }) => (
 );
 
 export const getStaticProps = ({ params: { slug } }) => {
-  const page = frontMatter.find(page => {
+  let page = frontMatter.find(page => {
     return getPath(page) === slug.join('/');
   });
 
+  page = JSON.parse(JSON.stringify(page));
   return { props: { page } };
 };
 

@@ -6,6 +6,7 @@ import { styled } from 'goober';
 import { sizes, mobile, tablet, desktop } from '../styles/theme';
 import { toDateString, getPath, getAbsoluteURL, getCoverURL } from '../styles/util';
 import { Header, Avatar } from '../styles/layout';
+import { InfoOverlay } from '../styles/overlay';
 import Footer from '../styles/footer';
 import ThemeToggle from '../styles/theme-toggle';
 import * as components from '../styles/article';
@@ -139,6 +140,10 @@ const Layout = ({ children, frontMatter }) => {
         ) : null}
         <link rel="canonical" href={frontMatter.canonical || getAbsoluteURL(getPath(frontMatter))} />
       </Head>
+
+      {!frontMatter.published || !frontMatter.published.live ? (
+        <InfoOverlay title="This draft isn't published yet." />
+      ) : null}
 
       <Article>
         {frontMatter.cover || frontMatter.title || frontMatter.subtitle ? (

@@ -7,6 +7,7 @@ excerpt: >-
   by without usage questions or requests for help or advice — how to fix a bug or an error, how to work
   with some of our documented features, or how something actually works.
 published:
+  live: true
   date: 2020-11-24
   handle: '_philpl'
   avatar: /avatars/phil.png

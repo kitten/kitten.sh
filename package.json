@@ -29,8 +29,7 @@
       ]
     ],
     "plugins": [
-      "babel-plugin-transform-async-to-promises",
-      "babel-plugin-import-glob-array"
+      "babel-plugin-transform-async-to-promises"
     ]
   },
   "dependencies": {
@@ -49,7 +48,6 @@
   "devDependencies": {
     "@mapbox/rehype-prism": "^0.5.0",
     "@silvenon/remark-smartypants": "^1.0.0",
-    "babel-plugin-import-glob-array": "^0.2.0",
     "babel-plugin-transform-async-to-promises": "^0.8.15",
     "file-loader": "^6.2.0",
     "imagemin-mozjpeg": "^9.0.0",
