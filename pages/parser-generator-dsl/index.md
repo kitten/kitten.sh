@@ -128,7 +128,7 @@ This allows a larger grammar to be built up and bits of the grammar to be reused
 a larger definition in one piece, which generates smaller bits of code in the macro and makes
 the tagged template literals feel more cohesive in our JS code. To me, this looks like a similar
 pattern to how styled-components splits up CSS for separate components, each rendering a single
-element with their own styles.
+element with their own styles. :star-struck:
 
 ### Sticky Regular Expressions
 
@@ -152,6 +152,8 @@ regex.exec(input); // null
 
 regex.lastIndex = 3;
 regex.exec(input); // ['hi', index: 3]
+
+regex.lastIndex; // 5
 ```
 
 Since regular expressions carry a `lastIndex` property that specifies _where they should match_,
@@ -194,3 +196,184 @@ concise this made me pretty optimistic in that this would be a usable syntax and
 />
 
 ## Generating the parsing code in Babel
+
+The last part of the endeavour was writing the actual Babel plugin code which would pick
+up all written grammars and replace them with parsing code. While writing the Babel code
+itself isn't too hard, since I wrote a couple of Babel plugins before, since one of the
+goals was to generate small & quick code deciding _what code_ to generate proved to be a
+little tricky. I decided early on that "generating small code" would mean that each
+`match` should be compiled to only **a single function**.
+
+There are a lot of places in the parsing grammar where one part of the match may be
+unsuccessful and will jump to another. This can happen for instance if a group is
+optional or if we have an alternation inside a group, which all means that there
+may be nested interpolations that the generated function will start to match and,
+after failing, may give up on while continuing with another part of the grammar.
+
+```js
+import match from 'reghex/macro';
+
+const parser = match('parsed')`
+  (\${1} \${2}+) | ${3}
+`;
+```
+
+For instance, given the above code the grammar may match `1` and then repeatedly `2`.
+However if at any point of the first part this grammar fails to match against the
+input string, the function will still need to attempt to match `3`.
+
+### Labelled Statements to the rescue!
+
+As it turns out, if we need to only output a single function for this parsing
+grammar, there exists only one unlikely solution to the problem, and this solution
+is — what I'd consider — quite an archaic language feature in JavaScript:
+**Labelled Block Statements**.
+
+We may not see this very often in handwritten JavaScript code, but any loop
+or block may be annotated using a label. Once we have a label we may break
+out of it by calling `break`. As [MDN puts it in their explanation of labelled
+statements](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/label)
+though:
+
+> "Labeled loops or blocks are very uncommon. Usually function calls can be used instead of loop jumps."
+
+So in conclusion, they're quite useful for generated code that is trying to
+avoid additional functions in its code output. However if you use labels in
+your own code it's very likely that a reviewer may just either complain or even
+exclaim in confusion. :shrug:
+
+The Babel [code](https://github.com/kitten/reghex/blob/1d76d26/src/babel/generator.js)
+I ended up writing shouldn't be a surprise — although it is a bit of a mess — and
+structures each part of the grammar's feature into its own "Node Class" which
+is specialised in accepting a part of [the parsed meta DSL](#parser-combinators). It
+recursively creates groups of nodes like `QuantifierNode`, `AlternationNode`,
+or `GroupNode`.
+
+The eventual output looks like following. This code snippet is annotated and
+modified to be easier to read:
+
+```js
+import { _exec } from "reghex";
+
+const parser = function _parsed(state) {
+  // This creates the AST node, which is an array with a tag
+  const node = [];
+  node.tag = "parsed";
+
+  let last_index = state.index;
+  let match;
+
+  // This "block_0" contains the first group of our grammar
+  block_0: {
+    var index_0 = state.index;
+    var length_0 = node.length;
+
+    // We first attempt to match "1"
+    if (match = _exec(state, /1/y)) {
+      node.push(match);
+    } else {
+      // If we fail, we restore the node as it was, and break out of "block_0"
+      node.length = length_0;
+      state.index = index_0;
+      break block_0;
+    }
+
+    // We then attempt to match "2" repeatedly
+    loop_1: for (var i = 0; true; i++) {
+      var index_1 = state.index;
+
+      // Note that the matching itself is done the same, even in a loop
+      if (match = _exec(state, /2/y)) {
+        node.push(match);
+      } else {
+        // If we had results we're good and can end the loop
+        if (iter_1) {
+          state.index = index_1;
+          break loop_1;
+        }
+
+        // If we didn't, we again restore the node, and break out of "block_0"
+        node.length = length_0;
+        state.index = index_0;
+        break block_0;
+      }
+    }
+
+    // If we get here the first group matched. Success!
+    return node;
+  }
+
+  // This is the second part of our grammar, where we attempt to match "3"
+  if (match = _exec(state, /3/y)) {
+    node.push(match);
+  } else {
+    // there's nothing left anymore since the grammar is over
+    // restore the the index from before any matchers ran and return
+    state.index = last_index;
+    return;
+  }
+
+  // We matched a "3". Success!
+  return node;
+};
+```
+
+In general, [each sequence that RegHex generates](https://github.com/kitten/reghex/blob/1d76d26/src/babel/generator.js#L334-L346)
+follows this same pattern of setting up a block, adding the prior index and node length to it,
+and then adding in the rest of the grammar recursively. It passes on a `break` statement to
+the lower nodes, which those can use to break out of the block.
+
+> If you use labelled block statements in your own code it’s very likely that a
+> reviewer may just either complain or even exclaim in confusion. 🤷
+
+The trickiest part here is to actually _read_ the code that the generator outputs,
+as it's clearly not very readable for people. However, I believe it's the **most
+compact** code that can be generated given the requirements — and [Google's Closure Compiler](https://developers.google.com/closure/compiler)
+agrees! Closure Compiler actually outputs labelled block statements when inlining some
+functions into loops quite frequently as well. In fact, when I tried to _handcode_ a grammar
+with inline functions, Closure Compiler turned those back into labelled block statements.
+
+## How does RegHex do?
+
+From an implementation standpoint, I'm quite pleased with the result. The API
+that I ended up with uses a lot of different ideas and language features all
+in a single project, which I've always found to be best for good learning
+experiences. If you've read this far this post has already covered:
+
+- Tagged Template Literals
+- Parser Combinators
+- Sticky Regular Expressions
+- Labelled Break Statements
+
+And to put RegHex through its paces, I wrote down the grammar for the entire GraphQL
+query language using it, which is published as
+[`graphql-parse`](https://github.com/kitten/graphql-parse). The file that contains
+the grammar is about _300 lines_ long and given that the implementation
+uses regular expression the compiled output comes in at only **2.6kB**
+(minified and gzipped).
+
+<img
+  src={require('./graphql-parse.webp')}
+  alt="Because it looks nice and fits. The graphql-parse bundle in one image. Ok, old joke thanks to Jason Miller."
+/>
+
+Running some benchmarks reveal that, probably due to the non trivial overhead of
+regular expressions in JavaScript, the performance of this parser is a third of
+the reference implementation. This is a little better than I expected given that
+RegHex is still a good tool for prototyping and creating small parsers quickly.
+
+### What does the future hold?
+
+It's worth noting that RegHex could also [support parsing entire tagged template
+literals](https://github.com/kitten/reghex/issues/2), which would increase the
+level of metaness even more, since it'd allow RegHex to be used to generate
+its own DSL's parser.
+
+RegHex also doesn't support errors very well, since it doesn't unroll a nice
+error message to where the match ultimately failed, which means that parsers
+that are implemented using it may not give any useful hints as to what went
+wrong at all.
+
+However, given how many concepts this one code base touches it was still a worthwhile
+proof of concept to write, no matter the shortcomings.<br />
+**[Check out the code, if you'd like to learn more even more about it!](https://github.com/kitten/reghex)**

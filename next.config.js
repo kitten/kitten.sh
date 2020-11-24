@@ -9,9 +9,11 @@ module.exports = withPlugins(
         require('@silvenon/remark-smartypants'),
         require('remark-squeeze-paragraphs'),
         require('remark-unwrap-images'),
+        require('remark-emoji'),
       ],
       rehypePlugins: [
         require('@mapbox/rehype-prism'),
+        require('rehype-slug'),
       ],
       layoutPath: 'layouts',
       defaultLayout: true,
