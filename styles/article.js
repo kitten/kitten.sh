@@ -148,6 +148,10 @@ export const inlineCode = styled('code')`
   color: inherit;
   opacity: 0.8;
 
+  word-break: normal;
+  hyphens: initial;
+  hanging-punctuation: initial;
+
   &:before {
     opacity: 0.34;
     position: absolute;
@@ -187,8 +191,10 @@ export const blockquote = styled(props => {
   font-weight: bold;
   letter-spacing: 0.8px;
   padding: 1.3em 0 1.1em 2ch;
+
   word-break: normal;
   hyphens: initial;
+  hanging-punctuation: initial;
 
   ${desktop`
     &:not([data-quote]) {
