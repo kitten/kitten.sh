@@ -129,3 +129,68 @@ a larger definition in one piece, which generates smaller bits of code in the ma
 the tagged template literals feel more cohesive in our JS code. To me, this looks like a similar
 pattern to how styled-components splits up CSS for separate components, each rendering a single
 element with their own styles.
+
+### Sticky Regular Expressions
+
+The parser generator so far works by creating smaller pieces of grammar, defined by interpolating
+other small matching grammars or regular expressions into it. However, while writing a small
+parser with regular expressions is something that quite a few people have done before, doing
+so without skipping over any characters in the input string is crucial.
+
+Typically, regular expressions will scan an input string until they've found a match, which
+is both costly and counter to how a parser works. Luckily in ECMAScript 6 the
+["sticky flag"](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/sticky)
+for regular expressions was added, which forces the regular expression to match only at its
+exact position, rather than starting to scan the string for matches:
+
+```js
+const regex = new RegExp('hi', 'y');
+const input = 'oh hi';
+
+regex.lastIndex = 0;
+regex.exec(input); // null
+
+regex.lastIndex = 3;
+regex.exec(input); // ['hi', index: 3]
+```
+
+Since regular expressions carry a `lastIndex` property that specifies _where they should match_,
+and move this index along if they have matched a part of the input string, this lends itself
+very well to building a continuous parser combinator that consists mostly of regular
+expressions and some branches and loops.
+
+## The Parser Generator's DSL's Parser
+
+Starting the implementation of this parser generator, this is where things become _meta_. Since
+the `match` API I've outlined is in itself a language that looks like regular expression syntax.
+I had to get to writing a small parser for it. The fascinating part about this parser is that
+the syntax is very reduced and hence the parser was quite small.
+The grammar overall is simple and ignores whitespaces of any kind for readability, uses **groups**
+(`(` and `)`), **alternations** (with `|`), **quantifiers** (`+`, `?`, and `*`), and lastly
+**non-capturing groups** (`?:`), and positive (`?=`) and negative (`?!`) **lookahead groups**.<br />
+In essence, this is a short example of the added grammar compared to the draft:
+
+```js
+const thisThat = match('thisThat')`
+  (?: ${/and/})
+  (
+    ((?! ${/.*that/}) ${/this/}+)
+    | ((?! ${/.*this/}) ${/that/}+)
+  )
+`;
+```
+
+This snippet will only match a given input if it starts with "and", however "and" is in a
+non-capturing group and won't be output to the AST node. It then matches either a repetition
+of "this" or a repetition of "that". There are negative lookahead groups which will make
+sure that we _don't unnecessarily start matching_ if any of the repeated sequences contain
+both "this" and "that".
+Given that this is very similar to the behaviour of regular expressions and fairly
+concise this made me pretty optimistic in that this would be a usable syntax and API.
+
+<img
+  src={require('./long-parse-grammar.png')}
+  alt="A diagram of our longer grammar of the matcher as shown in the code snippet above."
+/>
+
+## Generating the parsing code in Babel
