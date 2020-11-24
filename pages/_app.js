@@ -39,6 +39,7 @@ const App = ({ Component, pageProps }) => (
     <Head>
       <meta name="og:type" content="website" />
       <link rel="icon" type="image/png" href="/avatars/favicon.png" />
+      <link rel="alternate" type="application/rss+xml" href="/rss.xml" />
     </Head>
     <Component {...pageProps} />
   </Main>
