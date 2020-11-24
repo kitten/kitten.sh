@@ -20,7 +20,7 @@ const generateRSSFeed = async (req, res) => {
     id: "http://example.com/",
     link: getAbsoluteURL(),
     language: 'en',
-    favicon: getAbsoluteURL('/avatars/favicon.png'),
+    favicon: getAbsoluteURL('/avatars/icon.png'),
     updated: docsPages.length ? new Date(docsPages[0].published.date) : null,
     feedLinks: {
       atom: getAbsoluteURL('/rss.xml'),
