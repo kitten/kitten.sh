@@ -7,17 +7,26 @@ import { sizes, tablet, mobile } from '../styles/theme';
 import { Avatar } from '../styles/layout';
 import Footer from '../styles/footer';
 
+const Logo = styled('img')`
+  transform: translate(0, 5px);
+  display: inline-block;
+  vertical-align: bottom;
+  margin-right: 0.5ch;
+  width: 1em;
+  height: 1em;
+`;
+
 const PostsHeading = styled('h1')`
   text-transform: capitalize;
   font-size: 4.5rem;
-  padding: 3rem 0 2rem 0;
+  padding: 3rem 0 1.5rem 0;
   color: var(--color-active);
 `;
 
 const PostList = styled('ul')`
   list-style-type: none;
   max-width: ${sizes.page}px;
-  margin: 2.5rem auto;
+  margin: 2.5rem auto 1.5rem auto;
 
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -170,6 +179,7 @@ const Index = () => (
 
     <main>
       <PostsHeading>
+        <Logo src="/avatars/icon.png" />
         Recently Published
       </PostsHeading>
 
