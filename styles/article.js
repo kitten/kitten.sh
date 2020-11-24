@@ -50,7 +50,7 @@ const Image = styled('img')`
 `;
 
 export const img = ({ src, alt, width, height, layout, className }) => {
-  const props = { layout: layout || (!width && !height ? 'fill' : null), className };
+  const props = { width, height, layout: layout || (!width && !height ? 'fill' : null), className };
   if (typeof src === 'object' && src.srcSet) {
     props.srcSet = src.srcSet;
   } else {
@@ -187,6 +187,8 @@ export const blockquote = styled(props => {
   font-weight: bold;
   letter-spacing: 0.8px;
   padding: 1.3em 0 1.1em 2ch;
+  word-break: normal;
+  hyphens: initial;
 
   ${desktop`
     &:not([data-quote]) {
@@ -194,7 +196,7 @@ export const blockquote = styled(props => {
       float: right;
       max-width: 70%;
       margin-right: calc(-0.5 * (1200px - 65ch + 10ch));
-      padding: 1.5rem 0 1.5rem 2ch;
+      padding: 1.5rem 0 1rem 2ch;
       shape-outside: padding-box;
       margin-top: 0;
     }

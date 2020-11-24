@@ -66,3 +66,66 @@ template literal and compiles it to a parser. If my parser generator would be ab
 compact code that is still reasonably fast, it'd make itself very useful to create small & quick
 DSLs that can be run in the browser. Let's look at how I built
 [RegHex](https://github.com/kitten/reghex)!
+
+## Creating an Implementation Plan
+
+When jumping into a complex project like this, I typically start out at both ends of the process
+and ask myself, "What should the library's API look like?" and "What are the small implementation
+details I need to know before I start coding?"<br />
+However, planning and actually starting are two
+steps that due to procrastination take me quite... a considerable amount of time.
+
+For this project I came up with the rough idea for it about a year ago in 2019. I then wrote the
+first API design draft in April 2020, and implemented the library a month later in May 2020.
+I was pretty excited about the idea and have no excuses for this, so let's just move on. The
+first draft for the **API design** looked something like the following:
+
+```js
+const identifier = match('identifier')`
+  ${/[-\w]+/}
+`;
+
+const string = match('string')`
+  ( ${/"[^"]*"/} | ${/'[^']*'/} )
+`;
+
+const values = match('values')`
+  ( ${identifier} | ${string} )*
+`;
+```
+
+The API's general idea is to expose a `match` function that is called with a parsing grammar's
+name. It then is called as a tagged template literal with a regular expression-like grammar,
+which contains interpolations with either regular expressions or other grammars. The output
+of `match` can then be used to start parsing a string and will return an abstract syntax tree ("AST").
+
+While parsing `match` can be used with regular expressions as interpolations to _match_ a given
+part of the input string at the current parsing position. Outside of the interpolations we can
+use the regular expression syntax we're already familiar with to express parsing logic, e.g.
+`|` for matching something else if the first part of a group didn't match, or `*` to allow for
+multiple matches.
+
+### Parser Combinators
+
+This initial draft revealed a crucial difference to a regular parser generator. Because I chose
+to embed the parsing grammar into JS code via a tagged template literal, the draft started looking
+like a "parser combinator". In short, [parser combinators](https://en.wikipedia.org/wiki/Parser_combinator)
+are functions that accept other parsers as inputs and return a new parser.
+In this case `match`'s template optionally accepts other `match` parsers as interpolations.
+
+<img
+  src={require('./parser-combinators.png')}
+  width="450" height="400"
+  alt={`The grammar in the draft API states that either an
+    identifier or a string matches as often as possible, while
+    the two are grammars of their own too.`}
+/>
+
+> In short, parser combinators are functions that accept other parsers as inputs and
+> return a new parser.
+
+This allows a larger grammar to be built up and bits of the grammar to be reused without writing
+a larger definition in one piece, which generates smaller bits of code in the macro and makes
+the tagged template literals feel more cohesive in our JS code. To me, this looks like a similar
+pattern to how styled-components splits up CSS for separate components, each rendering a single
+element with their own styles.
