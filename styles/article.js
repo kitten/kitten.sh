@@ -164,6 +164,7 @@ export const inlineCode = styled('code')`
 `;
 
 const toText = children => Children.toArray(children).reduce((acc, child) => {
+  if (!child || !child.props) return acc;
   return acc +
     (typeof child.props.children === 'string'
       ? child.props.children

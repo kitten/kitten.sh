@@ -198,6 +198,10 @@ const Index = () => (
             {page.cover ? <Cover src={page.cover} /> : null}
           </Post>
         ))}
+
+        {docsPages.length === 0 ? (
+          <h3>Nothing to see here... yet. 🤔</h3>
+        ) : null}
       </PostList>
     </main>
 
