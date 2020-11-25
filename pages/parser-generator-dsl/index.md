@@ -97,7 +97,7 @@ const values = match('values')`
 // Output: [['"string"', .tag: 'string'], .tag: 'values']
 
 // Input: ident
-// Output: [['ident', .tag: 'values'], .tag: 'values']
+// Output: [['ident', .tag: 'identifier'], .tag: 'values']
 ```
 
 The API's general idea is to expose a `match` function that is called with a parsing grammar's
