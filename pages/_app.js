@@ -1,4 +1,4 @@
-import { load as loadFathom, trackPageview } from 'fathom-client';
+import GAnalytics from 'ganalytics';
 import { prefix } from 'goober-autoprefixer';
 import { styled, css, setup } from 'goober';
 import React, { useEffect } from 'react';
@@ -40,19 +40,16 @@ const App = ({ Component, pageProps }) => {
   const router = useRouter();
 
   useEffect(() => {
-    loadFathom('SOSQTHKA', {
-      excludedDomains: ['localhost']
-    });
-
+    const ga = new GAnalytics('UA-183931096-1', { aip: 1, aid: 1 });
     const onRouteChange = () => {
-      trackPageview();
+      ga.send('pageview');
     };
 
     router.events.on('routeChangeComplete', onRouteChange);
 
     return () => {
       router.events.off('routeChangeComplete', onRouteChange);
-    }
+    };
   }, []);
 
   return (
