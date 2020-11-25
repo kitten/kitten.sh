@@ -15,7 +15,7 @@ published:
 
 Ever since I started working on _styled-components_ I've been fascinated by parsers. Writing a plugin for
 Webpack or Babel for the first time felt like pure magic, especially if the plugin doesn't just transpile
-some code for compatibility reasons or adds some metadata, but instead generates entirely new code
+some code for compatibility reasons or adds some metadata but instead generates entirely new code
 or enables functionality that just isn't feasibly implemented as runtime-only code.
 
 These days as JavaScript developers parsers are all around us. When we're starting up a
@@ -27,10 +27,10 @@ in the background.
 To me, nothing exemplifies this **omnipresence of parsers** more than ["Babel
 Macros"](https://github.com/kentcdodds/babel-plugin-macros), which is a Babel plugin that in
 itself runs other plugins, which are embedded in special npm packages, called "macros". Very meta.
-With macros, a package can feasibly appear as if it was just a JS library, but use the full
+With macros, a package can feasibly appear as if it was just a JS library but use the full
 power of compile-time transpilation without us having to update our Babel config.
 For example, `eval.macro` evaluates JS code inside tagged template literals during compile-time.
-**Tagged template literals** were actually even meant for embedding domain specific languages
+**Tagged template literals** were even meant for embedding domain-specific languages
 ("DSLs") into JavaScript, as Dr. Axel Rauschmayer writes [in his post on
 them](https://2ality.com/2011/09/quasi-literals.html):
 
@@ -38,8 +38,8 @@ them](https://2ality.com/2011/09/quasi-literals.html):
 > of embedded DSLs in JavaScript."
 
 Given that macros can be used ad hoc to transpile any code, including tagged template literals,
-just by using importing a package, plugins like `eval.macro`, which itself technically embeds
-JS into JS, can pre-compile some of their functionality:
+just by using importing a package, plugins like `eval.macro` — which itself technically embeds
+JS into JS — can pre-compile some of their functionality:
 
 ```js
 import eval from 'eval.macro';
@@ -69,13 +69,13 @@ DSLs that can be run in the browser. Let's look at how I built
 
 ## Creating an Implementation Plan
 
-When jumping into a complex project like this, I typically start out at both ends of the process
-and ask myself, "What should the library's API look like?" and "What are the small implementation
-details I need to know before I start coding?"<br />
-However, planning and actually starting are two
-steps that due to procrastination take me quite... a considerable amount of time.
+When jumping into a complex project like this, I typically start at both ends of the process
+and ask, "What should the library's API look like?" and "What are the small implementation
+details I need some investigation first?"<br />
+However, planning and starting are two steps that due to procrastination take me quite...
+a considerable amount of time.
 
-For this project I came up with the rough idea for it about a year ago in 2019. I then wrote the
+For this project, I came up with the rough idea for it about a year ago in 2019. I then wrote the
 first API design draft in April 2020, and implemented the library a month later in May 2020.
 I was pretty excited about the idea and have no excuses for this, so let's just move on. The
 first draft for the **API design** looked something like the following:
@@ -100,7 +100,7 @@ which contains interpolations with either regular expressions or other grammars.
 of `match` can then be used to start parsing a string and will return an abstract syntax tree ("AST").
 
 While parsing `match` can be used with regular expressions as interpolations to _match_ a given
-part of the input string at the current parsing position. Outside of the interpolations we can
+part of the input string at the current parsing position. Outside of the interpolations, we can
 use the regular expression syntax we're already familiar with to express parsing logic, e.g.
 `|` for matching something else if the first part of a group didn't match, or `*` to allow for
 multiple matches.
@@ -111,7 +111,7 @@ This initial draft revealed a crucial difference to a regular parser generator. 
 to embed the parsing grammar into JS code via a tagged template literal, the draft started looking
 like a "parser combinator". In short, [parser combinators](https://en.wikipedia.org/wiki/Parser_combinator)
 are functions that accept other parsers as inputs and return a new parser.
-In this case `match`'s template optionally accepts other `match` parsers as interpolations.
+In this case, `match`'s template optionally accepts other `match` parsers as interpolations.
 
 <img
   src={require('./parser-combinators.png')}
@@ -180,10 +180,10 @@ readability which is a nice, small touch. Here's a small overview of the non-obv
 | `(?= )`       | A **positive lookahead** checks whether interpolations match, and if so continues the matcher without changing the input. If it matches, it's essentially ignored.                       |
 | `(?! )`       | A **negative lookahead** checks whether interpolations _don't_ match, and if so continues the matcher without changing the input. If the interpolations do match the matcher is aborted. |
 
-As shown, the grammar won't have many features, however, the most important one are undoubtedly
-alternations, since a parser that can't match several alternative patterns won't be able to
-express any languages. To look at an example of this DSL in use, here's a grammar which matches strings of repeated
-"this"s and "that"s:
+As shown, the grammar won't have many features, however, the most important one is undoubtedly
+alternations, since a parser that can't match several alternative patterns, won't be able to
+express any languages. To look at an example of this DSL in use here's a grammar which matches
+strings of repeated "this"s and "that"s:
 
 ```js
 const thisThat = match('thisThat')`
@@ -231,14 +231,14 @@ const parser = match('parsed')`
 `;
 ```
 
-For instance, given the above code the grammar may match `1` and then repeatedly `2`.
+For instance, given the above code, the grammar may match `1` and then repeatedly `2`.
 However if at any point of the first part this grammar fails to match against the
 input string, the function will still need to attempt to match `3`.
 
 ### Labelled Statements to the rescue!
 
-As it turns out, if we need to only output a single function for this parsing
-grammar, there exists only one unlikely solution to the problem, and this solution
+As it turns out if we need to only output a single function for this parsing
+grammar, there exists only one unlikely solution to the problem and this solution
 is — what I'd consider — quite an archaic language feature in JavaScript:
 **Labelled Block Statements**.
 
@@ -248,11 +248,11 @@ out of it by calling `break`. As [MDN puts it in their explanation of labelled
 statements](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/label)
 though:
 
-> "Labeled loops or blocks are very uncommon. Usually function calls can be used instead of loop jumps."
+> "Labelled loops or blocks are very uncommon. Usually, function calls can be used instead of loop jumps."
 
 So in conclusion, they're quite useful for generated code that is trying to
-avoid additional functions in its code output. However if you use labels in
-your own code it's very likely that a reviewer may just either complain or even
+avoid additional functions in its code output. However, if you use labels in
+your code a reviewer may likely just either complain or even
 exclaim in confusion. :shrug:
 
 The Babel [code](https://github.com/kitten/reghex/blob/1d76d26/src/babel/generator.js)
@@ -336,11 +336,11 @@ follows this same pattern of setting up a block, adding the prior index and node
 and then adding in the rest of the grammar recursively. It passes on a `break` statement to
 the lower nodes, which those can use to break out of the block.
 
-> If you use labelled block statements in your own code it’s very likely that a
-> reviewer may just either complain or even exclaim in confusion. 🤷
+> If you use labelled block statements in your code a reviewer may likely just either complain
+> or even exclaim in confusion. 🤷
 
-The trickiest part here is to actually _read_ the code that the generator outputs,
-as it's clearly not very readable for people. However, I believe it's the **most
+The trickiest part here is to even _read_ the code that the generator outputs,
+as it's not very readable to humans. However, I believe it's the **most
 compact** code that can be generated given the requirements — and [Google's Closure Compiler](https://developers.google.com/closure/compiler)
 agrees! Closure Compiler actually outputs labelled block statements when inlining some
 functions into loops quite frequently as well. In fact, when I tried to _handcode_ a grammar
@@ -370,7 +370,7 @@ uses regular expression the compiled output comes in at only **2.6kB**
   alt="Because it looks nice and fits. The graphql-parse bundle in one image. Ok, old joke thanks to Jason Miller."
 />
 
-Running some benchmarks reveal that, probably due to the non trivial overhead of
+Running some benchmarks reveal that, probably due to the non-trivial overhead of
 regular expressions in JavaScript, the performance of this parser is a third of
 the reference implementation. This is a little better than I expected given that
 RegHex is still a good tool for prototyping and creating small parsers quickly.
@@ -379,7 +379,7 @@ RegHex is still a good tool for prototyping and creating small parsers quickly.
 
 It's worth noting that RegHex could also [support parsing entire tagged template
 literals](https://github.com/kitten/reghex/issues/2), which would increase the
-level of metaness even more, since it'd allow RegHex to be used to generate
+level of meta-ness even more, since it'd allow RegHex to be used to generate
 its own DSL's parser.
 
 RegHex also doesn't support errors very well, since it doesn't unroll a nice
