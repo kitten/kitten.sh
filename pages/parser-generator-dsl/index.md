@@ -7,8 +7,8 @@ excerpt: >-
   tagged template literals can do more than just embed DSLs, they can be precompiled to become generated
   code. Let's look at how I built RegHex which let's you create parsers right in your JS code.
 published:
-  live: false
-  date: 2020-11-24
+  live: true
+  date: 2020-11-25
   handle: '_philpl'
   avatar: /avatars/phil.png
 ---
