@@ -1,4 +1,5 @@
 {
+  "alias": "kitten.sh",
   "rewrites": [
     {
       "source": "/sitemap.xml",

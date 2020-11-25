@@ -1,7 +1,9 @@
-import React from 'react';
-import Head from 'next/head';
+import { load as loadFathom, trackPageview } from 'fathom-client';
 import { prefix } from 'goober-autoprefixer';
 import { styled, css, setup } from 'goober';
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/router';
+import Head from 'next/head';
 
 import { sizes, desktop, tablet } from '../styles/theme';
 import '../styles/global.css';
@@ -34,15 +36,35 @@ const Main = styled('main')`
   `}
 `;
 
-const App = ({ Component, pageProps }) => (
-  <Main>
-    <Head>
-      <meta name="og:type" content="website" />
-      <link rel="icon" type="image/png" href="/avatars/icon.png" />
-      <link rel="alternate" type="application/rss+xml" href="/rss.xml" />
-    </Head>
-    <Component {...pageProps} />
-  </Main>
-);
+const App = ({ Component, pageProps }) => {
+  const router = useRouter();
+
+  useEffect(() => {
+    loadFathom('SOSQTHKA', {
+      excludedDomains: ['localhost']
+    });
+
+    const onRouteChange = () => {
+      trackPageview();
+    };
+
+    router.events.on('routeChangeComplete', onRouteChange);
+
+    return () => {
+      router.events.off('routeChangeComplete', onRouteChange);
+    }
+  }, []);
+
+  return (
+    <Main>
+      <Head>
+        <meta name="og:type" content="website" />
+        <link rel="icon" type="image/png" href="/avatars/icon.png" />
+        <link rel="alternate" type="application/rss+xml" href="/rss.xml" />
+      </Head>
+      <Component {...pageProps} />
+    </Main>
+  );
+}
 
 export default App;

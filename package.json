@@ -33,6 +33,7 @@
     ]
   },
   "dependencies": {
+    "fathom-client": "^3.0.0",
     "feed": "^4.2.1",
     "focus-visible": "^5.2.0",
     "goober": "^2.0.15",
