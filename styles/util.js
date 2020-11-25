@@ -1,9 +1,7 @@
 export const getAbsoluteURL = (path, req) => {
   if (!path) path = '';
   if (!path.startsWith('/')) path = '/' + path;
-  const deploymentURL = req ? req.headers.host : process.env.VERCEL_URL;
-  const baseURL = deploymentURL ? `https://${deploymentURL}` : 'https://kitten.sh';
-  return baseURL + path;
+  return 'https://kitten.sh' + path;
 };
 
 export const toDateString = date => {
