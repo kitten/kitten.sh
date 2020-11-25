@@ -50,7 +50,7 @@ const Image = styled('img')`
 `;
 
 export const img = ({ src, alt, width, height, layout, className }) => {
-  const props = { width, height, layout: layout || (!width && !height ? 'fill' : null), className };
+  const props = { alt, width, height, layout: layout || (!width && !height ? 'fill' : null), className };
   if (typeof src === 'object' && src.srcSet) {
     props.srcSet = src.srcSet;
   } else {
@@ -60,7 +60,7 @@ export const img = ({ src, alt, width, height, layout, className }) => {
   return (
     <FullBleed>
       <Image {...props} />
-      {alt && <ImageDescription>{alt}</ImageDescription>}
+      {alt && <ImageDescription aria-hidden="true">{alt}</ImageDescription>}
     </FullBleed>
   );
 };
@@ -269,6 +269,7 @@ export const blockquote = styled(props => {
     <blockquote
       {...props}
       role={isPullQuote ? 'presentation' : null}
+      aria-hidden={isPullQuote ? 'true' : 'false'}
       data-quote={!isPullQuote}
     />
   );

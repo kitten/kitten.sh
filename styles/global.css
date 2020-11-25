@@ -85,7 +85,7 @@ html, [data-theme="light"] {
 
     --color-prism-bg: #09121a;
     --color-prism-fg: #d6deeb;
-    --color-prism-comment: #637777;
+    --color-prism-comment: #5389a9;
     --color-prism-identifier: #82aaff;
     --color-prism-variable: #d6deeb;
     --color-prism-number: #f78c6c;
@@ -106,7 +106,7 @@ html, [data-theme="light"] {
 
   --color-prism-bg: #09121a;
   --color-prism-fg: #d6deeb;
-  --color-prism-comment: #637777;
+  --color-prism-comment: #5389a9;
   --color-prism-identifier: #82aaff;
   --color-prism-variable: #d6deeb;
   --color-prism-number: #f78c6c;

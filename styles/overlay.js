@@ -7,17 +7,17 @@ const Container = styled('div')`
 
 const Wrapper = styled(FullBleed)`
   position: fixed;
-  background: var(--color-active);
+  background: var(--color-background);
   height: 2rem;
   z-index: 3;
   top: 0;
 `;
 
 const Label = styled('h4')`
+  color: var(--color-text);
   text-align: center;
   font-size: 1rem;
   margin: auto;
-  color: white;
 `;
 
 const Icon = styled('span')`

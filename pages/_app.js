@@ -1,7 +1,7 @@
 import galite from 'ga-lite';
 import { prefix } from 'goober-autoprefixer';
 import { styled, css, setup } from 'goober';
-import React, { useEffect } from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 
@@ -36,11 +36,17 @@ const Main = styled('main')`
   `}
 `;
 
+const useUniversalEffect = typeof window !== 'undefined'
+  ? useLayoutEffect
+  : useEffect;
+
 const App = ({ Component, pageProps }) => {
   const router = useRouter();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     galite('create', 'UA-183931096-1', 'auto');
+
+    const unloadEvent = 'onpagehide' in window ? 'pagehide' : 'unload';
 
     const onRouteChange = () => {
       galite('send', 'pageview');
@@ -50,13 +56,32 @@ const App = ({ Component, pageProps }) => {
       galite('send', 'timing', 'JS Dependencies', 'unload');
     };
 
+    const onError = error => {
+      galite('send', 'exception', {
+        exDescription: error.message,
+        exFatal: true
+      });
+    };
+
+    if (window.performance) {
+      const timeSincePageLoad = Math.round(performance.now());
+      galite('send', 'timing', 'JS Dependencies', 'load', timeSincePageLoad);
+    }
+
     onRouteChange();
-    window.addEventListener('unload', onUnload);
+    window.addEventListener(unloadEvent, onUnload, { capture: true });
+    window.addEventListener('error', onError);
     router.events.on('routeChangeComplete', onRouteChange);
+
+    if ('pageshow' in window) {
+      window.addEventListener(onRouteChange);
+    }
 
     return () => {
       router.events.off('routeChangeComplete', onRouteChange);
-      window.removeEventListener('unload', onUnload);
+      window.removeEventListener(onRouteChange);
+      window.removeEventListener(unloadEvent, onUnload, { capture: true });
+      window.removeEventListener('error', onError);
     };
   }, []);
 
