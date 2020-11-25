@@ -1,4 +1,4 @@
-import GAnalytics from 'ganalytics';
+import galite from 'ga-lite';
 import { prefix } from 'goober-autoprefixer';
 import { styled, css, setup } from 'goober';
 import React, { useEffect } from 'react';
@@ -40,15 +40,23 @@ const App = ({ Component, pageProps }) => {
   const router = useRouter();
 
   useEffect(() => {
-    const ga = new GAnalytics('UA-183931096-1', { aip: 1, aid: 1 });
+    galite('create', 'UA-183931096-1', 'auto');
+
     const onRouteChange = () => {
-      ga.send('pageview');
+      galite('send', 'pageview');
     };
 
+    const onUnload = () => {
+      galite('send', 'timing', 'JS Dependencies', 'unload');
+    };
+
+    onRouteChange();
+    window.addEventListener('unload', onUnload);
     router.events.on('routeChangeComplete', onRouteChange);
 
     return () => {
       router.events.off('routeChangeComplete', onRouteChange);
+      window.removeEventListener('unload', onUnload);
     };
   }, []);
 
