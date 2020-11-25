@@ -338,7 +338,7 @@ export const a = styled(props => {
 })`
   color: var(--color-active);
   text-decoration: none;
-  background-size: 100% 1.5px;
+  background-size: 100% 1.4px;
   background-repeat: no-repeat;
   background-position: 0 1em;
 
