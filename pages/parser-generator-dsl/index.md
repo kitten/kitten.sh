@@ -52,20 +52,20 @@ const val = 42;
 
 Parsers are indeed all around us and frequently grant us _amazing new abilities_. But if we look
 at the state of the JavaScript ecosystem from the perspective of native, compiled languages we
-may notice that we can go a step further than this with **metacompilers**, which is a fancy
-category of programs that also includes **parser generators**.  Parser Generators — an example
-for JavaScript being [peg.js](https://pegjs.org/) — allow us to write a parser in a DSL, which
-often looks similar to regular expressions, and subsequently generate the parser itself automatically.
+may notice that we can go a step further than this with **metacompilers**, a fancy category of
+programs that also includes **parser generators**.  Parser Generators — an example
+in JavaScript being [peg.js](https://pegjs.org/) — allow us to write a parser in a DSL, which
+often looks similar to regular expressions, and subsequently generate the parser's code
+automatically.
 
 > Parser Generators allow us to write a parser in a DSL, which often
 > looks similar to regular expressions, and subsequently output the parser itself automatically.
 
-This on its own is pretty interesting knowledge, but knowing Babel Macros, I was wondering
-whether it was feasible to create a macro that allowed me to write _parsing grammar_ in a tagged
-template literal and compiles it to a parser. If my parser generator would be able to output
+This on its own is pretty useful knowledge, but knowing Babel Macros, I was wondering whether
+it was feasible to create a macro that allowed me to write a _parsing grammar_ in a tagged
+template literal and transpile it to a parser. If a parser generator in JS was able to output
 compact code that is still reasonably fast, it'd make itself very useful to create small & quick
-DSLs that can be run in the browser. Let's look at how I built
-[RegHex](https://github.com/kitten/reghex)!
+DSLs that can be run in the browser. Let's look at how I built [RegHex](https://github.com/kitten/reghex)!
 
 ## Creating an Implementation Plan
 
@@ -92,26 +92,34 @@ const string = match('string')`
 const values = match('values')`
   ( ${identifier} | ${string} )*
 `;
+
+// Input: "string"
+// Output: [['"string"', .tag: 'string'], .tag: 'values']
+
+// Input: ident
+// Output: [['ident', .tag: 'values'], .tag: 'values']
 ```
 
 The API's general idea is to expose a `match` function that is called with a parsing grammar's
 name. It then is called as a tagged template literal with a regular expression-like grammar,
-which contains interpolations with either regular expressions or other grammars. The output
-of `match` can then be used to start parsing a string and will return an abstract syntax tree ("AST").
+which contains interpolations with either regular expressions or other grammars, which are
+used to recursively parse bits of the input.
+The output of `match` can then be used to start parsing a string and will return an abstract
+syntax tree ("AST"), nested nodes describing the parsed contents of the input.
 
-While parsing `match` can be used with regular expressions as interpolations to _match_ a given
-part of the input string at the current parsing position. Outside of the interpolations, we can
-use the regular expression syntax we're already familiar with to express parsing logic, e.g.
-`|` for matching something else if the first part of a group didn't match, or `*` to allow for
-multiple matches.
+To control the logic of how inputs are parsed around the interpolations "operators" similar
+to a regular expression syntax are used, while regular expressions will match at the current
+index of the input. Since regular expression syntax is common in parser generators and is
+familiar to many, it felt rather natural to write, e.g.  `|` for matching something else
+if the first part of a group didn't match, or `*` to allow for multiple matches.
 
 ### Parser Combinators
 
-This initial draft revealed a crucial difference to a regular parser generator. Because I chose
-to embed the parsing grammar into JS code via a tagged template literal, the draft started looking
+This initial draft revealed a crucial feature of my planned API. Because I chose to embed
+the parsing grammar into JS code via a tagged template literal, the draft started looking
 like a "parser combinator". In short, [parser combinators](https://en.wikipedia.org/wiki/Parser_combinator)
-are functions that accept other parsers as inputs and return a new parser.
-In this case, `match`'s template optionally accepts other `match` parsers as interpolations.
+are functions that accept other parsers as inputs and return a new parser. In this case,
+`match`'s template optionally accepts other `match` parsers as interpolations.
 
 <img
   src={require('./parser-combinators.png')}
@@ -124,24 +132,27 @@ In this case, `match`'s template optionally accepts other `match` parsers as int
 > In short, parser combinators are functions that accept other parsers as inputs and
 > return a new parser.
 
-This allows a larger grammar to be built up and bits of the grammar to be reused without writing
-a larger definition in one piece, which generates smaller bits of code in the macro and makes
-the tagged template literals feel more cohesive in our JS code. To me, this looks like a similar
-pattern to how styled-components splits up CSS for separate components, each rendering a single
-element with their own styles. :star-struck:
+This allows a larger parser to be gradually composed from smaller, reusable bits of grammar, which
+also narrows down the task of generating parsing code to one small `match` tag at a time. As
+an API, this is what made tagged template literals a really compelling choice. To me, this felt
+similar to how styled-components splits up CSS for separate components, each rendering a single
+element with their own styles. :star-struck: Tagged template literals naturally force a library's
+API to **simplify and split up** the exposed API surface.
 
 ### Sticky Regular Expressions
 
-The parser generator so far works by creating smaller pieces of grammar, defined by interpolating
-other small matching grammars or regular expressions into it. However, while writing a small
-parser with regular expressions is something that quite a few people have done before, doing
-so without skipping over any characters in the input string is crucial.
+So far, the parser generator works by creating smaller pieces of grammar, defined by interpolating
+other small matching grammars or regular expressions. Intuitively, the most straightforward
+approach to generate code from this would be to only transpile the pieces of grammar in the
+template string, and to **reuse the interpolated regular expressions** as is. Doing so without
+skipping over any characters in the input string is crucial however.
 
-Typically, regular expressions will scan an input string until they've found a match, which
-is both costly and counter to how a parser works. Luckily in ECMAScript 6 the
-["sticky flag"](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/sticky)
-for regular expressions was added, which forces the regular expression to match only at its
-exact position, rather than starting to scan the string for matches:
+Executing a regular expression typically scans over an input string until a match is found,
+which is both costly and counter to how a parser works. Instead of scanning the string, what
+the parser generator needs is to attempt to match the regular expression only at an exact
+location. Luckily, in _ECMAScript 6_ support for the ["sticky
+flag"](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/sticky)
+was added, which does just that:
 
 ```js
 const regex = new RegExp('hi', 'y');
@@ -156,21 +167,25 @@ regex.exec(input); // ['hi', index: 3]
 regex.lastIndex; // 5
 ```
 
-Since regular expressions carry a `lastIndex` property that specifies _where they should match_,
-and move this index along if they have matched a part of the input string, this lends itself
-very well to building a continuous parser combinator that consists mostly of regular
-expressions and some branches and loops.
+The `lastIndex` property now indicates where the regular expression should be executed,
+rather than where it should start searching the input string. As usual, the index is
+also moved along if the regular expression has successfully matched a part of the input
+string. This lends itself very well to building a continuous parser combinator that
+consists mostly of regular expressions and some branches and loops, and enables the
+parser generator to only transpile our custom DSL rather than also reimplementing
+regular expressions.
 
 ## The Parser Generator's DSL's Parser
 
-Starting the implementation of this parser generator, this is where things become _meta_. Since
-the `match` API I've outlined is in itself a language that looks like regular expression syntax.
-I had to get to writing a small parser for it. The fascinating part about this parser is that
-the syntax is very reduced and hence the parser was quite small.
-I kept the grammar overall as simple as possible while supporting the operators I'm used to from
-regular expressions, so at the very least I had to add _quantifiers_, various types of groups,
-and alternations. Furthermore RegHex's DSL ignores whitespaces for
-readability which is a nice, small touch. Here's a small overview of the non-obvious operators:
+Starting the implementation of this parser generator, this is where things become _meta_.
+Since `match`'s tagged template API I've outlined is in itself a language that looks like
+regular expression syntax, a small parser for this DSL is necessary. Luckily, the syntax
+that this particular DSL has to support is rather small and hence the parser ended up being
+quite easy to write and compact too.
+RegHex's DSL was set to support _quantifiers_, various types of groups,
+and alternations. As I've decided in the design process early on, it would be whitespace
+insignificant fore readability. Here's a small overview of the operators that ended up
+in the DSL's syntax:
 
 | Operator      | Description                                                                                                                                                                              |
 | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -180,10 +195,10 @@ readability which is a nice, small touch. Here's a small overview of the non-obv
 | `(?= )`       | A **positive lookahead** checks whether interpolations match, and if so continues the matcher without changing the input. If it matches, it's essentially ignored.                       |
 | `(?! )`       | A **negative lookahead** checks whether interpolations _don't_ match, and if so continues the matcher without changing the input. If the interpolations do match the matcher is aborted. |
 
-As shown, the grammar won't have many features, however, the most important one is undoubtedly
-alternations, since a parser that can't match several alternative patterns, won't be able to
-express any languages. To look at an example of this DSL in use here's a grammar which matches
-strings of repeated "this"s and "that"s:
+Arguably, the most important feature of this syntax listed above is undoubtedly alternations,
+since a parser that can't match several alternative patterns, won't be able to express any
+useful grammar. Let's look at an example of the RegHex DSL in action with a grammar that
+matches strings of repeated "this"s and "that"s:
 
 ```js
 const thisThat = match('thisThat')`
@@ -195,11 +210,12 @@ const thisThat = match('thisThat')`
 `;
 ```
 
-This snippet will only match a given input if it starts with "and", however "and" is in a
+This snippet will only match a given input if it starts with "and". However, "and" is in a
 non-capturing group and won't be output to the AST node. It then matches either a repetition
 of "this" or a repetition of "that". There are negative lookahead groups which will make
-sure that we _don't unnecessarily start matching_ if any of the repeated sequences contain
-both "this" and "that".
+sure that we _don't unnecessarily start parsing the entire string_ if any of the repeated
+sequences contain both "this" and "that".
+
 Given that this is very similar to the behaviour of regular expressions and fairly
 concise this made me pretty optimistic in that this would be a usable syntax and API.
 
@@ -210,62 +226,75 @@ concise this made me pretty optimistic in that this would be a usable syntax and
 
 ## Generating the parsing code in Babel
 
-The last part of the endeavour was writing the actual Babel plugin code which would pick
+Finally, the last part of the endeavour was writing the Babel plugin code which would pick
 up all written grammars and replace them with parsing code. While writing the Babel code
-itself isn't too hard, since I wrote a couple of Babel plugins before, since one of the
-goals was to generate small & quick code deciding _what code_ to generate proved to be a
-little tricky. I decided early on that "generating small code" would mean that each
-`match` should be compiled to only **a single function**.
+itself wasn't too hard, since I had some experience writing Babel plugins before, because
+one of the goals was to generate small & quick code for the DSL, deciding _what the generated
+parsing code's patterns should be_ proved to be a little tricky. I decided early on to
+generate code that is as compact as possible, which meant to me that each usage of `match`
+should be compiled to only **a single function**.
 
 There are a lot of places in the parsing grammar where one part of the match may be
-unsuccessful and will jump to another. This can happen for instance if a group is
-optional or if we have an alternation inside a group, which all means that there
-may be nested interpolations that the generated function will start to match and,
-after failing, may give up on while continuing with another part of the grammar.
+unsuccessful and will jump to another — mostly due to alternations around groups.
+This means that there may be chained interpolations that the generated function will
+start to match and, after failing, may give up on while skipping to the next part
+of the grammar after an alternation.
 
 ```js
 import match from 'reghex/macro';
 
 const parser = match('parsed')`
-  (\${1} \${2}+) | ${3}
+  (${1} ${2}+) | ${3}
 `;
 ```
 
 For instance, given the above code, the grammar may match `1` and then repeatedly `2`.
 However if at any point of the first part this grammar fails to match against the
-input string, the function will still need to attempt to match `3`.
+input string, the function will still need to attempt to match `3`. It needs to skip
+to `| ${3}` and ensure that any results from the previously failed attempt are
+discarded.
 
 ### Labelled Statements to the rescue!
 
-As it turns out if we need to only output a single function for this parsing
-grammar, there exists only one unlikely solution to the problem and this solution
-is — what I'd consider — quite an archaic language feature in JavaScript:
-**Labelled Block Statements**.
+Investigating some potential patterns for this problem, I discovered that just a
+single solution seems to exist to have this amount of control in a single function,
+and this solution is — what I'd consider — quite an archaic language feature in
+JavaScript: **Labelled Block Statements**.
 
-We may not see this very often in handwritten JavaScript code, but any loop
-or block may be annotated using a label. Once we have a label we may break
-out of it by calling `break`. As [MDN puts it in their explanation of labelled
-statements](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/label)
-though:
+We may not see this feature very often in handwritten JavaScript code, but any
+loop or block may be annotated using a label. Once we have a label we may break
+out of it by calling `break`.
+
+```js
+loop1: for (let i = 0; i < 3; i++) {
+   loop2: for (let j = 0; j < 3; j++) {
+      if (i === 1 && j === 1) break loop1;
+   }
+}
+```
+
+This is quite useful for generated code that is trying to avoid additional functions
+in its code output. However, if you use labels in your code a reviewer may likely
+just either complain or even exclaim in confusion. :shrug: As [MDN puts
+it](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/label)
+in their explanation of labelled statements:
 
 > "Labelled loops or blocks are very uncommon. Usually, function calls can be used instead of loop jumps."
 
-So in conclusion, they're quite useful for generated code that is trying to
-avoid additional functions in its code output. However, if you use labels in
-your code a reviewer may likely just either complain or even
-exclaim in confusion. :shrug:
+### The Output Code
 
-The Babel [code](https://github.com/kitten/reghex/blob/1d76d26/src/babel/generator.js)
-I ended up writing shouldn't be a surprise — although it is a bit of a mess — and
-structures each part of the grammar's feature into its own "Node Class" which
-is specialised in accepting a part of [the parsed meta DSL](#parser-combinators). It
-recursively creates groups of nodes like `QuantifierNode`, `AlternationNode`,
+The Babel [code I wrote](https://github.com/kitten/reghex/blob/1d76d26/src/babel/generator.js)
+wasn't much of a surprise at this point — although it did end up becoming messy — and
+splits each part of the grammar into a separate "Node Class", specialised in accepting
+a part of [the parsed meta DSL](#parser-combinators) and outputting generated code just
+for this part of the grammar. Some classes of nodes are `QuantifierNode`, `AlternationNode`,
 or `GroupNode`.
 
-The eventual output looks like following. This code snippet is annotated and
-modified to be easier to read:
+The resulting output of the [earlier example](#generating-the-parsing-code-in-babel) looks
+like the following. I've annotated and modified the code snippet to be easier to read:
 
 ```js
+// A helper function to execute sticky regexes and return the matched string
 import { _exec } from "reghex";
 
 const parser = function _parsed(state) {
@@ -334,59 +363,64 @@ const parser = function _parsed(state) {
 In general, [each sequence that RegHex generates](https://github.com/kitten/reghex/blob/1d76d26/src/babel/generator.js#L334-L346)
 follows this same pattern of setting up a block, adding the prior index and node length to it,
 and then adding in the rest of the grammar recursively. It passes on a `break` statement to
-the lower nodes, which those can use to break out of the block.
+the lower nodes, which those can use to break out of a block.
 
 > If you use labelled block statements in your code a reviewer may likely just either complain
 > or even exclaim in confusion. 🤷
 
 The trickiest part here is to even _read_ the code that the generator outputs,
 as it's not very readable to humans. However, I believe it's the **most
-compact** code that can be generated given the requirements — and [Google's Closure Compiler](https://developers.google.com/closure/compiler)
-agrees! Closure Compiler actually outputs labelled block statements when inlining some
-functions into loops quite frequently as well. In fact, when I tried to _handcode_ a grammar
-with inline functions, Closure Compiler turned those back into labelled block statements.
+compact** code that can be generated given the requirements — and [Google's Closure
+Compiler](https://developers.google.com/closure/compiler), which is an optimising
+JavaScript compiler, agrees! Closure Compiler actually outputs labelled block
+statements too when inlining some functions into loops. In fact, when I tried
+to _handcode_ the above example with inline functions instead, Closure Compiler
+turned those back into labelled block statements.
 
 ## How does RegHex do?
 
 From an implementation standpoint, I'm quite pleased with the result. The API
 that I ended up with uses a lot of different ideas and language features all
-in a single project, which I've always found to be best for good learning
-experiences. If you've read this far this post has already covered:
+in a single project, which has been a rewarding learning experience and exercise.
+If you've read this far this post has already covered four broad topics:
 
 - Tagged Template Literals
 - Parser Combinators
 - Sticky Regular Expressions
 - Labelled Break Statements
 
-And to put RegHex through its paces, I wrote down the grammar for the entire GraphQL
-query language using it, which is published as
-[`graphql-parse`](https://github.com/kitten/graphql-parse). The file that contains
-the grammar is about _300 lines_ long and given that the implementation
-uses regular expression the compiled output comes in at only **2.6kB**
-(minified and gzipped).
+To then put RegHex through its paces, I generated a parser for the [GraphQL query
+language](https://moonhighway.com/graphql-query-language), which has been published as
+[`graphql-parse`](https://github.com/kitten/graphql-parse). The grammar ended up
+being about _300 lines_ long and given that the generated implementation is
+really compact the compiled output comes in at only about **2.6kB** (minified and
+gzipped).
 
 <img
   src={require('./graphql-parse.webp')}
   alt="Because it looks nice and fits. The graphql-parse bundle in one image. Ok, old joke thanks to Jason Miller."
 />
 
-Running some benchmarks reveal that, probably due to the non-trivial overhead of
-regular expressions in JavaScript, the performance of this parser is a third of
-the reference implementation. This is a little better than I expected given that
-RegHex is still a good tool for prototyping and creating small parsers quickly.
+Running some benchmarks reveals that, probably due to the non-trivial overhead of
+regular expressions in JavaScript however, the performance of this parser is only
+a third of the reference implementation. That being said, this is a little better
+than I expected given that RegHex is still a good tool for prototyping and creates
+a rather small parser implementation at _a fraction of the effort_ for developers.
 
 ### What does the future hold?
 
 It's worth noting that RegHex could also [support parsing entire tagged template
 literals](https://github.com/kitten/reghex/issues/2), which would increase the
-level of meta-ness even more, since it'd allow RegHex to be used to generate
-its own DSL's parser.
+level of meta-ness even more, since it'd allow RegHex to generate its own DSL's
+parser, which would make it somewhat of a [self-hosting
+parser](https://en.wikipedia.org/wiki/Self-hosting_(compilers)).
 
 RegHex also doesn't support errors very well, since it doesn't unroll a nice
-error message to where the match ultimately failed, which means that parsers
-that are implemented using it may not give any useful hints as to what went
-wrong at all.
+stack to where parsing ultimately failed, which means it may not give any useful
+hints as to what went wrong at all. Adding this could be a major improvement
+for using its generated parsers in a build tool or server-side code.
 
-However, given how many concepts this one code base touches it was still a worthwhile
-proof of concept to write, no matter the shortcomings.<br />
-**[Check out the code, if you'd like to learn more even more about it!](https://github.com/kitten/reghex)**
+However, given how many concepts RegHex's code base touches, it was still a
+worthwhile experience to work on this proof of concept, despite its current
+shortcomings.<br />
+**[Check out the code, if you'd like to learn more even more about RegHex!](https://github.com/kitten/reghex)**
