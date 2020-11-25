@@ -72,7 +72,7 @@ const Article = styled('article')`
 const Content = styled('div')`
   max-width: 65ch;
   width: 100%;
-  margin: 2.5rem auto;
+  margin: 2.5rem auto 0.5rem auto;
 
   text-rendering: optimizeLegibility;
   overflow-wrap: break-word;

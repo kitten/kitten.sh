@@ -424,3 +424,9 @@ However, given how many concepts RegHex's code base touches, it was still a
 worthwhile experience to work on this proof of concept, despite its current
 shortcomings.<br />
 **[Check out the code, if you'd like to learn more even more about RegHex!](https://github.com/kitten/reghex)**
+
+<img
+  src={require('./reghex-logo.png')}
+  height="100"
+  alt="The RegHex Logo"
+/>
