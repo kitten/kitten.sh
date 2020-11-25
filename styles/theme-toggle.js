@@ -49,8 +49,8 @@ const Toggle = styled(({ theme, children, ...rest }) => {
   margin-left: 1ch;
 
   & > svg {
-    width: 1.7em;
-    height: 1.7em;
+    width: 1.1rem;
+    height: 1.1rem;
   }
 `;
 

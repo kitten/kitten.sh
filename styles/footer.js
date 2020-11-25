@@ -44,6 +44,7 @@ const Halloumi = styled(props => (
 const Wrapper = styled('footer')`
   display: grid;
   grid-template-columns: 1fr min(${sizes.page}px, 100%) 1fr;
+  grid-template-rows: 10rem;
   position: relative;
   padding: 3rem 2ch 5rem 2ch;
   box-sizing: border-box;
