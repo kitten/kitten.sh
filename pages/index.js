@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Head from 'next/head';
 import { styled } from 'goober';
 
-import { toDateString, getPath } from '../styles/util';
+import { toDateString, getPath, getAbsoluteURL } from '../styles/util';
 import { sizes, tablet, mobile } from '../styles/theme';
 import { Avatar } from '../styles/layout';
 import Footer from '../styles/footer';
@@ -169,11 +169,16 @@ const Index = () => (
   <>
     <Head>
       <title>Latest Posts | Kitten</title>
+      <meta name="description" content={description} />
       <meta name="twitter:title" content="Kitten" />
       <meta name="twitter:creator" content="@_philpl" />
       <meta name="og:title" content="Kitten" />
-      <meta name="description" content={description} />
       <meta name="og:description" content={description} />
+      <meta property="og:image" content={getAbsoluteURL('/covers/index-cover.png')} />
+      <meta property="og:image:width" content="610" />
+      <meta property="og:image:height" content="385" />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:image" content={getAbsoluteURL('/covers/index-cover.png')} />
       <link rel="canonical" href="https://kitten.sh" />
     </Head>
 
