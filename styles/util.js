@@ -1,7 +1,8 @@
-export const getAbsoluteURL = (path, req) => {
+export const getAbsoluteURL = (path, deploymentDomain) => {
   if (!path) path = '';
   if (!path.startsWith('/')) path = '/' + path;
-  return 'https://kitten.sh' + path;
+  if (!deploymentDomain) deploymentDomain = 'kitten.sh';
+  return `https://${deploymentDomain}` + path;
 };
 
 export const toDateString = date => {

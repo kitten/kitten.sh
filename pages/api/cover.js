@@ -18,7 +18,11 @@ const generateCover = async (req, res) => {
       }
     });
 
-    await page.goto(getAbsoluteURL(`/_internal/cover/${req.query.slug || ''}`, req));
+    await page.goto(
+      getAbsoluteURL(`/_internal/cover/${req.query.slug || ''}`,
+      process.env.VERCEL_URL
+    ));
+
     await page.waitForLoadState();
 
     data = await page.screenshot({ type: 'png' });
@@ -26,7 +30,7 @@ const generateCover = async (req, res) => {
     if (browser) await browser.close();
   }
 
-  res.setHeader('Cache-Control', 's-maxage=31536000, immutable');
+  res.setHeader('Cache-Control', 'public, max-age=31536000, s-maxage=31536000, immutable');
   res.setHeader('Content-Type', 'image/png');
   res.end(data);
 }

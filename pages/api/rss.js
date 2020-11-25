@@ -1,4 +1,4 @@
-import { Feed } from 'feed';
+import Feed from 'rss';
 
 import { getPath, getCoverURL, getAbsoluteURL } from '../../styles/util';
 
@@ -17,39 +17,31 @@ const generateRSSFeed = async (req, res) => {
   const feed = new Feed({
     title: 'Kitten | Latest Posts',
     description: 'Random and hopefully useful thoughts and posts around JS, React, GraphQL, and more.',
-    id: "http://example.com/",
-    link: getAbsoluteURL(null, req),
+    feed_url: getAbsoluteURL('/rss.xml'),
+    site_url: getAbsoluteURL(),
+    image_url: getAbsoluteURL('/avatars/icon.png'),
+    pubDate: docsPages.length ? new Date(docsPages[0].published.date) : null,
     language: 'en',
-    favicon: getAbsoluteURL('/avatars/icon.png', req),
-    updated: docsPages.length ? new Date(docsPages[0].published.date) : null,
-    feedLinks: {
-      atom: getAbsoluteURL('/rss.xml', req),
-    },
-    generator: null,
-    author: {
-      name: 'Phil Pluckthun',
-      email: 'phil@kitten.sh',
-      link: 'https://twitter.com/_philpl',
-    }
+    ttl: 1440,
   });
 
   docsPages.forEach(page => {
-    feed.addItem({
+    feed.item({
       title: page.title,
-      id: getAbsoluteURL(getPath(page), req),
-      link: getAbsoluteURL(getPath(page), req),
+      url: getAbsoluteURL(getPath(page)),
       description: page.excerpt,
+      author: page.published.handle ? `@${page.published.handle}` : '@_philpl',
       date: new Date(page.published.date),
-      image: getCoverURL(page),
-      author: [
-        { name: `@${page.published.handle}` },
-      ],
+      enclosure: {
+        url: getCoverURL(page),
+        type: 'image/png',
+      },
     });
   });
 
-  res.setHeader('Cache-Control', 'public, max-age=86400, stale-while-revalidate');
+  res.setHeader('Cache-Control', 'public, max-age=86400, s-maxage=86400, stale-while-revalidate');
   res.setHeader('Content-Type', 'application/xml');
-  res.write(feed.rss2());
+  res.write(feed.xml({ indent: true }));
   res.end();
 };
 

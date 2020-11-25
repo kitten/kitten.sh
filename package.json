@@ -33,7 +33,6 @@
     ]
   },
   "dependencies": {
-    "feed": "^4.2.1",
     "focus-visible": "^5.2.0",
     "ga-lite": "^2.1.0",
     "goober": "^2.0.15",
@@ -45,6 +44,7 @@
     "preact-render-to-string": "^5.1.12",
     "react": "npm:@preact/compat",
     "react-dom": "npm:@preact/compat",
+    "rss": "^1.2.2",
     "sitemap": "^6.3.3"
   },
   "devDependencies": {

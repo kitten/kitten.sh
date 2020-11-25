@@ -15,7 +15,7 @@ const docsPages = page.keys()
 
 const generateSitemap = async (req, res) => {
   const smStream = new SitemapStream({
-    hostname: getAbsoluteURL(null, req),
+    hostname: getAbsoluteURL(),
     lastmodDateOnly: true,
   });
 
@@ -49,7 +49,7 @@ const generateSitemap = async (req, res) => {
 
   const sitemap = await streamToPromise(smStream).then((sm) => sm.toString());
 
-  res.setHeader('Cache-Control', 'public, max-age=86400, stale-while-revalidate');
+  res.setHeader('Cache-Control', 'public, max-age=86400, s-maxage=86400, stale-while-revalidate');
   res.setHeader('Content-Type', 'text/xml');
   res.write(sitemap);
   res.end();
