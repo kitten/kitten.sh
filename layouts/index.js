@@ -64,6 +64,12 @@ const MoreArticles = styled('span')`
   }
 `;
 
+const ShareContainer = styled('div')`
+  max-width: 65ch;
+  margin: 0 auto;
+  width: 100%;
+`;
+
 const Article = styled('article')`
   position: relative;
   text-rendering: geometricPrecision;
@@ -96,10 +102,16 @@ const Sidebar = styled('aside')`
   ${tablet`
     position: static;
     margin-top: 0.8rem;
-  `}
 
-  ${mobile`
-    margin-top: 1.6rem;
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    align-items: center;
+    width: auto;
+
+    & > img {
+      margin-right: 1ch;
+    }
   `}
 `;
 
@@ -107,6 +119,7 @@ const SidebarNote = styled('small')`
   display: block;
   margin-bottom: 0.3rem;
   color: var(--color-gray-text);
+  font-size: 1.1rem;
   line-height: 1.0;
 `;
 
@@ -160,21 +173,24 @@ const Layout = ({ children, frontMatter }) => {
         ) : null}
 
         <Sidebar>
-          {frontMatter.published && frontMatter.published.date ? (
-            <SidebarNote>{toDateString(frontMatter.published.date)}</SidebarNote>
-          ) : null}
-          {frontMatter.published && frontMatter.published.handle ? (
-            <SidebarNote>
-              {'by '}
-              <Handle
-                rel="noopener noreferrer"
-                target="_blank"
-                href={`https://twitter.com/${frontMatter.published.handle || ''}`}
-              >
-                @{frontMatter.published.handle}
-              </Handle>
-            </SidebarNote>
-          ) : null}
+          <SidebarNote>
+            {frontMatter.published && frontMatter.published.date ? (
+              <div>{toDateString(frontMatter.published.date)}</div>
+            ) : null}
+            {frontMatter.published && frontMatter.published.handle ? (
+              <div>
+                {'by '}
+                <Handle
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  href={`https://twitter.com/${frontMatter.published.handle || ''}`}
+                >
+                  @{frontMatter.published.handle}
+                </Handle>
+              </div>
+            ) : null}
+          </SidebarNote>
+
           <Avatar src={frontMatter.published.avatar} alt="" />
         </Sidebar>
 
@@ -185,7 +201,7 @@ const Layout = ({ children, frontMatter }) => {
         </Content>
       </Article>
 
-      <Footer>
+      <Footer page={frontMatter}>
         <MoreArticles bottom>
           <Link href="/">
             <a href="/">

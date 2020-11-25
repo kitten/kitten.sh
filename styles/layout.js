@@ -121,5 +121,3 @@ export const Avatar = styled('img')`
   border: 2px solid var(--color-active);
   margin: 0.6rem 0;
 `;
-
-

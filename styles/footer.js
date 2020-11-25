@@ -3,6 +3,8 @@ import { styled } from 'goober';
 
 import { h3 as H3 } from './article';
 import { sizes, tablet, mobile, desktop } from './theme';
+import { getTwitterShareLink } from './util';
+import twitterSvg from '../assets/twitter.svg';
 
 const Halloumi = styled(props => (
   <svg {...props} viewBox="0 0 87 55">
@@ -79,11 +81,61 @@ const Content = styled('div')`
   `}
 `;
 
-const Footer = ({ children }) => (
+const Share = styled('a')`
+  position: relative;
+  display: block;
+  line-height: 1.0;
+  color: var(--color-gray-text);
+  font-size: 1.1em;
+  font-family: var(--font-heading);
+  color: var(--color-background);
+  text-decoration: none;
+  margin-top: 0.5rem;
+  margin-left: calc(-1em - 1ch);
+  z-index: 1;
+
+  &:before {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    content: '';
+    margin-right: 1ch;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url('${twitterSvg}');
+    transform: translate(0, 0.15em);
+  }
+
+  ${tablet`
+    font-size: 0.9em;
+  `}
+
+  ${mobile`
+    position: absolute;
+    bottom: 2.5rem;
+    left: calc(2ch + 0.2ch);
+    font-size: 0.8em;
+    margin-left: 0;
+
+    &:before {
+      margin-right: calc(3ch - 0.8em);
+    }
+  `}
+`;
+
+const Footer = ({ page, children }) => (
   <Wrapper>
     <Content>
-      <H3>Thanks for reading!</H3>
-      <Halloumi />
+      <div>
+        <H3>Thanks for reading!</H3>
+        <Halloumi />
+        {page ? (
+          <Share href={getTwitterShareLink(page)}>
+            share on twitter
+          </Share>
+        ) : null}
+      </div>
     </Content>
     {children}
   </Wrapper>
