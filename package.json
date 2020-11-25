@@ -1,6 +1,7 @@
 {
   "name": "kitten.sh",
   "private": true,
+  "license": "See LICENSE.md",
   "scripts": {
     "dev": "next dev",
     "start": "next start",
