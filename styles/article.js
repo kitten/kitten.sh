@@ -1,4 +1,4 @@
-import { Children } from 'react';
+import { cloneElement, Children } from 'react';
 import { styled } from 'goober';
 
 import { emphasisPath, emphasisSvg } from './emphasis';
@@ -88,6 +88,79 @@ export const p = styled('p')`
   }
 `;
 
+const TableWrapper = styled('div')`
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+`;
+
+const TableCell = styled('span')`
+  display: inline-block;
+  max-width: 46ch;
+`;
+
+export const table = styled(({ children, ...rest }) => {
+  children = Children.toArray(children);
+  if (children.length === 2) {
+    const rows = Children.toArray(children[1].props.children).map(row => {
+      const children = Children.toArray(row.props.children).map(cell =>
+        cloneElement(cell, cell.props,
+          <TableCell>{cell.props.children}</TableCell>));
+      return cloneElement(row, row.props, children);
+    });
+    children = [children[0], cloneElement(children[1], children[1].props, rows)];
+  }
+
+  return (
+    <FullBleed>
+      <TableWrapper>
+        <table {...rest}>{children}</table>
+      </TableWrapper>
+    </FullBleed>
+  );
+})`
+  position: relative;
+  margin: 2.5rem auto 1.5rem auto;
+  padding: 0 2ch;
+  max-width: 100%;
+  min-width: 69ch;
+
+  border-collapse: separate;
+  border-spacing: 0;
+
+  & > * {
+    font-size: 0.9em;
+  }
+
+  & tr td {
+    padding: 0.8rem 1ch;
+    border-bottom: 1px solid var(--color-box-background);
+    line-height: 2.5ch;
+    width: max-content;
+  }
+
+  & th {
+    padding: 0.5rem 2ch 0.5rem 1ch;
+    background: var(--color-prism-bg);
+    border-bottom: 1px solid var(--color-box-background);
+    border-top: 1px solid var(--color-box-background);
+
+    word-break: normal;
+    hyphens: initial;
+    font-family: var(--font-heading);
+    text-align: left;
+
+    &:first-child {
+      border-left: 1px solid var(--color-box-background);
+      border-radius: 0.5rem 0 0 0.5rem;
+    }
+
+    &:last-child {
+      border-right: 1px solid var(--color-box-background);
+      border-radius: 0 0.5rem 0.5rem 0;
+    }
+  }
+`;
+
 export const h2 = styled('h2')`
   display: block;
   width: 100%;
@@ -139,7 +212,11 @@ export const h3 = styled(({ className, children, ...rest }) => (
   `}
 `;
 
-export const inlineCode = styled('code')`
+export const inlineCode = styled(props => (
+  <code {...props}>
+    {props.children === '\\|' ? '|' : props.children}
+  </code>
+))`
   position: relative;
   display: inline-block;
   font-size: 0.9em;

@@ -10,6 +10,7 @@ module.exports = withPlugins(
         require('remark-squeeze-paragraphs'),
         require('remark-unwrap-images'),
         require('remark-emoji'),
+        require('remark-gfm'),
       ],
       rehypePlugins: [
         require('@mapbox/rehype-prism'),

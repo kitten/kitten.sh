@@ -167,10 +167,23 @@ Starting the implementation of this parser generator, this is where things becom
 the `match` API I've outlined is in itself a language that looks like regular expression syntax.
 I had to get to writing a small parser for it. The fascinating part about this parser is that
 the syntax is very reduced and hence the parser was quite small.
-The grammar overall is simple and ignores whitespaces of any kind for readability, uses **groups**
-(`(` and `)`), **alternations** (with `|`), **quantifiers** (`+`, `?`, and `*`), and lastly
-**non-capturing groups** (`?:`), and positive (`?=`) and negative (`?!`) **lookahead groups**.<br />
-In essence, this is a short example of the added grammar compared to the draft:
+I kept the grammar overall as simple as possible while supporting the operators I'm used to from
+regular expressions, so at the very least I had to add _quantifiers_, various types of groups,
+and alternations. Furthermore RegHex's DSL ignores whitespaces for
+readability which is a nice, small touch. Here's a small overview of the non-obvious operators:
+
+| Operator      | Description                                                                                                                                                                              |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `?`, `+`, `*` | A **quantifier** may be used to change how many matches are accepted, in order: one or none, one or more, or any amount.                                                                 |
+| `\|`          | An **alternation** can be used to match either one thing or another, falling back when the first interpolation fails.                                                                    |
+| `(?: )`       | A **non-capturing group** is like a regular group, but the interpolations matched inside it don't appear in the parser's output.                                                         |
+| `(?= )`       | A **positive lookahead** checks whether interpolations match, and if so continues the matcher without changing the input. If it matches, it's essentially ignored.                       |
+| `(?! )`       | A **negative lookahead** checks whether interpolations _don't_ match, and if so continues the matcher without changing the input. If the interpolations do match the matcher is aborted. |
+
+As shown, the grammar won't have many features, however, the most important one are undoubtedly
+alternations, since a parser that can't match several alternative patterns won't be able to
+express any languages. To look at an example of this DSL in use, here's a grammar which matches strings of repeated
+"this"s and "that"s:
 
 ```js
 const thisThat = match('thisThat')`
