@@ -96,6 +96,11 @@ const TableWrapper = styled('div')`
 const TableCell = styled('span')`
   display: inline-block;
   max-width: 46ch;
+
+  ${mobile`
+    max-width: calc(100vw - 2ch);
+    width: max-content;
+  `}
 `;
 
 export const table = styled(({ children, ...rest }) => {
@@ -123,6 +128,11 @@ export const table = styled(({ children, ...rest }) => {
   padding: 0 2ch;
   max-width: 100%;
   min-width: 69ch;
+
+  ${mobile`
+    max-width: unset;
+    min-width: unset;
+  `}
 
   border-collapse: separate;
   border-spacing: 0;
