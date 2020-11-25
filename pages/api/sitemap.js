@@ -15,7 +15,7 @@ const docsPages = page.keys()
 
 const generateSitemap = async (req, res) => {
   const smStream = new SitemapStream({
-    hostname: getAbsoluteURL(),
+    hostname: getAbsoluteURL(null, req),
     lastmodDateOnly: true,
   });
 

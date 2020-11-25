@@ -18,7 +18,7 @@ const generateCover = async (req, res) => {
       }
     });
 
-    await page.goto(getAbsoluteURL(`/_internal/cover/${req.query.slug || ''}`));
+    await page.goto(getAbsoluteURL(`/_internal/cover/${req.query.slug || ''}`, req));
     await page.waitForLoadState();
 
     data = await page.screenshot({ type: 'png' });

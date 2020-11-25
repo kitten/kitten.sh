@@ -1,6 +1,8 @@
-export const getAbsoluteURL = (path = '') => {
+export const getAbsoluteURL = (path, req) => {
+  if (!path) path = '';
   if (!path.startsWith('/')) path = '/' + path;
-  const baseURL = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://kitten.sh';
+  const deploymentURL = req ? req.headers.host : process.env.VERCEL_URL;
+  const baseURL = deploymentURL ? `https://${deploymentURL}` : 'https://kitten.sh';
   return baseURL + path
 };
 

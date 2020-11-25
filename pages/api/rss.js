@@ -18,12 +18,12 @@ const generateRSSFeed = async (req, res) => {
     title: 'Kitten | Latest Posts',
     description: 'Random and hopefully useful thoughts and posts around JS, React, GraphQL, and more.',
     id: "http://example.com/",
-    link: getAbsoluteURL(),
+    link: getAbsoluteURL(null, req),
     language: 'en',
-    favicon: getAbsoluteURL('/avatars/icon.png'),
+    favicon: getAbsoluteURL('/avatars/icon.png', req),
     updated: docsPages.length ? new Date(docsPages[0].published.date) : null,
     feedLinks: {
-      atom: getAbsoluteURL('/rss.xml'),
+      atom: getAbsoluteURL('/rss.xml', req),
     },
     generator: null,
     author: {
@@ -36,8 +36,8 @@ const generateRSSFeed = async (req, res) => {
   docsPages.forEach(page => {
     feed.addItem({
       title: page.title,
-      id: getAbsoluteURL(getPath(page)),
-      link: getAbsoluteURL(getPath(page)),
+      id: getAbsoluteURL(getPath(page), req),
+      link: getAbsoluteURL(getPath(page), req),
       description: page.excerpt,
       date: new Date(page.published.date),
       image: getCoverURL(page),
