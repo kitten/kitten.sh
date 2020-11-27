@@ -405,6 +405,11 @@
   resolved "https://registry.yarnpkg.com/@next/react-refresh-utils/-/react-refresh-utils-10.0.2.tgz#a9a3daa55385749cd62fb57d4423ca27ae5f4e81"
   integrity sha512-ILc5/BipD7+GBLmtfnQDMG71KLx0fEpVI5kJw8jN9SoeygMrb4auZhCl7gA6QP3oynocYouJ8piLj1Ol80ZvVw==
 
+"@philpl/ga-lite@^2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@philpl/ga-lite/-/ga-lite-2.1.1.tgz#1dc9a63e9122efe1f13bfc8e2aff6629168e5b8d"
+  integrity sha512-ej+edwvDpEX98d3KYalXCGvfQItN5eP7WSjO5mCHvLyMKORfXwO8xCxLUkt8r68My50yViW1Qjsh+xwmEJSmXA==
+
 "@prefresh/babel-plugin@0.2.2":
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/@prefresh/babel-plugin/-/babel-plugin-0.2.2.tgz#b921f0a1350a9daa9106518378a4e5a49211e6f6"
@@ -2563,11 +2568,6 @@ flush-write-stream@^1.0.0:
     inherits "^2.0.3"
     readable-stream "^2.3.6"
 
-focus-visible@^5.2.0:
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/focus-visible/-/focus-visible-5.2.0.tgz#3a9e41fccf587bd25dcc2ef045508284f0a4d6b3"
-  integrity sha512-Rwix9pBtC1Nuy5wysTmKy+UjbDJpIfg8eHjw0rjZ1mX4GNLz1Bmd16uDpI3Gk1i70Fgcs8Csg2lPm8HULFg9DQ==
-
 for-in@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/for-in/-/for-in-1.0.2.tgz#81068d295a8142ec0ac726c6e2200c30fb6d5e80"
@@ -2635,11 +2635,6 @@ function-bind@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/function-bind/-/function-bind-1.1.1.tgz#a56899d3ea3c9bab874bb9773b7c5ede92f4895d"
   integrity sha512-yIovAzMX49sF8Yl58fSCWJ5svSLuaibPxXQJFLmBObTuCr0Mf1KiPopGM9NiFjiYBCbfaa2Fh6breQ6ANVTI0A==
-
-ga-lite@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/ga-lite/-/ga-lite-2.1.0.tgz#ce92abfbc54bdf541257055ddbc8ed7461e3cd05"
-  integrity sha512-GR9on+Nm7QuNzJU71VqHpGlYvGQfDq5l6Za8IYq8QnnmPWf8f3AVHkmtaRMLamCdHxTbu2gsSAP9srOqW3MuNQ==
 
 gauge@~2.7.3:
   version "2.7.4"

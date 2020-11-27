@@ -1,4 +1,4 @@
-import galite from 'ga-lite';
+import galite from '@philpl/ga-lite';
 import { prefix } from 'goober-autoprefixer';
 import { styled, css, setup } from 'goober';
 import React, { useEffect, useLayoutEffect } from 'react';
@@ -7,8 +7,6 @@ import Head from 'next/head';
 
 import { sizes, desktop, tablet } from '../styles/theme';
 import '../styles/global.css';
-
-import 'focus-visible';
 
 setup(React.createElement, prefix);
 

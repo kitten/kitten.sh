@@ -34,8 +34,7 @@
     ]
   },
   "dependencies": {
-    "focus-visible": "^5.2.0",
-    "ga-lite": "^2.1.0",
+    "@philpl/ga-lite": "^2.1.1",
     "goober": "^2.0.15",
     "goober-autoprefixer": "^1.2.1",
     "next": "^10.0.2",

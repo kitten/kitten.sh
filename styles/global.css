@@ -115,7 +115,7 @@ html, [data-theme="light"] {
   --color-prism-boolean: #ff5874;
 }
 
-*:focus:not(.focus-visible) {
+*:focus:not(:focus-visible) {
   outline: none;
 }
 
