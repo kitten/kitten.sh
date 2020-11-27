@@ -212,7 +212,7 @@ export const h3 = styled(({ className, children, ...rest }) => (
   <h3 {...rest} className={`${className} ${emphasisPath}`}>
     <EmphasisWrapper>
       <EmphasisText>{children}</EmphasisText>
-      <EmphasisUnderline />
+      <EmphasisUnderline aria-hidden="true" />
     </EmphasisWrapper>
   </h3>
 ))`
