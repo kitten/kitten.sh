@@ -112,7 +112,7 @@ const Footer = ({ page, children }) => {
   return (
     <Wrapper>
       <Content>
-        <Halloumi />
+        <Halloumi aria-hidden="true" />
         {page ? (
           <Share href={getTwitterShareLink(page)}>
             share on twitter
