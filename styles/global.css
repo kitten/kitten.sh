@@ -54,8 +54,8 @@ html {
 
 html, [data-theme="light"] {
   --color-text: #0a0b0c;
-  --color-invert: #0a0b0c;
-  --color-gray-text: #42484c;
+  --color-gray-background: #fff1f9;
+  --color-gray-text: #26333b;
   --color-background: #ffffff;
   --color-box-background: #d0d1d2;
   --color-passive: #7e736c;
@@ -71,34 +71,32 @@ html, [data-theme="light"] {
   --color-prism-class: #111;
   --color-prism-keyword: #0c969b;
   --color-prism-boolean: #bc5454;
+
+  --shadow:
+    -0.5em -0.5em 0.8em 0 #fff8,
+    -0.2em -0.2em 0.3em 0 #fff7,
+    0.5em 0.5em 0.8em 0 #0002,
+    0.2em 0.2em 0.3em 0 #0002,
+    inset 0 0 0 0 #fff8,
+    inset 0 0 0 0 #fff7,
+    inset 0 0 0 0 #0002,
+    inset 0 0 0 0 #0002;
+  --shadow-inv:
+    0 0 0 0 #fff8,
+    0 0 0 0 #fff7,
+    0 0 0 0 #0002,
+    0 0 0 0 #0002,
+    inset -0.5em -0.5em 0.8em 0 #fff8,
+    inset -0.2em -0.2em 0.3em 0 #fff7,
+    inset 0.5em 0.5em 0.8em 0 #0002,
+    inset 0.2em 0.2em 0.3em 0 #0002;
 }
 
-@media screen and (prefers-color-scheme: dark) {
-  html {
-    --color-text: #eceff1;
-    --color-invert: #e3e7ee;
-    --color-gray-text: #cacfd3;
-    --color-background: #14161a;
-    --color-box-background: #4b506b;
-    --color-passive: #7e736c;
-    --color-active: #e972b5;
-
-    --color-prism-bg: #09121a;
-    --color-prism-fg: #d6deeb;
-    --color-prism-comment: #5389a9;
-    --color-prism-identifier: #82aaff;
-    --color-prism-variable: #d6deeb;
-    --color-prism-number: #f78c6c;
-    --color-prism-punctuation: #c792ea;
-    --color-prism-class: #ffcb8b;
-    --color-prism-boolean: #ff5874;
-  }
-}
-
-[data-theme="dark"] {
+@media screen and (prefers-color-scheme: dark) { html {
   --color-text: #eceff1;
   --color-invert: #e3e7ee;
   --color-gray-text: #cacfd3;
+  --color-gray-background: #272b33;
   --color-background: #14161a;
   --color-box-background: #4b506b;
   --color-passive: #7e736c;
@@ -113,6 +111,65 @@ html, [data-theme="light"] {
   --color-prism-punctuation: #c792ea;
   --color-prism-class: #ffcb8b;
   --color-prism-boolean: #ff5874;
+
+  --shadow:
+    -0.5em -0.5em 0.8em 0 #fff1,
+    -0.2em -0.2em 0.3em 0 #fff1,
+    0.5em 0.5em 0.8em 0 #0005,
+    0.2em 0.2em 0.3em 0 #0004,
+    inset 0 0 0 0 #fff1,
+    inset 0 0 0 0 #fff1,
+    inset 0 0 0 0 #0004,
+    inset 0 0 0 0 #0003;
+  --shadow-inv:
+    0 0 0 0 #fff1,
+    0 0 0 0 #fff1,
+    0 0 0 0 #0004,
+    0 0 0 0 #0003,
+    inset -0.5em -0.5em 0.8em 0 #fff1,
+    inset -0.2em -0.2em 0.3em 0 #fff1,
+    inset 0.5em 0.5em 0.8em 0 #0004,
+    inset 0.2em 0.2em 0.3em 0 #0003;
+}}
+
+[data-theme="dark"] {
+  --color-text: #eceff1;
+  --color-invert: #e3e7ee;
+  --color-gray-text: #cacfd3;
+  --color-gray-background: #272b33;
+  --color-background: #14161a;
+  --color-box-background: #4b506b;
+  --color-passive: #7e736c;
+  --color-active: #e972b5;
+
+  --color-prism-bg: #09121a;
+  --color-prism-fg: #d6deeb;
+  --color-prism-comment: #5389a9;
+  --color-prism-identifier: #82aaff;
+  --color-prism-variable: #d6deeb;
+  --color-prism-number: #f78c6c;
+  --color-prism-punctuation: #c792ea;
+  --color-prism-class: #ffcb8b;
+  --color-prism-boolean: #ff5874;
+
+  --shadow:
+    -0.5em -0.5em 0.8em 0 #fff1,
+    -0.2em -0.2em 0.3em 0 #fff1,
+    0.5em 0.5em 0.8em 0 #0005,
+    0.2em 0.2em 0.3em 0 #0004,
+    inset 0 0 0 0 #fff1,
+    inset 0 0 0 0 #fff1,
+    inset 0 0 0 0 #0004,
+    inset 0 0 0 0 #0003;
+  --shadow-inv:
+    0 0 0 0 #fff1,
+    0 0 0 0 #fff1,
+    0 0 0 0 #0004,
+    0 0 0 0 #0003,
+    inset -0.5em -0.5em 0.8em 0 #fff1,
+    inset -0.2em -0.2em 0.3em 0 #fff1,
+    inset 0.5em 0.5em 0.8em 0 #0004,
+    inset 0.2em 0.2em 0.3em 0 #0003;
 }
 
 *:focus:not(:focus-visible) {

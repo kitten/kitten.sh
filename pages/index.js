@@ -6,6 +6,7 @@ import { toDateString, getPath, getAbsoluteURL } from '../styles/util';
 import { sizes, tablet, mobile } from '../styles/theme';
 import { Avatar } from '../styles/layout';
 import Footer from '../styles/footer';
+import Signup from '../styles/signup';
 
 const Logo = styled('img')`
   transform: translate(0, 5px);
@@ -24,13 +25,7 @@ const PostsHeading = styled('h1')`
 `;
 
 const Posts = styled('div')`
-  min-height: calc(100vh - 9rem - 2.5rem);
   box-sizing: border-box;
-  padding-bottom: 2.5rem;
-
-  ${tablet`
-    min-height: calc(100vh - 9rem - 1.5rem);
-  `}
 `;
 
 const PostList = styled('ul')`
@@ -148,6 +143,8 @@ const Cover = styled('div')`
   background-image: url('${p => p.src}');
   background-size: cover;
   background-position: center;
+  font-size: 1.3rem;
+  box-shadow: var(--shadow);
   border-radius: 50%;
   width: 10rem;
   height: 10rem;
@@ -156,10 +153,6 @@ const Cover = styled('div')`
   right: 0;
   top: 0;
   z-index: 0;
-
-  box-shadow:
-    1px 7px 21px 3px rgba(0, 0, 0, 0.24),
-    -1px -7px 21px rgba(255, 255, 255, 0.09);
 `;
 
 const description = 'Random and hopefully useful thoughts and posts around JS, React, GraphQL, and more.';
@@ -230,6 +223,7 @@ const Index = () => (
       </PostList>
     </Posts>
 
+    <Signup />
     <Footer />
   </>
 );

@@ -70,13 +70,12 @@ const Cover = styled('div')`
   height: 17rem;
   margin-left: 1rem;
   margin-bottom: -1rem;
+  font-size: 2rem;
   float: right;
   z-index: 0;
   opacity: 0.8;
 
-  box-shadow:
-    1px 7px 21px 3px rgba(0, 0, 0, 0.24),
-    -1px -7px 21px rgba(255, 255, 255, 0.09);
+  box-shadow: var(--shadow);
 
   ${tablet`
     position: absolute;

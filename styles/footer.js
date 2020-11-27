@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useCallback } from 'react';
+import galite from '@philpl/ga-lite';
 import { styled } from 'goober';
 
 import { sizes, tablet, mobile, desktop } from './theme';
@@ -52,9 +53,6 @@ const Wrapper = styled('footer')`
   left: 50%;
   margin-left: -50vw;
 
-  background: var(--color-invert);
-  color: var(--color-background);
-
   & > * {
     grid-column: 2;
   }
@@ -79,7 +77,7 @@ const Share = styled('a')`
   line-height: 1.0;
   font-size: 1.1em;
   font-family: var(--font-heading);
-  color: var(--color-background);
+  color: var(--color-active);
   text-decoration: none;
   margin-top: 0.5rem;
   z-index: 1;
@@ -106,18 +104,24 @@ const Share = styled('a')`
   `}
 `;
 
-const Footer = ({ page, children }) => (
-  <Wrapper>
-    <Content>
-      <Halloumi />
-      {page ? (
-        <Share href={getTwitterShareLink(page)}>
-          share on twitter
-        </Share>
-      ) : null}
-    </Content>
-    {children}
-  </Wrapper>
-);
+const Footer = ({ page, children }) => {
+  const onClick = useCallback(() => {
+    galite('send', 'social', 'Twitter', 'share', document.location.pathname);
+  }, []);
+
+  return (
+    <Wrapper>
+      <Content>
+        <Halloumi />
+        {page ? (
+          <Share href={getTwitterShareLink(page)}>
+            share on twitter
+          </Share>
+        ) : null}
+      </Content>
+      {children}
+    </Wrapper>
+  );
+};
 
 export default Footer;

@@ -68,6 +68,7 @@ export const img = ({ src, alt, width, height, layout, className }) => {
 export const p = styled('p')`
   line-height: 2.5ch;
   margin-top: 0.8rem;
+  color: inherit;
 
   &:first-of-type::first-letter {
     float: left;
@@ -203,6 +204,7 @@ const EmphasisWrapper = styled('span')`
 
 const EmphasisText = styled('span')`
   position: relative;
+  color: inherit;
   z-index: 1;
 `;
 
@@ -216,6 +218,7 @@ export const h3 = styled(({ className, children, ...rest }) => (
 ))`
   margin: 2.5rem 0 1rem 0;
   font-size: 1.2em;
+  color: inherit;
 
   ${mobile`
     font-size: 1.2em;
