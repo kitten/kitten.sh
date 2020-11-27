@@ -80,6 +80,7 @@ const Share = styled('a')`
   color: var(--color-active);
   text-decoration: none;
   margin-top: 0.5rem;
+  transition: filter 0.3s ease;
   z-index: 1;
 
   &:before {
@@ -94,6 +95,12 @@ const Share = styled('a')`
     background-image: url('${twitterSvg}');
     transform: translate(0, 0.15em);
   }
+
+  ${desktop`
+    &:hover {
+      filter: hue-rotate(-20deg) brightness(1.4);
+    }
+  `}
 
   ${tablet`
     font-size: 0.9em;

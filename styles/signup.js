@@ -114,6 +114,7 @@ const Submit = styled('button')`
   color: inherit;
   background-color: inherit;
   margin: 0.7rem -0.5ch 0 auto;
+  cursor: pointer;
 
   transition:
     opacity 0.15s ease-out,

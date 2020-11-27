@@ -22,6 +22,7 @@ const MoreArticles = styled('span')`
   font-size: 0.9em;
   font-family: var(--font-heading);
   color: var(--color-active);
+  transition: filter 0.3s ease;
   z-index: 2;
 
   & > a {
@@ -38,8 +39,7 @@ const MoreArticles = styled('span')`
 
   ${desktop`
     &:hover {
-      transition: filter 0.3s ease;
-      filter: invert(0.8);
+      filter: hue-rotate(-20deg) brightness(1.4);
     }
 
     @media (prefers-reduced-motion) {
