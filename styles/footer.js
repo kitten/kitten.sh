@@ -1,7 +1,6 @@
 import React from 'react';
 import { styled } from 'goober';
 
-import { h3 as H3 } from './article';
 import { sizes, tablet, mobile, desktop } from './theme';
 import { getTwitterShareLink } from './util';
 import twitterSvg from '../assets/twitter.svg';
@@ -28,12 +27,11 @@ const Halloumi = styled(props => (
 ))`
   position: absolute;
   height: 5.5rem;
-  right: 40%;
+  right: 0;
   bottom: calc(50% - 5rem);
   color: var(--color-passive);
 
   ${tablet`
-    right: calc(40% - 4rem);
     bottom: calc(50% - 4rem);
   `}
 
@@ -46,21 +44,16 @@ const Halloumi = styled(props => (
 const Wrapper = styled('footer')`
   display: grid;
   grid-template-columns: 1fr min(${sizes.page}px, 100%) 1fr;
-  grid-template-rows: 10rem;
+  grid-template-rows: 9rem;
   position: relative;
-  padding: 3rem 2ch 5rem 2ch;
+  padding: 0 2ch 2rem 2ch;
   box-sizing: border-box;
   width: 100vw;
   left: 50%;
   margin-left: -50vw;
-  margin-top: 4.5rem;
 
   background: var(--color-invert);
   color: var(--color-background);
-
-  ${mobile`
-    padding: 2rem 2ch 3rem 2ch;
-  `}
 
   & > * {
     grid-column: 2;
@@ -68,16 +61,15 @@ const Wrapper = styled('footer')`
 `;
 
 const Content = styled('div')`
+  position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: flex-end;
   margin-bottom: 2rem;
 
-  ${desktop`
-    & > h3 {
-      font-size: 1.5em;
-    }
+  ${tablet`
+    margin-bottom: 1rem;
   `}
 `;
 
@@ -85,13 +77,11 @@ const Share = styled('a')`
   position: relative;
   display: block;
   line-height: 1.0;
-  color: var(--color-gray-text);
   font-size: 1.1em;
   font-family: var(--font-heading);
   color: var(--color-background);
   text-decoration: none;
   margin-top: 0.5rem;
-  margin-left: calc(-1em - 1ch);
   z-index: 1;
 
   &:before {
@@ -112,30 +102,19 @@ const Share = styled('a')`
   `}
 
   ${mobile`
-    position: absolute;
-    bottom: 2.5rem;
-    left: calc(2ch + 0.2ch);
     font-size: 0.8em;
-    margin-left: 0;
-
-    &:before {
-      margin-right: calc(3ch - 0.8em);
-    }
   `}
 `;
 
 const Footer = ({ page, children }) => (
   <Wrapper>
     <Content>
-      <div>
-        <H3>Thanks for reading!</H3>
-        <Halloumi />
-        {page ? (
-          <Share href={getTwitterShareLink(page)}>
-            share on twitter
-          </Share>
-        ) : null}
-      </div>
+      <Halloumi />
+      {page ? (
+        <Share href={getTwitterShareLink(page)}>
+          share on twitter
+        </Share>
+      ) : null}
     </Content>
     {children}
   </Wrapper>

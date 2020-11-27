@@ -8,6 +8,7 @@ import { toDateString, getPath, getAbsoluteURL, getCoverURL } from '../styles/ut
 import { Header, Avatar } from '../styles/layout';
 import { InfoOverlay } from '../styles/overlay';
 import Footer from '../styles/footer';
+import Signup from '../styles/signup';
 import ThemeToggle from '../styles/theme-toggle';
 import * as components from '../styles/article';
 import arrowSvg from '../assets/arrow-1.svg';
@@ -200,6 +201,8 @@ const Layout = ({ children, frontMatter }) => {
           </MDXProvider>
         </Content>
       </Article>
+
+      <Signup />
 
       <Footer page={frontMatter}>
         <MoreArticles bottom>

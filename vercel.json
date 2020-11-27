@@ -1,5 +1,8 @@
 {
   "alias": "kitten.sh",
+  "github": {
+    "silent": true
+  },
   "rewrites": [
     {
       "source": "/sitemap.xml",

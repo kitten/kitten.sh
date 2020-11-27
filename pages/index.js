@@ -23,6 +23,16 @@ const PostsHeading = styled('h1')`
   color: var(--color-active);
 `;
 
+const Posts = styled('div')`
+  min-height: calc(100vh - 9rem - 2.5rem);
+  box-sizing: border-box;
+  padding-bottom: 2.5rem;
+
+  ${tablet`
+    min-height: calc(100vh - 9rem - 1.5rem);
+  `}
+`;
+
 const PostList = styled('ul')`
   list-style-type: none;
   max-width: ${sizes.page}px;
@@ -182,7 +192,7 @@ const Index = () => (
       <link rel="canonical" href="https://kitten.sh" />
     </Head>
 
-    <main>
+    <Posts>
       <PostsHeading>
         <Logo src="/avatars/icon.png" />
         Recently Published
@@ -218,7 +228,7 @@ const Index = () => (
           <h3>Nothing to see here... yet. 🤔</h3>
         ) : null}
       </PostList>
-    </main>
+    </Posts>
 
     <Footer />
   </>

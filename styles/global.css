@@ -76,7 +76,7 @@ html, [data-theme="light"] {
 @media screen and (prefers-color-scheme: dark) {
   html {
     --color-text: #eceff1;
-    --color-invert: #d6deeb;
+    --color-invert: #e3e7ee;
     --color-gray-text: #cacfd3;
     --color-background: #14161a;
     --color-box-background: #4b506b;
@@ -97,7 +97,7 @@ html, [data-theme="light"] {
 
 [data-theme="dark"] {
   --color-text: #eceff1;
-  --color-invert: #d6deeb;
+  --color-invert: #e3e7ee;
   --color-gray-text: #cacfd3;
   --color-background: #14161a;
   --color-box-background: #4b506b;
