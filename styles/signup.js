@@ -121,6 +121,10 @@ const Submit = styled('button')`
     box-shadow 0.2s ease-out;
   box-shadow: var(--shadow);
 
+  &:hover {
+    color: var(--color-text);
+  }
+
   &:active {
     box-shadow: var(--shadow-inv);
   }

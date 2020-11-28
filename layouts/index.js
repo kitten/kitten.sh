@@ -3,73 +3,14 @@ import Head from 'next/head';
 import { MDXProvider } from '@mdx-js/react';
 import { styled } from 'goober';
 
-import { sizes, mobile, tablet, desktop } from '../styles/theme';
+import { sizes, tablet } from '../styles/theme';
 import { toDateString, getPath, getAbsoluteURL, getCoverURL } from '../styles/util';
 import { Header, Avatar } from '../styles/layout';
 import { InfoOverlay } from '../styles/overlay';
+import Floaty from '../styles/floaty';
 import Footer from '../styles/footer';
 import Signup from '../styles/signup';
-import ThemeToggle from '../styles/theme-toggle';
 import * as components from '../styles/article';
-import arrowSvg from '../assets/arrow-1.svg';
-
-const MoreArticles = styled('span')`
-  display: inline-block;
-  position: absolute;
-  margin: 2rem 0;
-  padding-left: 3ch;
-  line-height: 1.0;
-  font-size: 0.9em;
-  font-family: var(--font-heading);
-  color: var(--color-active);
-  transition: filter 0.3s ease;
-  z-index: 2;
-
-  & > a {
-    text-decoration: none;
-    color: inherit;
-  }
-
-  ${p => p.bottom ? 'bottom: 0;' : 'top: 0;'};
-
-  ${tablet`
-    margin: 1rem 0;
-    font-size: 0.8em;
-  `}
-
-  ${desktop`
-    &:hover {
-      filter: hue-rotate(-20deg) brightness(1.4);
-    }
-
-    @media (prefers-reduced-motion) {
-      &, &:hover {
-        transition: none;
-      }
-    }
-  `}
-
-  &:before {
-    position: absolute;
-    top: 0;
-    left: 0;
-    display: inline-block;
-    width: 2ch;
-    height: 1em;
-    content: '';
-    transform: rotate(180deg);
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-image: url('${arrowSvg}');
-  }
-`;
-
-const ShareContainer = styled('div')`
-  max-width: 65ch;
-  margin: 0 auto;
-  width: 100%;
-`;
 
 const Article = styled('article')`
   position: relative;
@@ -162,14 +103,7 @@ const Layout = ({ children, frontMatter }) => {
       <Article>
         {frontMatter.cover || frontMatter.title || frontMatter.subtitle ? (
           <Header page={frontMatter}>
-            <MoreArticles>
-              <Link href="/">
-                <a href="/">
-                  other posts
-                </a>
-              </Link>
-              <ThemeToggle />
-            </MoreArticles>
+            <Floaty showThemeToggle />
           </Header>
         ) : null}
 
@@ -205,13 +139,7 @@ const Layout = ({ children, frontMatter }) => {
       <Signup />
 
       <Footer page={frontMatter}>
-        <MoreArticles bottom>
-          <Link href="/">
-            <a href="/">
-              other posts
-            </a>
-          </Link>
-        </MoreArticles>
+        <Floaty bottom />
       </Footer>
     </>
   );

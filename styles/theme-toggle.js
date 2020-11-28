@@ -30,17 +30,35 @@ const Toggle = styled(({ theme, children, ...rest }) => {
   )
 })`
   display: inline-block;
+  color: var(--color-active);
   position: absolute;
   appearance: none;
   background: none;
   border: none;
   outline: none;
-  color: inherit;
   cursor: pointer;
 
   padding: 1em;
   margin: -1em;
   margin-left: 1ch;
+  vertical-align: bottom;
+
+  transform: translate(0, 0.2em);
+  transition: filter 0.3s ease;
+
+  [data-theme="dark"] &:hover {
+    filter: hue-rotate(80deg) brightness(1.4);
+  }
+
+  [data-theme="light"] &:hover {
+    filter: brightness(0.5);
+  }
+
+  @media (prefers-reduced-motion) {
+    &, &:hover {
+      transition: none;
+    }
+  }
 
   & > svg {
     width: 1.1rem;
