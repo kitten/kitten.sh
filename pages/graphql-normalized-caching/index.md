@@ -1,6 +1,12 @@
 ---
 title: Caching Relational GraphQL Data
 subtitle: urql's normalised cache mechanisms explained
+cover: /covers/graphcache.jpg
+excerpt: >-
+  How do normalised caches in GraphQl work? Normalised caching in GraphQL is one of the most
+  commonly used features. urql's Graphcache is one of those caches, which with GraphQL's schema
+  can add ever smarter features like “Offline Support” or “Patial Results”. Let's find out what
+  makes it tick.
 published:
   live: false
   date: 2020-11-30
