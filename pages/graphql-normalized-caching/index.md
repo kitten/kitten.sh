@@ -7,7 +7,7 @@ excerpt: >-
   features in apps using GraphQL. urql's Graphcache is one of those caches, which adds
   ever smarter features like “Offline Support” or “Patial Results”.  Let's find out what makes it tick.
 published:
-  live: false
+  live: true
   date: 2020-11-30
   handle: '_philpl'
   avatar: /avatars/phil.png
