@@ -44,6 +44,10 @@ const Image = styled('img')`
   width: 100%;
   max-height: 80vh;
 
+  ${tablet`
+    height: auto;
+  `}
+
   ${mobile`
     max-height: 100vh;
   `}

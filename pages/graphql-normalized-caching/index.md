@@ -290,7 +290,7 @@ its data graph. What can we do if we give Graphcache, say, the entire schema?
 a mention of this concept, which really stuck with me:
 
 > "We can make the cache know more about the API. [...]
-> The way to make better caches is to have more metadata."
+> The way to make better caches is to have more metadata."<br />
 > — Mikhail Novikov
 
 While this talk presented the idea of adding more metadata _on top_ of the existing schema with
@@ -373,12 +373,100 @@ allows the UI to immediately adapt to mutations when the API would otherwise del
 
 On apps like Twitter this is a common UX technique to display likes immediately rather than
 waiting for the UI to respond, since, unlike composing a tweet, liking a tweet is an action
-that can be sent to the API at any point of time in the future.
+that can be sent to the API at any point of time in the future. For _Offline Support_ this means
+that our apps can stay interactive even when (less important) mutations can't be sent, since
+the result of those mutations can be **optimistically emulated** for the UI.
 
 ### Commutative Data Layering
 
-The first feature is one we've added right at the start, which luckily allowed us to work on
-the second one iteratively. Conceptualising the second feeature, commutativity, wasn't easy
-and the first implementation that [Jovi de Croock]() and I discussed over weeks was implemented
-in [a PR from March 2020](https://github.com/FormidableLabs/urql/pull/565), while we were travelling to
-[Formidable's](https://formidable.com) HQ in Seattle.
+For _Optimistic Updates_ we already had data layering implemented, but for full _Offline
+Support_ it became clear that we needed to provide stronger guarantees around the cache's
+data for a client to maintain its data consistently despite unstable or inconsitent network
+access. When an app becomes offline-resilient it first starts adding retry logic to its
+requests (for `urql` we have [a retry
+exchange](https://formidable.com/open-source/urql/docs/advanced/retry-operations/)) which
+means it's dealing with a potentially large flurry of requests that may resolve at different
+points in the future, out of order.
+
+This is horrible for maintaining consistency in the cached data. There's no prediction of
+how data is written and merged into the cache anymore, there's no guarantee in which order
+a query's data is written to the cache, and worse, there's no guarantee in which order
+mutations are written to the cache. Oops, or as [James Long says in his talk "CRDTs for
+Mortals"](https://youtu.be/DEcwa68f-jY?t=298):
+
+> "Why is syncing so hard? Unreliable ordering and conflicts."<br />
+> — James Long
+
+In this talk James talks about synchronising data from multiple distributed clients with
+[CRDTs](https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type), which are a
+method of assigning timestamps to messages to establish eventual consistency when
+synchronising updates across multiple clients.
+
+Unfortunately, CRDTs specifically aren't suitable for our GraphQL cache, since they'd
+require changes to the API as well and are more suitable for synchronising updates rather
+than entire sets of result. Luckily though, since with GraphQL we're dealing with a
+client/server network, there isn't as much distribution and hence synchronisation that
+needs to be done. Instead, we can assume any correct order and move on.
+
+The method that we applied to Graphcache for ensuring more consistency is what we aptly
+call **commutativity** — the strategy of applying ordered results _in order_. Understanding
+and planning this feature wasn't easy and the first implementation that [Jovi de
+Croock](https://twitter.com/JoviDeC) and I discussed over weeks was implemented in
+[a PR from March 2020](https://github.com/FormidableLabs/urql/pull/565), while we were
+at [Formidable's](https://formidable.com) HQ in Seattle.
+
+What we planned was to _reuse_ the **layering** approach that was already implemented for
+_optimistic updates_. To implement this feature we decided that queries and mutations
+would register themselves in order as they were queued up and as their results came in,
+if the results arrive out of order, they'd first be applied to layers that are kept
+_in the original order_. These commutative layers essentially sort changes in the cache's
+data structure as they are applied.
+
+<img
+  src={require('./commutative-layers.png')}
+  width="645" height="450"
+  alt="If a layer result comes in first, results are written to separate layers, where data in later ones take precedence."
+/>
+
+> Commutative layers essentially sort changes in the cache's data structure as
+> they are applied.
+
+When the earliest result in the stack of layers is resolved from the API, then that layer
+is squashed into the "base layer". Since all of these layers are tables of scalars and
+relations, this is the equivalent of copying each entry down to the base layer, so they're
+squashed and cleaned up continuously. Optimistic layers also participate in this structure
+and are different in that they may already contain optimistic values when they're created.
+
+As the cache now reads values from this layered data structure, when it looks up an entry
+in the layered tables it will start with the latest layer on top and cascade down into the
+base layer until it finds the value or not. This may also be one of the rare cases where
+JavaScript's difference between `null` and `undefined` comes in handy! If we want a layer
+to erase an entry, we can set it to `undefined` and treat it separately from having no
+value at all and from having a scalar of `null`.
+
+### Keeping optimistic and non-optimistic data apart.
+
+The last problem we faced with this system is keeping optimistic changes away from non-optimistic
+ones. With the `updates` API it's easy for users to accidentally read some optimistic data
+while an update is written to a non-optimistic layer, making the change permanent. This
+may even happen when multiple items are optimistically added to a list, which makes the
+result contain optimistic items. Oops again.
+
+Hence, we put some systems into place to [keep optimistic data as
+separate](https://formidable.com/open-source/urql/docs/graphcache/under-the-hood/#optimistic-results--refetches)
+from "real data" as possible. Once one or more optimistic updates are started all active
+mutations for these optimistic updates will be delayed to resolve them as a batch together.
+For the user this makes no difference as the optimistic change already reflects what the
+server data will change as well. But internally this allows all optimistic layers to be
+cleared before the mutations' results are applied, preventing the mutation results from
+ever "seeing" the optimistic ones.
+
+Simiarly we quickly found out that it's inconvenient to have queries overwrite optimistic
+mutations. When an optimistic mutation adds an item to the list it'd be very awkward for
+a query to refetch that list, making the optimistic addition disappear. So we also started
+blocking queries that conflict with optimistic updates, which solved this issue too.
+
+The idea that we could **delay** results to improve the user experience around optimistic
+updates was an unexpected and important realisation to say the least.
+
+## Notifying the UI of changes
