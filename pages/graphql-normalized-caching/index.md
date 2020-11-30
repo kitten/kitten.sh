@@ -474,6 +474,49 @@ blocking queries that conflict with optimistic updates, which solved this issue 
 The idea that we could **delay** results to improve the user experience around optimistic
 updates was an unexpected and important realisation to say the least.
 
+### Taking the garbage out.
+
+Another small feature that shall not go unmentioned here is **Garbage Collection**. Over
+the lifetime of an app it may accumulate a lot of unused entities in memory. This could
+even be a more severe problem when the cache is used offline, since all persisted data
+is loaded into memory on startup.
+
+To prevent this from becoming a problem, Graphcache schedules a _garbage collection_
+run after every change. If an entity has no relation leading to it, and is hence
+unused, it is removed during this clean up phase. When we implemented this we had
+to decide between two main implementations: tracing gargabe collection and [automatic
+reference counting](https://en.wikipedia.org/wiki/Automatic_Reference_Counting).
+
+The former scans all data, following and marking all relations that are currently in
+memory, to find ones which are definitely unused. Reference counting on the other
+hands counts the amounts of references to an entity as they are created, updated,
+or removed. Ultimately, we decided on the latter method as it's much faster and
+easier to implement.
+
+```js
+{
+  refCount: {
+    'Item:123': 1,
+    'Item:0': 0
+  },
+  refLock: {
+    [1]: { 'Item:234': 1 }
+  },
+  gc: Set { 'Item:0' }
+}
+```
+
+Our data structure tracks the amount of references to each entity, both on the base
+layer and separately on the optimistic layers. When the amount of references falls
+to zero, the entity key is added to the `gc` set, which means it's scheduled for
+deletion.
+
+This approach does not delete references that have created a cycle. If two entities
+reference each other, for instance, they won't be deleted, even if they can't be
+reached via a query. This is a drawback, but given that this garbage collector is
+designed to be fast rather than 100% effective, we've found the trade off to be
+worth it.
+
 ## Notifying the UI of changes
 
 In `urql`, all queries, mutations, and subscriptions are sent through an extension pipeline,
@@ -511,13 +554,23 @@ been updated, the `Client` is notified that this query has a new update.
 Graphcache has come quite far in the year that we've been working on it now, and as this
 post has hopefully shown, what goes into a normalised GraphQL cache goes much beyond
 the data normalisation bit of it. Today we can be proud of a normalised cache that is
-can one of the fastest and smallest in the community. We're continuing to experiment
+one of the fastest and smallest in the community. We're continuing to experiment
 with **"smart features"** which have already brought us ideas such as the built-in
-Offline Support, which are what ultimately make Graphcache unique.
+Offline Support, which are what ultimately make Graphcache unique. But seeing how
+much I had to cover in just one post explaining it is encouraging already — to
+recap:
+
+- Normalised Data Structures & GraphQL document traversal
+- Manual updaters & resolvers configurations
+- Schema awareness & partial results
+- Optimistic Updates
+- Commutative Layers
+- Garbage Collection
+- Data Dependencies for notifying the `Client`
 
 It's easy for me to list out where the implementation of our cache has ended up and
 what it does, but there's a long list of reasons, discussions, and failed experiments
-behind each change we've introduced. It's almost a shame to not mention them since
+behind each change and feature, we've introduced. It's almost a shame to not mention them since
 each problem related to Graphcache felt like the hardest I'd work on for weeks at a
 time. However, the important takeaway is that we focus on making each of our features
 intuitive, which is best exemplified by the [detailed warnings and
