@@ -287,6 +287,10 @@ export const blockquote = styled(props => {
   hyphens: initial;
   hanging-punctuation: initial;
 
+  &[data-quote] > *:first-child {
+    margin-top: 0;
+  }
+
   ${desktop`
     &[data-quote] {
       padding: 0.8em 0 0 2ch;
