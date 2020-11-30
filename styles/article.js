@@ -44,6 +44,10 @@ const Image = styled('img')`
   width: 100%;
   max-height: 80vh;
 
+  ${tablet`
+    height: auto;
+  `}
+
   ${mobile`
     max-height: 100vh;
   `}
@@ -180,6 +184,9 @@ export const h2 = styled('h2')`
   letter-spacing: -0.4px;
   color: var(--color-active);
 
+  word-break: normal;
+  hyphens: initial;
+
   ${mobile`
     font-size: 2em;
   `}
@@ -235,7 +242,7 @@ export const inlineCode = styled(props => (
   font-size: 0.9em;
   padding: 1px 0.5ch;
   margin: -1px 0;
-  color: inherit;
+  color: var(--color-text);
   opacity: 0.8;
 
   word-break: normal;
@@ -287,6 +294,10 @@ export const blockquote = styled(props => {
   hyphens: initial;
   hanging-punctuation: initial;
 
+  &[data-quote] > *:first-child {
+    margin-top: 0;
+  }
+
   ${desktop`
     &[data-quote] {
       padding: 0.8em 0 0 2ch;
@@ -309,6 +320,7 @@ export const blockquote = styled(props => {
     &:not([data-quote]) {
       max-width: 50%;
       margin-right: calc(-0.5 * (100vw - 65ch + 10ch));
+      padding-right: 1ch;
     }
   `}
 
