@@ -5,7 +5,7 @@ cover: /covers/graphcache.jpg
 excerpt: >-
   How do normalised caches work? Normalised caching is one of the most commonly used
   features in apps using GraphQL. urql's Graphcache is one of those caches, which adds
-  ever smarter features like “Offline Support” or “Patial Results”.  Let's find out what makes it tick.
+  ever smarter features like “Offline Support” or “Partial Results”.  Let's find out what makes it tick.
 published:
   live: true
   date: 2020-11-30
@@ -600,5 +600,5 @@ more automatic optimisations and mechanisms that ultimately benefit a lot of peo
 
 The [`urql` GraphQL client](https://formidable.com/open-source/urql/docs/) is an Open Source
 project we work on at [Formidable](https://formidable.com/). We're a consultancy — if
-you need help with your next GraphQL or React project,
+your team needs help with a GraphQL or React project,
 [**let's talk!**](https://formidable.com/contact/)
