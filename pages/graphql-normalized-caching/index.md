@@ -470,3 +470,56 @@ The idea that we could **delay** results to improve the user experience around o
 updates was an unexpected and important realisation to say the least.
 
 ## Notifying the UI of changes
+
+In `urql`, all queries, mutations, and subscriptions are sent through an extension pipeline,
+which contains all of its GraphQL client logic. The `Client` itself only has the task to
+coordinate this pipeline and to communicate with bindings. This pipeline contains what we
+call "Exchanges", which are middleware that accept a stream of operations (queries, mutations
+and subscriptions), forward them to the next _exchange_, and return a stream of results.
+This system allows us to **integrate caches into the same pipeline** as all other logic,
+like retrying, fetching, or deduplication, rather than layering caches on top of the
+`Client` with an additional API-surface.
+
+For Graphcache this means that it needs to notify the `Client` of any changes to the
+active queries as it updates its cache. For instance, a mutation may update an entity
+that is shared with a query, which means that Graphcache needs to notify the `Client`
+that the query's data has changed.
+
+<img
+  src={require('./data-dependencies.png')}
+  width="633" height="420"
+  alt="The Client is notified when any dependencies of a query overlap with an update."
+/>
+
+For this there's another technique that is applied while traversing query documents.
+During traversal, a `Set` of keys is collected. This `Set` identifies all entities that
+the traversal has visited, which hence clearly identifies either which entities have
+been read or written, depending on whether Graphcache was updating or reading from its
+store. We call this list of keys the "dependencies" of a document.
+
+The _exchange_ then only needs to compare the `Set` it gets when it updates the cache
+with the dependencies of active queries. If any queries contains a dependency that has
+been updates, the `Client` is notified that this query has a new update.
+
+## Graphcache — More than just a normalised cache
+
+Graphcache has come quite far in the year that we've been working on it now, and as this
+post has hopefully shown, what goes into a normalised GraphQL cache goes much beyond
+the data normalisation bit of it. Today we can be proud of a normalised cache that is
+one of the fastest and smallest in the community. We're continuing to experiment
+with **"smart features"** which have already brought us ideas such as the built-in
+Offline Support, which are what ultimately make Graphcache unique.
+
+It's easy for me to list out where the implementation of our cache has ended up and
+what it does, but there's a long list of reasons, discussions, and failed experiments
+behind each change we've introduced. It's almost a shame to not mention them, since
+each problem related to Graphcache felt like the hardest I'd work on for weeks at a
+time. However, the important takeaway is that we focus on making each of our features
+intuitive, which is best exemplified by the [detailed warnings and
+errors](https://formidable.com/open-source/urql/docs/graphcache/errors/) Graphcache
+logs when something goes wrong. It's impressive how a simple specification like
+GraphQL that enough people can and have agreed on can enable us to experiment with
+more automatic optimisations and mechanisms that ultimately benefit a lot of people.
+
+> "There's two hard problems in Computer Science: We only have one joke and it's not funny."
+> [(Source)](https://twitter.com/pbowden/status/468855097879830528)

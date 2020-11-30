@@ -184,6 +184,9 @@ export const h2 = styled('h2')`
   letter-spacing: -0.4px;
   color: var(--color-active);
 
+  word-break: normal;
+  hyphens: initial;
+
   ${mobile`
     font-size: 2em;
   `}
