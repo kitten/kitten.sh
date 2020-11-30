@@ -313,6 +313,7 @@ export const blockquote = styled(props => {
     &:not([data-quote]) {
       max-width: 50%;
       margin-right: calc(-0.5 * (100vw - 65ch + 10ch));
+      padding-right: 1ch;
     }
   `}
 
