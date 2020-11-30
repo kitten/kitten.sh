@@ -235,7 +235,7 @@ export const inlineCode = styled(props => (
   font-size: 0.9em;
   padding: 1px 0.5ch;
   margin: -1px 0;
-  color: inherit;
+  color: var(--color-text);
   opacity: 0.8;
 
   word-break: normal;
