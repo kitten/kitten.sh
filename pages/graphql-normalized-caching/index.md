@@ -66,50 +66,47 @@ and work our way from the basics all the way to how we can stack more benefits o
 
 ## Normalising relational data
 
-The principles of normalising relational data as it's pulled from an API are the same, no matter
-whether we're dealing with a GraphQL API, a RESTful API, or any other API. This also closely
-resembles structures in relational databases, which isn't a coincidence, since we're dealing
-with "entities" identified by primary keys that are linked together.
+The principles of normalising relational data as it's pulled from an API hold true, no matter whether
+we're dealing with a GraphQL API, a RESTful API, or any other API. This also closely resembles
+structures in relational databases, which isn't a coincidence, since we're dealing with "entities"
+identified by primary keys that are linked together.
 
 > "Collectively, multiple tables of data are called relational data because it is the relations,
 > not just the individual datasets, that are important."<br />
 > — [R for Data Science](https://r4ds.had.co.nz/relational-data.html)
 
-In GraphQL we write schemas with types that have fields returning either scalars or other types.
-As data is built up and resolved on our API these relations and scalars are copied into nested,
-denormalised JSON data, which the API receives matching the query document it has sent. For a
-normalisation to take place this **hierarchical nested data** needs to be stored into **flat
-tables**, or records. For that, the cache needs information on the types of the data and an
-ID to index the objects (or "entities") by a **primary key**.
+In GraphQL, we write schemas with types that have fields, which return either scalars or other types,
+and build up a graph. As data resolved by our API these relations and scalars are copied into nested,
+denormalised JSON data, which the API receives, matching the query document it has sent. For a
+normalisation to take place this **hierarchical nested data** needs to be stored in **flat tables**,
+and for that, the cache needs information on the types of the data and an ID to index the objects
+(or "entities") by a **primary key**.
 
-If we wrote normalisation code for a REST API the responses' structures are known per endpoint
-and we'd write our code to make assumptions based on that. This is for instance the underlying
-principle of [normalizr](https://github.com/paularmstrong/normalizr) a library that normalises
-JSON data by having you write a schema definition for it.  However, in GraphQL, the responses'
-structures are _dynamic_ and change depending on the query document, so it isn't possible to
-automatically assume a type for any given field. Clients solve
-this by using two things: the query document itself and ["Type Name
-Introspection".](http://spec.graphql.org/June2018/#sec-Type-Name-Introspection)
+If we wrote normalisation code for a REST API, the responses' structures are known by us per endpoint
+beforehand, and we'd write our code to make assumptions based on that. This is for instance the
+underlying principle of [normalizr](https://github.com/paularmstrong/normalizr), a library that normalises
+JSON data by having us write a schema definition for it.  However, in GraphQL, the responses' structures
+are _dynamic_ and change depending on the query document, so it isn't possible to automatically assume
+a type for any given field. GraphQL clients solve this by using two things: the query document's structure
+itself and ["Type Name Introspection".](http://spec.graphql.org/June2018/#sec-Type-Name-Introspection)
 
-With _Type Name Introspection_ a query document may contain the special `__typename` field on
-any selection set to inquire the API about the type of a returned entity. If we query an API
-for a type `Item` and add the `__typename` field to our selection then the GraphQL API will
-respond with the `"__typename": "Item"` record on the response. The normalised cache can add
-this field to any outgoing query's selection sets automatically and thus retrieve all of the
-response's type information on the fly.
+With _Type Name Introspection_, a query document may contain special `__typename` fields on any selection
+set to inquire the API about the type name of an entity. If we query an API for a type `Item` and add the
+`__typename` field to our selection then the GraphQL API will respond with the `"__typename": "Item"`
+record on the response. The normalised cache can add this field to any outgoing query's selection sets
+automatically and thus retrieve all the response's type information on the fly.
 
-We also know that any response must match the query document the API received, which we can
-use to our advantage to traverse the response as it's also traversing the query. Furthermore,
-they way a query is written it already says a lot about the response. If a field has no
-selection set it's typically a scalar, e.g. `{ createdAt }`, and if a field has a selection set
-it's likely a relation to another entity, e.g. `{ todo { id } }`.
+We also know that any response must match the query document the API received, which we can use to our
+advantage to traverse the response as it's also traversing the query. Furthermore, the way a query is
+written it already says a lot about the response. If a field has no selection set it's typically a scalar,
+e.g. `{ createdAt }`, and if a field has a selection set it's likely a relation to another entity,
+e.g. `{ todo { id } }`.
 
-Lastly, the normalised cache needs to be able to generate a _primary key_ for each entity.
-[Relay enforces](https://relay.dev/docs/en/graphql-server-specification.html#object-identification)
-that types on a schema must all have an `id` field with a globally unique ID. Apollo and
-Graphcache on the other hand assume that a type _may_ have either an `id` or `_id` field,
-by default, and that the query document always includes it, though the specific keying
-function is configurable by type in either though.
+Lastly, the normalised cache needs to be able to generate a _primary key_ for each entity. [Relay
+enforces](https://relay.dev/docs/en/graphql-server-specification.html#object-identification) that types
+on a schema must all have an `id` field with a globally unique ID. Apollo and Graphcache on the other
+hand assume that a type _may_ have either an `id` or `_id` field, by default, and that the query document
+always includes it, though the specific keying function is configurable by type in either, though.
 
 <img
   src={require('./query-document-info.png')}
@@ -132,7 +129,7 @@ or reading normalised data is the most intensive part of the normalised cache. H
 the writing process, we may differentiate between fields that contain scalars (or "records"
 in Graphcache) and fields with selection sets that lead to other _entities_, so relations,
 and store both in our data structure. During the reading process, where the normalised cache
-attempts to create a result just from its cached data the cache can use the relations it has
+attempts to create a result just from its cached data, the cache can use the relations it has
 stored, when it reaches a nested selection set, to traverse the query document and the relations
 in its cache in tandem.
 
@@ -142,7 +139,7 @@ in its cache in tandem.
 A special case here is **"embedded data"**. Not all types in GraphQL have keyable fields.
 Some may just abstract scalar-like data or simply add nested data to its parent type. For
 instance, an `Image` type may just exist locally but contain fields for URLs, image formats,
-dimensions, or other data. If a normalised cache encounters an unkeyable type it may embed
+dimensions, or other data. If a normalised cache encounters an unkeyable type, it may embed
 it inside the parent entity. This means that, like a scalar, it becomes only reachable from
 its parent's field on which it was originally found. Caches have varying approaches to
 storing _embedded data_, but Graphcache still treats it as a relation and creates a key based
@@ -185,9 +182,9 @@ nested structure pairs well with how JavaScript engines optimise for consistent 
 objects.
 
 Furthermore, it may be surprising that this data structure is directly mutated rather than
-being an immutable structure. Graphcache always copies data from its cache on reading a
-query, so each query result it generates is a fresh result unrelated to the cached data
-or to a previous result.
+being a kind of immutable structure. Graphcache always copies data from its cache on
+reading a query, so each query result it generates is a fresh result unrelated to the
+cached data or to a previous result, hence immutability isn't necessary internally.
 
 This data structure is beneficial for storing records, but it's also used to store relations,
 which Graphcache calls "links", which are stored separately, since they can also be identified
