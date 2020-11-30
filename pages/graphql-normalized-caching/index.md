@@ -3,10 +3,9 @@ title: Caching Relational GraphQL Data
 subtitle: urql's normalised cache mechanisms explained
 cover: /covers/graphcache.jpg
 excerpt: >-
-  How do normalised caches for GraphQL work? Normalised caching is one of the most commonly used
-  features in apps using GraphQL. urql's Graphcache is one of those caches, which with schema
-  metadata can add ever smarter features like “Offline Support” or “Patial Results”.
-  Let's find out what makes it tick.
+  How do normalised caches work? Normalised caching is one of the most commonly used
+  features in apps using GraphQL. urql's Graphcache is one of those caches, which adds
+  ever smarter features like “Offline Support” or “Patial Results”.  Let's find out what makes it tick.
 published:
   live: false
   date: 2020-11-30
@@ -145,12 +144,12 @@ the query document and the relations in its cache in tandem.
 
 A special case here is **"embedded data"**. Not all types in GraphQL have keyable fields.
 Some may just abstract scalar-like data or simply add nested data to its parent type. For
-instance, an `Image` type may just exist locally but contain fields for URLs, image formats,
-dimensions, or other data. If a normalised cache encounters an unkeyable type, it may embed
-it inside the parent entity. This means that, like a scalar, it becomes only reachable from
-its parent's field on which it was originally found. Caches have varying approaches to
-storing _embedded data_, but Graphcache still treats it as a relation and creates a key based
-on the parent's key and the current field.
+instance, an `Image` type may contain fields for URLs, image formats, dimensions, or
+other data, but would only be accessed through a consistent parent entity, like a `Post`.
+If a normalised cache encounters an unkeyable type, it may embed it inside the parent entity.
+This means that, like a scalar, it becomes only reachable from its parent's field on which it
+was originally found. Caches have varying approaches to storing _embedded data_, but Graphcache
+still treats it as a relation and creates a key based on the parent's key and the current field.
 
 ### Normalised Data Structures
 
@@ -165,9 +164,9 @@ an ID or other key and type name, and the field's name and arguments, if it has 
 How this data is stored in normalised caches differs from one implementation to another.
 Graphcache itself went through _three different phases_, where we optimised and iterated on
 its internal data structure and how it stores GraphQL data. Currently, the data structure
-compares to and resembles tables as seen in relational databases quite closely. It stores
-each entity as a record object of its fields and this object is stored separately in a `Map`
-of primary keys.
+compares to and resembles tables as seen in relational databases (and the above table)
+quite closely. It stores each entity as a record object of its fields and this object
+is stored separately in a `Map` of primary keys.
 
 ```js
 Map {
@@ -180,22 +179,24 @@ Map {
 }
 ```
 
-In this data structure a `Map` is used to index entities by its primary key. Each entity
-is stored as an object containing all fields. The fields are keyed not only by their names
-but also by a JSON string of their arguments. In an earlier version, Graphcache used to store
-all this data on a flat `Map` (and later [a HAMT
-tree](https://en.wikipedia.org/wiki/Hash_array_mapped_trie)), but we found that the newer, more
-nested structure pairs well with how JavaScript engines optimise for consistent shapes of
-objects.
+In this data structure, a `Map` is used to index entities by their primary keys. Each entity
+is stored as an object containing all fields. The fields are keyed not only by name but also
+by a JSON string of their arguments, if the field was access with any arguments. In an earlier
+version, Graphcache used to store all this data on a flat `Map` (and later [a HAMT
+tree](https://en.wikipedia.org/wiki/Hash_array_mapped_trie)), without having separate
+objects for each entity. But we found that the newer, more nested structure pairs well with
+how JavaScript engines optimise for consistent shapes of objects.
 
-On a side note, it may be surprising that this data structure is directly mutated rather than
-being a kind of immutable structure. Graphcache always copies data from its cache on
-reading a query, so each query result it generates is a fresh result unrelated to the
-cached data or to a previous result, hence immutability isn't necessary internally.
+On a side note, this data structure is directly mutated by the cache during traversal rather
+than being an immutable structure that is copied and then changed. Graphcache always copies
+data from its store to a result, when generating a result, so each query result it generates
+is a fresh result unrelated to the cached data or to a previous result, hence immutability
+isn't necessary internally.
 
-This data structure is also used to store relations, which Graphcache calls "links", albeit
-in a separate table, since they can also be identified separately on query documents by the
-presence or absence of selection sets on fields.
+This table-like data structure is also used to store relations, which Graphcache calls "links",
+albeit in a _separate table_ rather than in the same one, since relations can be identified
+separately on query documents by the presence or absence of selection sets on fields. This
+avoids having to mark any data in our data structures as special "link types".
 
 ```js
 Map {
@@ -210,18 +211,19 @@ Map {
 }
 ```
 
-A _separate table_ of entities stores just the fields that contain **relations** to other entities.
-Here we also first see the `Query` root type from which the traversal of queries originates. Links
-from one entity to another may be represented by a single key, but when a relation is to an array
-of entities the data structure stores an array of keys. Any field in GraphQL that isn't marked as
-required may also be nullable, so any link may also be set to `null`.
+This _separate table_ contains only the **relations** of entities to other entities.
+Here we also first see the `Query` root type from which the traversal of queries originates.
+Links from one entity to another may be represented by a single key, but when a relation is to
+an array of entities the data structure stores an array of keys. Any field in GraphQL that
+isn't marked as required may also be nullable, so any link may also be set to `null`.
 
 ### Are all updates automatic?
 
-While normalised caches store and update entities in a location, which means that all changes
-to an entity are shared across queries, an API makes a lot of implicit changes to the relations
-of data as it runs. For instance, when an item is created a cache won't know how a list of this
-item may change and it won't automatically know to add the item to this list.
+While normalised caches store and update entities in a single location, which means that all
+changes to an entity are shared across any result, an API makes a lot of implicit changes to
+the relations of data as it runs. For instance, when an item is created a cache won't automatically
+know that it should add this item to a list of items on a separate field. For these kinds of
+cases Graphcache has "updater" and "resolver" configurations.
 
 As I've mentioned earlier, a configuration option exists to alter the keys that are generated for
 entities by type. Other configuration options exist to step into Graphcache's traversal process
@@ -239,9 +241,9 @@ as needed after mutations (or subscription events.)
 }
 ```
 
-When an entity is traversed, Graphcache also looks at a configuration option that's called
-`resolvers`, which can alter the value of a field dynamically without interrupting the cache's
-traversal process. This is a pretty powerful concept as it may "interleave" results from the
+When an entity's field is visited during traversal, Graphcache also looks at a configuration option
+that's called `resolvers`, which can alter the value of a field dynamically without interrupting
+the cache's traversal process. This is a pretty powerful API as it may "interleave" results from the
 resolver and the cached data. The example shows the simplest resolver which relates the
 `Query.todo` field to a `Todo` item which allows the cache to lookup the item even if it
 hasn't seen the relation from an API result before.
@@ -250,13 +252,15 @@ The interleaving of resolver results come into play when the resolver's result c
 fields that aren't used just for keying. In that case it may override the value of fields even
 if the fields are cached. This is particularly useful to [perform
 pagination](https://formidable.com/open-source/urql/docs/graphcache/computed-queries/#pagination),
-where several pages are merged into an "infinite list" of results.
+where several pages are merged into an "infinite list" of results. In short, a _resolver_ may
+alter any field or nested data that Graphcache knows about dynamically.
 
-Similarly to `resolvers`, the traversal process for mutations may also be altered by adding
+Similarly to `resolvers`, the traversal process for **mutations** may also be altered by adding
 `updates`. The configuration option may be used to update queries or fragments separate from
 any query that the cache is currently running. This spawns a nested traversal that ad hoc starts
-traversing the cache separately. The data that a method like `cache.updateQuery` allows the user
-to update is a fresh copy, as previously mentioned, so it's even safe to mutate it:
+traversing the cache separately. The `cache.updateQuery` method allows the developer to update data
+for a query document manually, and since all data that is queried from the cache is a fresh copy,
+as previously mentioned, it's even safe to just mutate it:
 
 ```js
 {
@@ -273,20 +277,20 @@ to update is a fresh copy, as previously mentioned, so it's even safe to mutate 
 }
 ```
 
-What we're hoping from these configuration APIs is that they're obvious enough to feel trivial.
-They're modelled to imitate the GraphQL resolvers that are found on the backend. Personally, I
-feel that having configurations for keys, resolvers, and updaters on the cache that all seem
-related and inituitive is a big win from an API design standpoint. They each represent a
-_specific step_ in the traversal and caching process.
+What we're hoping from these configuration APIs is that they're obvious enough to feel trivial
+and intuitive. They're modelled to imitate the GraphQL resolvers that are found in API code.
+Personally, I feel that having configurations for keys, resolvers, and updaters on the cache,
+that all seem similarly structured and used, is a big win from an API design standpoint.
+They each represent a _specific step_ in the traversal and caching process.
 
-We also early on made the decision to keep these configuration options centralised. These
-options represent how data is cached and closely represent the application data as the API
-presents it. By keeping this configuration central and closely related to the schema, rather
-than queries or the UI, the cache **imitates the API** ever more closely.
+We also early on made the decision to **keep all configuration options centralised**. These
+options represent how data is cached and altered, and closely represent the application data
+as the API presents it to us. By keeping this configuration central and closely related to
+the schema, rather than queries or the UI, the cache **imitates the API** ever more closely.
 
 ### Doing better with more information.
 
-As we can see, a normalised cache can do a lot with just the bare minimum of type information,
+As we can see, a normalised cache can do a lot with just the bare minimum of type information —
 the `__typename` fields. So it's worth asking at this point whether we can do any better given
 that GraphQL has a whole schema worth of information about its data graph. What can we do if
 we give Graphcache, say, the entire schema?
@@ -297,24 +301,29 @@ a mention of this concept, which really stuck with me:
 > The way to make better caches is to have more metadata."<br />
 > — Mikhail Novikov
 
-While this talk presented the idea of adding more metadata _on top_ of the existing schema with
-directives as additional annotations, I felt that the existing dynamic GraphQL clients of the
-time didn't even use that information efficiently. And one feature that can be implemented with
-more metadata from the schema are **partial results**.
+While this talk presented the idea of adding more metadata _on top_ of existing GraphQL schemas
+with directives as additional annotations, I felt that the existing dynamic GraphQL clients of the
+time didn't even use the usual metadata of a schema effectively. And one feature that can be
+implemented with more metadata from the schema are **partial results**.
 
-While retrieving data from the cache there are a lot of opportunities for cache misses, when the
-cache doesn't have enough data to fulfil a query only from its store. Thinking of the most basic
-app examples, having a list page go to a details page is pretty common, and furthermore,
-displaying (and hence querying) more data on the details page than for the list is also
-commonly found. But how can a GraphQL client deal with displaying the details page
-sooner? By displaying some of it, as best as it can.
+While retrieving data from the cache there are a lot of opportunities for cache misses, which
+happen when the cache doesn't have enough data to fulfil a query only from its store, and
+instead must send a request to the API. Thinking of the most basic app examples, having a
+list page that links to a details page is pretty common, and furthermore, displaying (and
+hence querying) more data on the details page than for the list's items is also commonly done.
+But how could a GraphQL client attempt to display a details page sooner without running into
+a cache miss immediately? By displaying some of it, as best as it can! 👷
 
-When a `schema` is passed to Graphcache, it receives metadata on which fields of a schema are
-optional. Given that a lot of GraphQL apps we're seeing now use TypeScript with type generation
-Graphcache then encounters a missing field in its cache, it does exactly what the `graphql`
-execution would on the server-side, it sets the field to `null` if it's optional or cascades
-the cache miss upwards until either the query itself is a cache miss still or it finds a nullable
-field.
+When a `schema` is passed to Graphcache, it receives metadata on which fields are marked as
+optional or required.
+When Graphcache encounters a missing field in its cache while it has a `schema`, it does
+exactly what the `graphql` execution would on the server-side, it sets the field to `null`
+if it's optional or cascades the cache miss upwards until it either finds a different
+nullable field on a parent entity, or the query itself becomes cache miss afterall. In other
+words, it attempts to give us only partial result and sends the API request for more data off
+in the background.
+Given that a lot of GraphQL apps we're seeing now use TypeScript with type generation, a
+lot of UIs are already being built to deal with nullable GraphQL data.
 
 <img
   src={require('./partial-results.png')}
@@ -322,17 +331,17 @@ field.
 />
 
 This is one of the more "extravagant" features in Graphcache, but based on what I have
-experienced when building apps and heard from people who are starting from scratch with GraphQL,
-it was a grievance for some, and the intention of **partial results** is to make it easier to
-progressively improve the user experience of our apps. It also is one of the defining features
-that pushed us to add **Offline Support**!
+experienced when building apps and heard from people, who are starting from scratch with GraphQL,
+it was a grievance for some to build partially loading UIs, and the intention of **partial
+results** is to make it easier to progressively improve the user experience of our apps, by
+filling this gap.  It also is one of the defining features that pushed us to add **Offline Support**!
 
 ## Optimistic Ordering and Layers
 
 There are two more features that I was leaving out so far that enable us to do one more thing™.
 In Graphcache we went so far as to add [Offline
 Support](https://formidable.com/open-source/urql/docs/graphcache/offline/) back in June 2020,
-and it's two important features that enabled us to do this:
+and it's two important features that enabled us to come this far:
 
 - **Optimistic Updates**, which allow mutations to optimistically make changes to the cache's data
   immediately, before a request is even sent to the API.
@@ -341,16 +350,17 @@ and it's two important features that enabled us to do this:
 
 Both of these features were vital for us to allow **Offline Support** to be added while
 keeping the developer experience neither complicated nor confusing. When this mode of Graphcache
-is used a `storage` engine may be passed (the default one uses IndexedDB) which persists
-results and queued mutations. When the client is offline then Graphcache is able to continue
-delivering fully cached or partial results as best as it can, while when it's online it
-continually persists data.
+is used, a `storage` engine may be passed (the default one uses IndexedDB) which persists
+results and queues mutations, which when they fail may be retried when the client comes
+back online. When the client is offline however, Graphcache is able to continue delivering
+fully cached or partial results as best as it can, while when it's online it continually
+persists data.
 
 ### Optimistic Updates
 
 "Optimistic Updates" are a feature that we've added almost right at the start of implementing
-Graphcache as it has become an almost standard feature of GraphQL normalised caches. With
-_optimistic updates_ an `optimistic` configuration option may be passed to Graphcache that
+Graphcache, as it has become an almost standard feature of normalised caches. With _optimistic
+updates_ an `optimistic` configuration option may be passed to Graphcache that
 tells the cache how to generate a "fake result" for a mutation before a request has been
 sent to the API.
 
@@ -366,52 +376,52 @@ sent to the API.
 }
 ```
 
-So far the data structure that we've looked at previously stores normalised data just fine and
+So far, the data structure that we've looked at previously store normalised data just fine, and
 Graphcache keeps two tables of entries, one for "records" (or scalars) and one for "links" (or
 relations.) When an optimistic result is applied, the cache actually creates additional layers
 of these tables that it stacks on top of the "base layer".
 
-When a mutation is executed that has an `optimistic` entry the optimistic result is used to
+When a mutation is executed that has an `optimistic` entry, the optimistic result is used to
 temporarily apply changes to the cache on new layers. When the API responds with the mutation's
-result this layer is erased again so the API's result can be applied to the _base layer_. This
-allows the UI to immediately adapt to mutations when the API would otherwise delay an interaction.
+result, this temporary layer is erased again and the API's result is applied to the _base layer_.
+This allows the UI to immediately adapt to mutations in response to a user interaction when the
+API would otherwise delay it.
 
-On apps like Twitter, this is a common UX technique to display likes immediately rather than
-waiting for the UI to respond, since, unlike composing a tweet, liking a tweet is an action
-that can be sent to the API at any point of time in the future. For _Offline Support_ this means
-that our apps can stay interactive even when (less important) mutations can't be sent, since
-the result of those mutations can be **optimistically emulated** for the UI.
+On apps like Twitter, this is a common UX technique to display "likes" immediately rather than
+waiting for the API to respond, since, unlike composing a tweet, this interaction isn't
+time-sensitive and resilient to failure. For _Offline Support_ this means that our apps can
+stay interactive even when we're offline and mutations can't be sent, since the result of
+those mutations can be **optimistically emulated** for the UI.
 
 ### Commutative Data Layering
 
 For _Optimistic Updates_ we already had data layering implemented, but for full _Offline
 Support_ it became clear that we needed to provide stronger guarantees around the cache's
-data for a client to maintain its data consistently despite unstable or inconsitent network
-access. When an app becomes offline-resilient it first starts adding retry logic to its
-requests (for `urql` we have [a retry
-exchange](https://formidable.com/open-source/urql/docs/advanced/retry-operations/)) which
-means it's dealing with a potentially large flurry of requests that may resolve at different
-points in the future, out of order.
+data for a client to maintain consistency, in the face of unstable or inconsitent network
+connections. When an app becomes offline-resilient it first starts adding retry logic to
+its requests (for `urql` we have [a retry
+exchange](https://formidable.com/open-source/urql/docs/advanced/retry-operations/)), which
+means it's then dealing with a potentially large flurry of requests that may resolve at
+different points in the future — out of order.
 
-This is horrible for maintaining consistency in the cached data. There's no prediction of
-how data is written and merged into the cache anymore, there's no guarantee in which order
-a query's data is written to the cache, and worse, there's no guarantee in which order
-mutations are written to the cache. Oops, or as [James Long says in his talk "CRDTs for
-Mortals"](https://youtu.be/DEcwa68f-jY?t=298):
+This is horrible for maintaining consistency in the cache's store. There's no prediction to be
+made of how data is written and merged anymore, there's no guarantee in which order data
+is written to the cache, and worse, there's no guarantee in which order _mutations_ are written
+to the cache. Oops; as [James Long says in his talk "CRDTs for Mortals":](https://youtu.be/DEcwa68f-jY?t=298):
 
 > "Why is syncing so hard? Unreliable ordering and conflicts."<br />
 > — James Long
 
 In this talk, James talks about synchronising data from multiple distributed clients with
 [CRDTs](https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type), which are a
-method of assigning timestamps to messages to establish eventual consistency when
+method of assigning timestamps to messages for establishing an eventual consistency when
 synchronising updates across multiple clients.
 
 Unfortunately, CRDTs aren't suitable for our GraphQL cache, since implementing them
 requires changes to the API, and as they're more suitable for synchronising updates
 rather than entire sets of results. Luckily though, since with GraphQL we're dealing with a
-client/server network, there isn't as much distribution and hence synchronisation that
-needs to be done. Instead, we can assume any correct order and move on.
+client/server network, there isn't as much distribution, and hence, synchronisation that
+needs to be done. Instead, we can assume _any_ consistent order and move on.
 
 The method that we applied to Graphcache for ensuring more consistency is what we aptly
 call **commutativity** — the strategy of applying ordered results _in order_. Understanding
@@ -422,9 +432,9 @@ at [Formidable's](https://formidable.com) HQ in Seattle.
 
 What we planned was to _reuse_ the **layering** approach that was already implemented for
 _optimistic updates_. To implement this feature we decided that queries and mutations
-would register themselves in order as they were queued up and as their results came in.
-If the results arrive out of order, they'd first be applied to layers that are kept
-_in the original order_. These commutative layers essentially sort changes in the cache's
+would register themselves first in the order they were queued up in. If their results
+eventually arrive out of order, they'd first be applied to layers that are kept _in
+the original order_. These commutative layers essentially sort changes in the cache's
 data structure as they are applied.
 
 <img
@@ -436,11 +446,12 @@ data structure as they are applied.
 > Commutative layers essentially sort changes in the cache's data structure as
 > they are applied.
 
-When the earliest result in the stack of layers is resolved from the API, then that layer
-is squashed into the "base layer". Since all of these layers are tables of scalars and
-relations, this is the equivalent of copying each entry down to the base layer, so they're
-squashed and cleaned up continuously. Optimistic layers also participate in this structure
-and are different in that they may already contain optimistic values when they're created.
+When the earliest result in the stack of layers (the lowest in "FILO" order) is resolved
+from the API, then that layer is committed or rather "squashed" into the base layer.
+Since all of these layers are tables of scalars and relations, this is the equivalent
+of copying each entry down to the base layer, so they're cleaned up continuously.
+Optimistic layers also participate in this structure and are different in that they may
+already contain optimistic values when they're created.
 
 As the cache now reads values from this layered data structure, when it looks up an entry
 in the layered tables it will start with the latest layer on top and cascade down into the
@@ -453,21 +464,22 @@ value at all and from having a scalar of `null`.
 
 The last problem we faced with this system is keeping optimistic changes away from non-optimistic
 ones. With the `updates` API, it's easy for developers to accidentally read some optimistic
-data while an update is written to a non-optimistic layer, making the change permanent.
-This may even happen when multiple items are optimistically added to a list, which makes
-the result contain optimistic items. Oops again.
+data while an update is written to a non-optimistic layer, making a temporary change accidentally
+permanent. This may even happen when multiple items are optimistically added to a list, which makes
+the result eventually contain optimistic items, even when their non-optimistic results have
+already been added. Oops again! 😕
 
 Hence, we put some systems into place to [keep optimistic data as
 separate](https://formidable.com/open-source/urql/docs/graphcache/under-the-hood/#optimistic-results--refetches)
-from "real data" as possible. Once one or more optimistic updates are started all active
-mutations for these optimistic updates will be delayed to resolve them as a batch together.
-For the user, this makes no difference as the optimistic change already reflects what the
-server data will change as well. But internally this allows all optimistic layers to be
+from "real data" as possible. Once one or more optimistic updates for mutations have been
+made, all active mutations for these optimistic updates will be delayed and resolved together as
+a batch.  For the user, this makes no difference as the optimistic changes already reflected
+what the server data changes too. But internally this allows all optimistic layers to be
 cleared before the mutations' results are applied, preventing the mutation results from
 ever "seeing" the optimistic ones.
 
 Relatedly, we quickly found out that it's inconvenient to have queries overwrite optimistic
-mutations. When an optimistic mutation adds an item to the list it'd be very awkward for
+mutations. When an optimistic mutation adds an item to the list, it'd be very awkward for
 a query to refetch that list, making the optimistic addition disappear. So we also started
 blocking queries that conflict with optimistic updates, which solved this issue too.
 
@@ -477,19 +489,19 @@ updates was an unexpected and important realisation to say the least.
 ### Taking the garbage out.
 
 Another small feature that shall not go unmentioned here is **Garbage Collection**. Over
-the lifetime of an app it may accumulate a lot of unused entities in memory. This could
-even be a more severe problem when the cache is used offline, since all persisted data
-is loaded into memory on startup.
+the lifetime of an app, the cache may accumulate a lot of unused entities in memory. This
+could even become a more severe problem when the cache is used offline, since all persisted
+data is loaded into memory on startup, which could then grow larger and larger.
 
 To prevent this from becoming a problem, Graphcache schedules a _garbage collection_
-run after every change. If an entity has no relation leading to it, and is hence
-unused, it is removed during this clean up phase. When we implemented this we had
-to decide between two main implementations: tracing gargabe collection and [automatic
-reference counting](https://en.wikipedia.org/wiki/Automatic_Reference_Counting).
+run each time it makes any changes to its store. If an entity has no relation leading
+to it, and is hence unused, it is removed during this cleanup phase. When we implemented
+this we had to decide between two possible implementations: tracing gargabe collection
+and [automatic reference counting](https://en.wikipedia.org/wiki/Automatic_Reference_Counting).
 
-The former scans all data, following and marking all relations that are currently in
-memory, to find ones which are definitely unused. Reference counting on the other
-hands counts the amounts of references to an entity as they are created, updated,
+The former scans all relations it can find starting from the `Query` root type, and marks
+entities it can find to then determine which ones are unused. Reference counting on the
+other hands counts the amounts of references to an entity as they are created, updated,
 or removed. Ultimately, we decided on the latter method as it's much faster and
 easier to implement.
 
@@ -511,22 +523,22 @@ layer and separately on the optimistic layers. When the amount of references fal
 to zero, the entity key is added to the `gc` set, which means it's scheduled for
 deletion.
 
-This approach does not delete references that have created a cycle. If two entities
-reference each other, for instance, they won't be deleted, even if they can't be
-reached via a query. This is a drawback, but given that this garbage collector is
-designed to be fast rather than 100% effective, we've found the trade off to be
-worth it.
+This approach does not delete cyclical references. If two entities reference each
+other, they won't be deleted, even if they aren't used by any other relation. This is
+a drawback, but given that this garbage collector is designed to be fast rather than
+accurate, we've found the tradeoff to be worth it.
 
 ## Notifying the UI of changes
 
 In `urql`, all queries, mutations, and subscriptions are sent through an extension pipeline,
 which contains all of its GraphQL client logic. The `Client` itself only has the task to
-coordinate this pipeline and to communicate with bindings. This pipeline contains what we
-call "Exchanges", which are middleware that accept a stream of operations (queries, mutations
-and subscriptions), forward them to the next _exchange_, and return a stream of results.
-This system allows us to **integrate caches into the same pipeline** as all other logic,
-like retrying, fetching, or deduplication, rather than layering caches on top of the
-`Client` with an additional API-surface.
+coordinate this pipeline and to communicate with framework bindings. This pipeline contains
+what we call ["Exchanges"](https://formidable.com/open-source/urql/docs/concepts/),
+which are middleware that accept a stream of operations (queries, mutations and subscriptions),
+forward them to the next _exchange_, and return a stream of results. This system allows us to
+**integrate caches into the same pipeline** as all other logic, like retrying, fetching, or
+deduplication, rather than layering caches on top of the `Client` with an additional
+API-surface.
 
 For Graphcache this means that it needs to notify the `Client` of any changes to the
 active queries as it updates its cache. For instance, a mutation may update an entity
@@ -547,7 +559,9 @@ query document.
 
 The _exchange_ then only needs to compare the `Set` it gets when it updates the cache
 with the dependencies of active queries. If any queries contains a dependency that has
-been updated, the `Client` is notified that this query has a new update.
+been updated, the `Client` is notified that this query has a new update. In other words,
+the caching logic in Graphcache is completely agnostic to how it's run and could even
+be used for GraphQL clients other than `urql`.
 
 ## Graphcache — More than just a normalised cache
 
@@ -568,10 +582,10 @@ recap:
 - Garbage Collection
 - Data Dependencies for notifying the `Client`
 
-It's easy for me to list out where the implementation of our cache has ended up and
+It's easy for me to list out where Graphcache's implementation has ended up and
 what it does, but there's a long list of reasons, discussions, and failed experiments
-behind each change and feature, we've introduced. It's almost a shame to not mention them since
-each problem related to Graphcache felt like the hardest I'd work on for weeks at a
+behind each change and feature, we've introduced. It's almost a shame to not mention
+them, since each problem we encountered felt like the hardest I'd work on for weeks at a
 time. However, the important takeaway is that we focus on making each of our features
 intuitive, which is best exemplified by the [detailed warnings and
 errors](https://formidable.com/open-source/urql/docs/graphcache/errors/) Graphcache
@@ -581,3 +595,10 @@ more automatic optimisations and mechanisms that ultimately benefit a lot of peo
 
 > "There are two hard problems in Computer Science: We only have one joke and it's not funny."
 > [(Source)](https://twitter.com/pbowden/status/468855097879830528)
+
+---
+
+The [`urql` GraphQL client](https://formidable.com/open-source/urql/docs/) is an Open Source
+project we work on at [Formidable](https://formidable.com/). We're a consultancy — if
+you need help with your next GraphQL or React project,
+[**let's talk!**](https://formidable.com/contact/)

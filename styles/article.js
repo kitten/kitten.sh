@@ -176,6 +176,18 @@ export const table = styled(({ children, ...rest }) => {
   }
 `;
 
+export const hr = styled('hr')`
+  width: 50%;
+  margin: 2.5rem auto 1.5rem auto;
+  border: none;
+  border-top: 2px solid var(--color-active);
+
+  & + p:last-child {
+    color: var(--color-gray-text);
+    font-size: 1.1rem;
+  }
+`;
+
 export const h2 = styled('h2')`
   display: block;
   width: 100%;
