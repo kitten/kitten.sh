@@ -29,6 +29,7 @@ const ImageDescription = styled('span')`
   max-width: 65ch;
   text-align: center;
   font-size: 0.75em;
+  line-height: 2.6ch;
   margin: 1rem auto 1.5rem auto;
   padding: 0 2ch;
   opacity: 0.8;
@@ -70,7 +71,7 @@ export const img = ({ src, alt, width, height, layout, className }) => {
 };
 
 export const p = styled('p')`
-  line-height: 2.5ch;
+  line-height: 2.6ch;
   margin-top: 0.8rem;
   color: inherit;
 
@@ -84,7 +85,7 @@ export const p = styled('p')`
     margin-top: 0.5rem;
   }
 
-  p + &, p + blockquote + & {
+  p + & {
     text-indent: 2ch;
   }
 
@@ -149,7 +150,7 @@ export const table = styled(({ children, ...rest }) => {
   & tr td {
     padding: 0.8rem 1ch;
     border-bottom: 1px solid var(--color-box-background);
-    line-height: 2.5ch;
+    line-height: 2.6ch;
     width: max-content;
   }
 
@@ -193,7 +194,8 @@ export const h2 = styled('h2')`
   width: 100%;
   font-size: 2.2em;
   margin-top: 2.5rem;
-  letter-spacing: -0.4px;
+  letter-spacing: -0.01ch;
+  line-height: 1.7ch;
   color: var(--color-active);
 
   word-break: normal;
@@ -237,6 +239,7 @@ export const h3 = styled(({ className, children, ...rest }) => (
 ))`
   margin: 2.5rem 0 1rem 0;
   font-size: 1.2em;
+  line-height: 2.6ch;
   color: inherit;
 
   ${mobile`
@@ -297,7 +300,6 @@ export const blockquote = styled(props => {
   );
 })`
   color: var(--color-passive);
-  line-height: 0.8;
   font-weight: bold;
   letter-spacing: 0.8px;
   padding: 1.3em 0 1.1em 2ch;
@@ -305,6 +307,7 @@ export const blockquote = styled(props => {
   word-break: normal;
   hyphens: initial;
   hanging-punctuation: initial;
+  letter-spacing: 0.05ch;
 
   &[data-quote] > *:first-child {
     margin-top: 0;
@@ -352,9 +355,14 @@ export const blockquote = styled(props => {
     content: '';
   }
 
-  & > p {
+  &:not([data-quote]) > p {
     margin: 1rem 0;
     line-height: 1.1;
+  }
+
+  &[data-quote] > p {
+    margin: 1rem 0;
+    line-height: 2.1ch;
   }
 `;
 
@@ -409,7 +417,7 @@ export const ol = styled('ol')`
     margin-top: 0.8rem;
     margin-left: 2ch;
     padding-left: 1ch;
-    line-height: 2.5ch;
+    line-height: 2.6ch;
 
     &::marker {
       font-weight: bold;
@@ -432,7 +440,7 @@ export const ul = styled('ul')`
     position: relative;
     padding-left: 3ch;
     margin-top: 0.8rem;
-    line-height: 2.5ch;
+    line-height: 2.6ch;
 
     &:before {
       position: absolute;
@@ -483,6 +491,7 @@ export const code = styled('code')`
   word-break: normal;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  line-height: 1.1;
 
   padding: 0.8rem 2ch;
   margin: -0.8rem -2ch;

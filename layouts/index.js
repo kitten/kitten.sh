@@ -34,6 +34,8 @@ const Content = styled('div')`
   -ms-hyphenate-limit-chars: 7 4 3;
   hyphenate-limit-chars: 7 4 3;
   hanging-punctuation: first;
+  letter-spacing: 0.01ch;
+  line-height: 2.6ch;
 `;
 
 const Sidebar = styled('aside')`

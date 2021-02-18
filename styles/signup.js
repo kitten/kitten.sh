@@ -20,6 +20,10 @@ const Container = styled('aside')`
     margin-top: 0.5rem;
   }
 
+  & p {
+    line-height: 2.6ch;
+  }
+
   ${mobile`
     padding-bottom: 1.5rem;
   `}

@@ -191,6 +191,12 @@ body {
   margin: 0;
 }
 
+@media (max-width: 600px) {
+  body {
+    font-size: 19px;
+  }
+}
+
 a {
   color: var(--color-active);
 }
