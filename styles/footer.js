@@ -76,17 +76,16 @@ const Share = styled('a')`
   display: block;
   line-height: 1.0;
   font-size: 1.1em;
-  font-family: var(--font-heading);
   color: var(--color-active);
   text-decoration: none;
   margin-top: 0.5rem;
   transition: filter 0.3s ease;
   z-index: 1;
 
-  font-weight: var(--text-weight-medium);
+  font-weight: var(--text-weight-bold);
   font-variation-settings:
-    "wght" var(--text-weight-medium)
-    "opsz" var(--text-width-label);
+    "wght" var(--text-weight-bold)
+    "opsz" var(--text-width-headline);
 
   &:before {
     display: inline-block;

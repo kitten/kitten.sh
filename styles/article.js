@@ -75,12 +75,13 @@ export const p = styled('p')`
   margin-top: 0.8rem;
   color: inherit;
 
-  &:first-of-type::first-letter {
+  &:first-of-type:first-letter {
     float: left;
-    font-size: 3em;
+    font-size: 3.4em;
     padding-right: 0.4rem;
     margin-left: -0.07ch;
-    margin-top: 0.5rem;
+    padding-top: 0.09em;
+    margin-bottom: -0.2em;
 
     line-height: 3rem;
     font-weight: var(--text-weight-bold);
@@ -198,7 +199,7 @@ export const h2 = styled('h2')`
   width: 100%;
   font-size: 2.2em;
   margin-top: 2.5rem;
-  letter-spacing: -0.01ch;
+  margin-bottom: 0.8rem;
   line-height: 1.7ch;
   color: var(--color-active);
 
@@ -318,13 +319,10 @@ export const blockquote = styled(props => {
   font-variation-settings:
     "wght" var(--text-weight-bold)
     "opsz" var(--text-width-label);
-  letter-spacing: 0.8px;
   padding: 1.3em 0 1.1em 2ch;
-
   word-break: normal;
   hyphens: initial;
   hanging-punctuation: initial;
-  letter-spacing: 0.05ch;
 
   &[data-quote] > *:first-child {
     margin-top: 0;

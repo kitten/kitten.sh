@@ -122,7 +122,7 @@ const Input = styled('input')`
 const Submit = styled('button')`
   font-family: var(--font-heading);
   font-size: 1.2rem;
-  padding: 0.5em 2ch;
+  padding: 0.5em 1ch;
   border: none;
   border-radius: 100em;
   float: right;

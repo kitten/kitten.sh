@@ -12,6 +12,7 @@ const HeaderWrapper = styled('header')`
 `;
 
 const Title = styled('h1')`
+  font-family: var(--font-heading);
   font-size: 4.5rem;
   padding-top: 1rem;
 
@@ -44,7 +45,7 @@ const HeaderGap = styled('div')`
 
 const Subtitle = styled('h2')`
   font-size: 2.2em;
-  font-style: italic;
+  font-family: var(--font-heading);
   color: var(--color-passive);
   background: var(--color-background);
   margin-top: 1rem;
