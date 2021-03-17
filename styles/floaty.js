@@ -31,7 +31,7 @@ const MoreArticles = styled('a')`
     "opsz" var(--text-width-label);
 
   ${tablet`
-    font-size: 0.8em;
+    font-size: 1em;
   `}
 
   ${desktop`

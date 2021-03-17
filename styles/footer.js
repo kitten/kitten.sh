@@ -106,11 +106,10 @@ const Share = styled('a')`
   `}
 
   ${tablet`
-    font-size: 0.9em;
-  `}
-
-  ${mobile`
-    font-size: 0.8em;
+    font-size: 1em;
+    font-variation-settings:
+      "wght" var(--text-weight-medium),
+      "opsz" var(--text-width-label);
   `}
 `;
 
