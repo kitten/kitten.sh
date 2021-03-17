@@ -22,6 +22,10 @@ const Content = styled('div')`
   width: 100%;
   margin: 2.5rem auto 0.5rem auto;
 
+  font-variation-settings:
+    "wght" var(--text-weight-normal),
+    "opsz" var(--text-width-normal);
+
   text-rendering: optimizeLegibility;
   overflow-wrap: break-word;
   word-wrap: break-word;
@@ -68,7 +72,7 @@ const SidebarNote = styled('small')`
 
   font-weight: var(--text-weight-normal);
   font-variation-settings:
-    "wght" var(--text-weight-normal)
+    "wght" var(--text-weight-normal),
     "opsz" var(--text-width-label);
 `;
 

@@ -84,7 +84,7 @@ const Share = styled('a')`
 
   font-weight: var(--text-weight-bold);
   font-variation-settings:
-    "wght" var(--text-weight-bold)
+    "wght" var(--text-weight-bold),
     "opsz" var(--text-width-headline);
 
   &:before {

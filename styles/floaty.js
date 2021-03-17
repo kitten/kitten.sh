@@ -28,7 +28,7 @@ const MoreArticles = styled('a')`
 
   font-weight: var(--text-weight-medium);
   font-variation-settings:
-    "wght" var(--text-weight-medium)
+    "wght" var(--text-weight-medium),
     "opsz" var(--text-width-label);
 
   ${tablet`

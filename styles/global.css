@@ -46,9 +46,9 @@ html {
   --text-weight-bold: 600;
   --text-weight-bolder: 640;
 
-  --text-width-normal: 20;
-  --text-width-label: 32;
-  --text-width-headline: 40;
+  --text-width-normal: 20.5;
+  --text-width-label: 29;
+  --text-width-headline: 37;
 }
 
 html, [data-theme="light"] {
@@ -182,7 +182,7 @@ body {
   line-height: 1.0;
   font-weight: var(--text-weight-normal);
   font-variation-settings:
-    "wght" var(--text-weight-normal)
+    "wght" var(--text-weight-normal),
     "opsz" var(--text-width-normal);
   font-style: normal;
   font-size: 21px;
@@ -204,9 +204,10 @@ a {
 }
 
 h2, h3 {
+  font-family: var(--font-body);
   font-weight: var(--text-weight-bold);
   font-variation-settings:
-    "wght" var(--text-weight-bold)
+    "wght" var(--text-weight-bold),
     "opsz" var(--text-width-headline);
   line-height: 0.9;
 }
@@ -222,8 +223,12 @@ code, pre {
 b, strong {
   font-weight: var(--text-weight-bold);
   font-variation-settings:
-    "wght" var(--text-weight-bold)
+    "wght" var(--text-weight-bold),
     "opsz" var(--text-width-normal);
+}
+
+div, article, section, aside, p, a, i, em {
+  font-variation-settings: inherit;
 }
 
 h1, h2, h3, h4, h5, h6, dl, dd, ol, ul, menu, figure, blockquote, p, pre, form {

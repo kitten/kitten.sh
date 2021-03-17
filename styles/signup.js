@@ -42,7 +42,7 @@ const Wrapper = styled('div')`
   > p {
     font-weight: var(--text-weight-medium);
     font-variation-settings:
-      "wght" var(--text-weight-medium)
+      "wght" var(--text-weight-medium),
       "opsz" var(--text-width-label);
   }
 
@@ -70,7 +70,7 @@ const Label = styled('label')`
 
   font-weight: var(--text-weight-bold);
   font-variation-settings:
-    "wght" var(--text-weight-bold)
+    "wght" var(--text-weight-bold),
     "opsz" var(--text-width-label);
 `;
 
@@ -134,7 +134,7 @@ const Submit = styled('button')`
 
   font-weight: var(--text-weight-medium);
   font-variation-settings:
-    "wght" var(--text-weight-medium)
+    "wght" var(--text-weight-medium),
     "opsz" var(--text-width-label);
 
   transition:
