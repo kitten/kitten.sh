@@ -82,7 +82,6 @@ const Share = styled('a')`
   transition: filter 0.3s ease;
   z-index: 1;
 
-  font-weight: var(--text-weight-bold);
   font-variation-settings:
     "wght" var(--text-weight-bold),
     "opsz" var(--text-width-headline);

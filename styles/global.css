@@ -171,6 +171,11 @@ html, [data-theme="light"] {
     inset 0.2em 0.2em 0.3em 0 #0003;
 }
 
+* {
+  font-weight: unset;
+  font-variation-settings: inherit;
+}
+
 *:focus:not(:focus-visible) {
   outline: none;
 }
@@ -180,7 +185,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
   font-family: var(--font-body);
   line-height: 1.0;
-  font-weight: var(--text-weight-normal);
   font-variation-settings:
     "wght" var(--text-weight-normal),
     "opsz" var(--text-width-normal);
@@ -205,7 +209,6 @@ a {
 
 h2, h3 {
   font-family: var(--font-body);
-  font-weight: var(--text-weight-bold);
   font-variation-settings:
     "wght" var(--text-weight-bold),
     "opsz" var(--text-width-headline);
@@ -221,14 +224,10 @@ code, pre {
 }
 
 b, strong {
-  font-weight: var(--text-weight-bold);
+  letter-spacing: 0;
   font-variation-settings:
     "wght" var(--text-weight-bold),
     "opsz" var(--text-width-normal);
-}
-
-div, article, section, aside, p, a, i, em {
-  font-variation-settings: inherit;
 }
 
 h1, h2, h3, h4, h5, h6, dl, dd, ol, ul, menu, figure, blockquote, p, pre, form {

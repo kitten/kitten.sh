@@ -18,6 +18,7 @@ const Logo = styled('img')`
 `;
 
 const PostsHeading = styled('h1')`
+  font-family: var(--font-heading);
   text-transform: capitalize;
   font-size: 4.5rem;
   padding: 3rem 0 1.5rem 0;
@@ -77,6 +78,7 @@ const PostLink = styled('a')`
 
 const Title = styled('h2')`
   display: inline;
+  font-family: var(--font-heading);
   font-size: 2.2rem;
   line-height: 1.2;
   color: var(--color-text);
