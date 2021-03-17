@@ -22,6 +22,10 @@ const Content = styled('div')`
   width: 100%;
   margin: 2.5rem auto 0.5rem auto;
 
+  font-variation-settings:
+    "wght" var(--text-weight-normal),
+    "opsz" var(--text-width-normal);
+
   text-rendering: optimizeLegibility;
   overflow-wrap: break-word;
   word-wrap: break-word;
@@ -34,7 +38,6 @@ const Content = styled('div')`
   -ms-hyphenate-limit-chars: 7 4 3;
   hyphenate-limit-chars: 7 4 3;
   hanging-punctuation: first;
-  letter-spacing: 0.01ch;
   line-height: 2.6ch;
 `;
 
@@ -65,6 +68,9 @@ const SidebarNote = styled('small')`
   color: var(--color-gray-text);
   font-size: 1.1rem;
   line-height: 1.0;
+  font-variation-settings:
+    "wght" var(--text-weight-normal),
+    "opsz" var(--text-width-label);
 `;
 
 const Handle = styled(components.a)`

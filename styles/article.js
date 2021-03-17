@@ -28,11 +28,15 @@ const ImageDescription = styled('span')`
   color: var(--color-gray-text);
   max-width: 65ch;
   text-align: center;
-  font-size: 0.75em;
-  line-height: 2.6ch;
+  font-size: 0.8em;
+  line-height: 2.4ch;
   margin: 1rem auto 1.5rem auto;
   padding: 0 2ch;
   opacity: 0.8;
+
+  font-variation-settings:
+    "wght" var(--text-weight-normal),
+    "opsz" var(--text-width-wide);
 
   ${mobile`
     text-align: left;
@@ -75,14 +79,18 @@ export const p = styled('p')`
   margin-top: 0.8rem;
   color: inherit;
 
-  &:first-of-type::first-letter {
+  &:first-of-type:first-letter {
     float: left;
-    font-size: 3em;
-    font-weight: bold;
+    font-size: 3.4em;
     padding-right: 0.4rem;
-    line-height: 3rem;
     margin-left: -0.07ch;
-    margin-top: 0.5rem;
+    padding-top: 0.09em;
+    margin-bottom: -0.2em;
+
+    line-height: 3rem;
+    font-variation-settings:
+      "wght" var(--text-weight-bold),
+      "opsz" var(--text-width-normal);
   }
 
   p + & {
@@ -194,12 +202,16 @@ export const h2 = styled('h2')`
   width: 100%;
   font-size: 2.2em;
   margin-top: 2.5rem;
-  letter-spacing: -0.01ch;
+  margin-bottom: 0.8rem;
   line-height: 1.7ch;
   color: var(--color-active);
 
   word-break: normal;
   hyphens: initial;
+
+  font-variation-settings:
+    "wght" var(--text-weight-bold),
+    "opsz" var(--text-width-headline);
 
   ${mobile`
     font-size: 2em;
@@ -241,10 +253,9 @@ export const h3 = styled(({ className, children, ...rest }) => (
   font-size: 1.2em;
   line-height: 2.6ch;
   color: inherit;
-
-  ${mobile`
-    font-size: 1.2em;
-  `}
+  font-variation-settings:
+    "wght" var(--text-weight-bold),
+    "opsz" var(--text-width-headline);
 `;
 
 export const inlineCode = styled(props => (
@@ -300,14 +311,14 @@ export const blockquote = styled(props => {
   );
 })`
   color: var(--color-passive);
-  font-weight: bold;
-  letter-spacing: 0.8px;
-  padding: 1.3em 0 1.1em 2ch;
-
+  font-variation-settings:
+    "wght" var(--text-weight-bold),
+    "opsz" var(--text-width-label);
+  padding: 1.3em 0 0.7em 2ch;
   word-break: normal;
   hyphens: initial;
   hanging-punctuation: initial;
-  letter-spacing: 0.05ch;
+  font-size: 1.2em;
 
   &[data-quote] > *:first-child {
     margin-top: 0;
@@ -321,7 +332,6 @@ export const blockquote = styled(props => {
 
   ${notMobile`
     &:not([data-quote]) {
-      font-size: 1.2em;
       float: right;
       max-width: 70%;
       margin-right: calc(-0.5 * (1200px - 65ch + 10ch));
@@ -373,7 +383,7 @@ export const a = styled(props => {
 })`
   color: var(--color-active);
   text-decoration: none;
-  background-size: 100% 1.4px;
+  background-size: 100% 0.09ch;
   background-repeat: no-repeat;
   background-position: 0 1em;
 
@@ -420,7 +430,9 @@ export const ol = styled('ol')`
     line-height: 2.6ch;
 
     &::marker {
-      font-weight: bold;
+      font-variation-settings:
+        "wght" var(--text-weight-bold),
+        "opsz" var(--text-width-normal);
       color: var(--color-active);
     }
   }
