@@ -27,6 +27,11 @@ const MoreArticles = styled('a')`
   transition: filter 0.3s ease;
   padding-left: 3ch;
 
+  font-weight: var(--text-weight-medium);
+  font-variation-settings:
+    "wght" var(--text-weight-medium)
+    "opsz" var(--text-width-label);
+
   ${tablet`
     font-size: 0.8em;
   `}

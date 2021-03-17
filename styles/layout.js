@@ -44,6 +44,7 @@ const HeaderGap = styled('div')`
 
 const Subtitle = styled('h2')`
   font-size: 2.2em;
+  font-style: italic;
   color: var(--color-passive);
   background: var(--color-background);
   margin-top: 1rem;

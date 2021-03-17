@@ -83,6 +83,11 @@ const Share = styled('a')`
   transition: filter 0.3s ease;
   z-index: 1;
 
+  font-weight: var(--text-weight-medium);
+  font-variation-settings:
+    "wght" var(--text-weight-medium)
+    "opsz" var(--text-width-label);
+
   &:before {
     display: inline-block;
     width: 1em;

@@ -65,6 +65,11 @@ const SidebarNote = styled('small')`
   color: var(--color-gray-text);
   font-size: 1.1rem;
   line-height: 1.0;
+
+  font-weight: var(--text-weight-normal);
+  font-variation-settings:
+    "wght" var(--text-weight-normal)
+    "opsz" var(--text-width-label);
 `;
 
 const Handle = styled(components.a)`

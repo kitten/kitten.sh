@@ -1,32 +1,14 @@
 @font-face {
-  font-family: 'hd';
-  src: url('../assets/hd.woff2') format('woff2');
-  font-weight: bold;
+  font-family: 'Sharf';
+  src: url('../assets/sharf-regular.woff2') format('woff2');
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'bd';
-  src: url('../assets/bd-regular.woff2') format('woff2');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'bd';
-  src: url('../assets/bd-italic.woff2') format('woff2');
-  font-weight: normal;
+  font-family: 'Sharf';
+  src: url('../assets/sharf-italic.woff2') format('woff2');
   font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'bd';
-  src: url('../assets/bd-bold.woff2') format('woff2');
-  font-weight: bold;
-  font-style: normal;
   font-display: swap;
 }
 
@@ -47,9 +29,18 @@
 }
 
 html {
-  --font-heading: hd, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, 'Helvetica Neue', sans-serif;
-  --font-body: bd, 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+  --font-heading: 'Sharf', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, 'Helvetica Neue', sans-serif;
+  --font-body: 'Sharf', 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
   --font-code: 'Dank Mono', 'Fira Code', 'Fira Mono', monospace;
+
+  --text-weight-normal: 400;
+  --text-weight-medium: 500;
+  --text-weight-bold: 600;
+  --text-weight-bolder: 640;
+
+  --text-width-normal: 20;
+  --text-width-label: 32;
+  --text-width-headline: 40;
 }
 
 html, [data-theme="light"] {
@@ -181,7 +172,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
   font-family: var(--font-body);
   line-height: 1.0;
-  font-weight: normal;
+  font-weight: var(--text-weight-normal);
+  font-variation-settings:
+    "wght" var(--text-weight-normal)
+    "opsz" var(--text-width-normal);
   font-style: normal;
   font-size: 21px;
   width: 100vw;
@@ -203,8 +197,18 @@ a {
 
 h1, h2, h3 {
   font-family: var(--font-heading);
-  font-weight: bold;
+  font-weight: var(--text-weight-bold);
+  font-variation-settings:
+    "wght" var(--text-weight-bold)
+    "opsz" var(--text-width-headline);
   line-height: 0.9;
+}
+
+h1 {
+  font-weight: var(--text-weight-bolder);
+  font-variation-settings:
+    "wght" var(--text-weight-bolder)
+    "opsz" var(--text-width-headline);
 }
 
 code, pre, sup, sub {
@@ -216,10 +220,12 @@ code, pre {
 }
 
 b, strong {
-  font-weight: bold;
+  font-weight: var(--text-weight-bold);
+  font-variation-settings: "wght" var(--text-weight-bold);
 }
 
 h1, h2, h3, h4, h5, h6, dl, dd, ol, ul, menu, figure, blockquote, p, pre, form {
+  font-variation-settings: inherit;
   margin: 0;
   padding: 0;
 }

@@ -39,6 +39,13 @@ const Wrapper = styled('div')`
   grid-gap: 2ch;
   place-items: end;
 
+  > p {
+    font-weight: var(--text-weight-medium);
+    font-variation-settings:
+      "wght" var(--text-weight-medium)
+      "opsz" var(--text-width-label);
+  }
+
   ${mobile`
     grid-template-columns: 1fr;
     grid-template-rows: 1fr 1fr;
@@ -56,10 +63,15 @@ const Form = styled('form')`
 `;
 
 const Label = styled('label')`
-  font-size: 0.8rem;
+  font-size: 1rem;
   text-transform: uppercase;
   font-family: var(--font-heading);
   color: var(--color-active);
+
+  font-weight: var(--text-weight-bold);
+  font-variation-settings:
+    "wght" var(--text-weight-bold)
+    "opsz" var(--text-width-label);
 `;
 
 const Input = styled('input')`
@@ -110,7 +122,7 @@ const Input = styled('input')`
 const Submit = styled('button')`
   font-family: var(--font-heading);
   font-size: 1.2rem;
-  padding: 0.5em 1ch;
+  padding: 0.5em 2ch;
   border: none;
   border-radius: 100em;
   float: right;
@@ -119,6 +131,11 @@ const Submit = styled('button')`
   background-color: inherit;
   margin: 0.7rem -0.5ch 0 auto;
   cursor: pointer;
+
+  font-weight: var(--text-weight-medium);
+  font-variation-settings:
+    "wght" var(--text-weight-medium)
+    "opsz" var(--text-width-label);
 
   transition:
     opacity 0.15s ease-out,

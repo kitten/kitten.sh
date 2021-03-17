@@ -78,11 +78,15 @@ export const p = styled('p')`
   &:first-of-type::first-letter {
     float: left;
     font-size: 3em;
-    font-weight: bold;
     padding-right: 0.4rem;
-    line-height: 3rem;
     margin-left: -0.07ch;
     margin-top: 0.5rem;
+
+    line-height: 3rem;
+    font-weight: var(--text-weight-bold);
+    font-variation-settings:
+      "wght" var(--text-weight-bold)
+      "opsz" var(--text-width-normal);
   }
 
   p + & {
@@ -201,6 +205,11 @@ export const h2 = styled('h2')`
   word-break: normal;
   hyphens: initial;
 
+  font-weight: var(--text-weight-bold);
+  font-variation-settings:
+    "wght" var(--text-weight-bold)
+    "opsz" var(--text-width-headline);
+
   ${mobile`
     font-size: 2em;
   `}
@@ -241,6 +250,11 @@ export const h3 = styled(({ className, children, ...rest }) => (
   font-size: 1.2em;
   line-height: 2.6ch;
   color: inherit;
+
+  font-weight: var(--text-weight-bold);
+  font-variation-settings:
+    "wght" var(--text-weight-bold)
+    "opsz" var(--text-width-headline);
 
   ${mobile`
     font-size: 1.2em;
@@ -300,7 +314,10 @@ export const blockquote = styled(props => {
   );
 })`
   color: var(--color-passive);
-  font-weight: bold;
+  font-weight: var(--text-weight-bold);
+  font-variation-settings:
+    "wght" var(--text-weight-bold)
+    "opsz" var(--text-width-label);
   letter-spacing: 0.8px;
   padding: 1.3em 0 1.1em 2ch;
 
@@ -420,7 +437,10 @@ export const ol = styled('ol')`
     line-height: 2.6ch;
 
     &::marker {
-      font-weight: bold;
+      font-weight: var(--text-weight-bold);
+      font-variation-settings:
+        "wght" var(--text-weight-bold)
+        "opsz" var(--text-width-normal);
       color: var(--color-active);
     }
   }
