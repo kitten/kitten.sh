@@ -20,12 +20,16 @@ const Title = styled('h1')`
     display: inline;
     position: relative;
     z-index: 1;
+
+    background-color: transparent;
     background-image: linear-gradient(
       to bottom,
       transparent,
-      transparent 30%,
-      var(--color-background) 30%,
-      var(--color-background)
+      transparent 31%,
+      var(--color-background) 31%,
+      var(--color-background) 96%,
+      transparent 96%,
+      transparent 100%
     );
   `}
 
@@ -47,14 +51,23 @@ const Subtitle = styled('h2')`
   font-size: 2.2em;
   font-family: var(--font-heading);
   color: var(--color-passive);
-  background: var(--color-background);
-  margin-top: 1rem;
-  z-index: 1;
+  padding-top: 1rem;
+
+  background-color: transparent;
+  background-image: linear-gradient(
+    to bottom,
+    transparent,
+    transparent 31%,
+    var(--color-background) 31%,
+    var(--color-background) 96%,
+    transparent 96%,
+    transparent 100%
+  );
 
   ${tablet`
     display: inline;
+    position relative;
     line-height: 1.2em;
-    position: relative;
     z-index: 1;
   `}
 

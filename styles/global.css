@@ -1,6 +1,6 @@
 @font-face {
-  font-family: 'Phantom Sans';
-  src: url('../assets/phantom-medium.woff2') format('woff2');
+  font-family: 'Name Sans';
+  src: url('../assets/name-sans-heading-semibold.woff2') format('woff2');
   font-weight: bold;
   font-style: normal;
   font-display: swap;
@@ -37,7 +37,7 @@
 }
 
 html {
-  --font-heading: 'Phantom Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, 'Helvetica Neue', sans-serif;
+  --font-heading: 'Name Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, 'Helvetica Neue', sans-serif;
   --font-body: 'Sharf', 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
   --font-code: 'Dank Mono', 'Fira Code', 'Fira Mono', monospace;
 

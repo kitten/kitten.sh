@@ -85,7 +85,7 @@ const Title = styled('h2')`
 
   text-decoration: none;
   background-color: var(--color-background);
-  background-size: 100% 1.6px;
+  background-size: 100% 2px;
   background-repeat: no-repeat;
   background-position: 0 100%;
 

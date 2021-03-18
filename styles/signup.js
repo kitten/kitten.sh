@@ -62,14 +62,10 @@ const Form = styled('form')`
 `;
 
 const Label = styled('label')`
-  font-size: 1rem;
+  font-size: 0.8rem;
   text-transform: uppercase;
   font-family: var(--font-heading);
   color: var(--color-active);
-
-  font-variation-settings:
-    "wght" var(--text-weight-bold),
-    "opsz" var(--text-width-label);
 `;
 
 const Input = styled('input')`
@@ -118,9 +114,9 @@ const Input = styled('input')`
 `;
 
 const Submit = styled('button')`
-  font-family: var(--font-heading);
+  font-family: var(--font-body);
   font-size: 1.2rem;
-  padding: 0.5em 1ch;
+  padding: 0.5em 2ch;
   border: none;
   border-radius: 100em;
   float: right;
@@ -131,8 +127,8 @@ const Submit = styled('button')`
   cursor: pointer;
 
   font-variation-settings:
-    "wght" var(--text-weight-medium),
-    "opsz" var(--text-width-label);
+    "wght" var(--text-weight-bold),
+    "opsz" var(--text-width-wide);
 
   transition:
     opacity 0.15s ease-out,
