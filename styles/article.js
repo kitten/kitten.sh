@@ -170,8 +170,11 @@ export const table = styled(({ children, ...rest }) => {
 
     word-break: normal;
     hyphens: initial;
-    font-family: var(--font-heading);
     text-align: left;
+
+    font-variation-settings:
+      "wght" var(--text-weight-bold),
+      "opsz" var(--text-width-wide);
 
     &:first-child {
       border-left: 1px solid var(--color-box-background);
