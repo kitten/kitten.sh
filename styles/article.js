@@ -314,7 +314,7 @@ export const blockquote = styled(props => {
   font-variation-settings:
     "wght" var(--text-weight-bold),
     "opsz" var(--text-width-label);
-  padding: 1.3em 0 0.7em 2ch;
+  padding: 1.3em 0 0.5em 2ch;
   word-break: normal;
   hyphens: initial;
   hanging-punctuation: initial;
@@ -326,7 +326,7 @@ export const blockquote = styled(props => {
 
   ${desktop`
     &[data-quote] {
-      padding: 0.8em 0 0 2ch;
+      padding: 0.8em 0 0.2em 2ch;
     }
   `}
 
