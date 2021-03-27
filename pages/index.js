@@ -35,16 +35,8 @@ const PostList = styled('ul')`
   margin: 2.5rem auto 1.5rem auto;
 
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr));
   grid-gap: 3rem;
-
-  ${tablet`
-    grid-template-columns: 1fr 1fr;
-  `}
-
-  ${mobile`
-    grid-template-columns: 1fr;
-  `}
 `;
 
 const Post = styled('li')`
