@@ -81,22 +81,24 @@ const Cover = styled('div')`
   background-size: cover;
   background-position: center;
   border-radius: 50%;
-  width: 17rem;
-  height: 17rem;
-  margin-left: 1rem;
-  margin-bottom: -1rem;
+  width: 19rem;
+  height: 19rem;
   font-size: 2rem;
   float: right;
   z-index: 0;
   opacity: 0.8;
-
   box-shadow: var(--shadow);
+  margin-left: 2rem;
+  margin-right: -1rem;
+  shape-outside: circle(50%);
 
   ${tablet`
     position: absolute;
     right: -8rem;
     bottom: 1rem;
     float: unset;
+    margin-left: 0;
+    margin-right: 0;
   `}
 
   ${mobile`
