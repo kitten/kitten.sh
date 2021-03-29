@@ -117,7 +117,7 @@ export const Header = ({ className, page, children }) => (
     {page.cover && <Cover src={page.cover} />}
     {page.title && <Title>{page.title}</Title>}
     {page.title && page.subtitle ? <HeaderGap /> : null}
-    {page.subtitle && (
+    {page.subtitle && page.subtitle.length <= 70 && (
       <Subtitle>
         {!/[.?!]\s*$/i.test(page.subtitle)
           ? `${page.subtitle.trim()}.`
@@ -127,6 +127,28 @@ export const Header = ({ className, page, children }) => (
     )}
   </HeaderWrapper>
 );
+
+const IntroductionWrapper = styled('section')`
+  margin-bottom: 1.5rem;
+`;
+
+const InlineSubtitle = styled('p')`
+  font-size: 1.4em;
+  color: var(--color-passive);
+  font-variation-settings:
+    "wght" var(--text-weight-bold),
+    "opsz" var(--text-width-headline);
+`;
+
+export const Introduction = ({ page }) => {
+  if (page.subtitle.length <= 70) return null;
+
+  return (
+    <IntroductionWrapper>
+      <InlineSubtitle>{page.subtitle}</InlineSubtitle>
+    </IntroductionWrapper>
+  );
+};
 
 export const Avatar = styled('img')`
   display: inline-block;

@@ -5,7 +5,7 @@ import { styled } from 'goober';
 
 import { sizes, tablet } from '../styles/theme';
 import { toDateString, getPath, getAbsoluteURL, getCoverURL } from '../styles/util';
-import { Header, Avatar } from '../styles/layout';
+import { Introduction, Header, Avatar } from '../styles/layout';
 import { InfoOverlay } from '../styles/overlay';
 import Floaty from '../styles/floaty';
 import Footer from '../styles/footer';
@@ -66,11 +66,15 @@ const SidebarNote = styled('small')`
   display: block;
   margin-bottom: 0.3rem;
   color: var(--color-gray-text);
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   line-height: 1.0;
   font-variation-settings:
     "wght" var(--text-weight-normal),
     "opsz" var(--text-width-label);
+
+  ${tablet`
+    font-size: 1.1rem;
+  `}
 `;
 
 const Handle = styled(components.a)`
@@ -80,6 +84,7 @@ const Handle = styled(components.a)`
 
 const Layout = ({ children, frontMatter }) => {
   const coverURL = getCoverURL(frontMatter);
+  const subtitle = frontMatter.subtitle;
 
   return (
     <>
@@ -138,6 +143,7 @@ const Layout = ({ children, frontMatter }) => {
         </Sidebar>
 
         <Content>
+          <Introduction page={frontMatter} />
           <MDXProvider components={components}>
             {children}
           </MDXProvider>
