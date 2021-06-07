@@ -41,12 +41,14 @@ const Cover = ({ page }) => (
     </Head>
     <Wrapper>
       <HeaderBox page={page}>
-        <AuthorBar>
-          <Avatar src={page.published.avatar} alt="" />
-          <Handle>
-            @{page.published.handle}
-          </Handle>
-        </AuthorBar>
+        {page.authors.map(author => (
+          <AuthorBar>
+            <Avatar src={author.avatar} alt="" />
+            <Handle>
+              @{author.handle}
+            </Handle>
+          </AuthorBar>
+        ))}
       </HeaderBox>
     </Wrapper>
   </>

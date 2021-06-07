@@ -82,6 +82,11 @@ const Handle = styled(components.a)`
   font-style: italic;
 `;
 
+const Canonical = styled(components.a)`
+  font-size: 1.2rem;
+  background-size: 100% 0;
+`;
+
 const Layout = ({ children, frontMatter }) => {
   const coverURL = getCoverURL(frontMatter);
   const subtitle = frontMatter.subtitle;
@@ -97,8 +102,8 @@ const Layout = ({ children, frontMatter }) => {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:image" content={coverURL} />
         <meta name="twitter:title" content={frontMatter.title} />
-        {frontMatter.published && frontMatter.published.handle ? (
-          <meta name="twitter:creator" content={frontMatter.published.handle} />
+        {frontMatter.authors[0].handle ? (
+          <meta name="twitter:creator" content={frontMatter.authors[0].handle} />
         ) : null}
         {frontMatter.excerpt ? (
           <meta name="description" content={frontMatter.excerpt} />
@@ -106,7 +111,10 @@ const Layout = ({ children, frontMatter }) => {
         {frontMatter.excerpt ? (
           <meta name="og:description" content={frontMatter.excerpt} />
         ) : null}
-        <link rel="canonical" href={frontMatter.canonical || getAbsoluteURL(getPath(frontMatter))} />
+        <link
+          rel="canonical"
+          href={frontMatter.canonical ? frontMatter.canonical.link : getAbsoluteURL(getPath(frontMatter))}
+        />
       </Head>
 
       {!frontMatter.published || !frontMatter.published.live ? (
@@ -125,21 +133,36 @@ const Layout = ({ children, frontMatter }) => {
             {frontMatter.published && frontMatter.published.date ? (
               <div>{toDateString(frontMatter.published.date)}</div>
             ) : null}
-            {frontMatter.published && frontMatter.published.handle ? (
-              <div>
-                {'by '}
+            {'by '}
+            {frontMatter.authors.map((author, i, arr) => (
+              <>
+                {i > 0 && i === arr.length - 1 ? ' & ' : null}
                 <Handle
                   rel="noopener noreferrer"
                   target="_blank"
-                  href={`https://twitter.com/${frontMatter.published.handle || ''}`}
+                  href={author.link}
                 >
-                  @{frontMatter.published.handle}
+                  @{author.handle}
                 </Handle>
-              </div>
-            ) : null}
+              </>
+            ))}
           </SidebarNote>
 
-          <Avatar src={frontMatter.published.avatar} alt="" />
+          {frontMatter.authors.map(author => (
+            <Avatar src={author.avatar} alt="" />
+          ))}
+
+          {frontMatter.canonical ? (
+            <SidebarNote>
+              <Canonical
+                rel="noopener noeferrer"
+                target="_blank"
+                href={frontMatter.canonical.link}
+              >
+                {`Originally published on ${frontMatter.canonical.name}`}
+              </Canonical>
+            </SidebarNote>
+          ) : null}
         </Sidebar>
 
         <Content>

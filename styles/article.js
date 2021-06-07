@@ -464,7 +464,7 @@ export const ul = styled('ul')`
       display: block;
       content: '';
       width: 2ch;
-      height: 1em;
+      height: 2.6ch;
       background-size: contain;
       background-position: 0 50%;
       background-repeat: no-repeat;

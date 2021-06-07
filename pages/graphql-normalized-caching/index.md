@@ -9,8 +9,10 @@ excerpt: >-
 published:
   live: true
   date: 2020-11-30
-  handle: '_philpl'
-  avatar: /avatars/phil.png
+authors:
+  - handle: '_philpl'
+    link: https://twitter.com/_philpl
+    avatar: /avatars/phil.png
 ---
 
 When I see essays on why to build new apps with [GraphQL](https://graphql.org/), most of them

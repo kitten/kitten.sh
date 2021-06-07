@@ -138,6 +138,8 @@ const InlineSubtitle = styled('p')`
   font-variation-settings:
     "wght" var(--text-weight-bold),
     "opsz" var(--text-width-headline);
+  word-break: normal;
+  hyphens: initial;
 `;
 
 export const Introduction = ({ page }) => {
@@ -157,5 +159,5 @@ export const Avatar = styled('img')`
   object-fit: cover;
   border-radius: 50%;
   border: 2px solid var(--color-active);
-  margin: 0.6rem 0;
+  margin: 0.6rem 0.6rem 0.6rem 0;
 `;

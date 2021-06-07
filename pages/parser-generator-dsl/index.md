@@ -9,8 +9,10 @@ excerpt: >-
 published:
   live: true
   date: 2020-11-25
-  handle: '_philpl'
-  avatar: /avatars/phil.png
+authors:
+  - handle: '_philpl'
+    link: https://twitter.com/_philpl
+    avatar: /avatars/phil.png
 ---
 
 Ever since I started working on _styled-components_ I've been fascinated by parsers. Writing a plugin for
