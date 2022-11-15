@@ -24,6 +24,7 @@ export default class MyDocument extends Document {
             id="_goober"
             dangerouslySetInnerHTML={{ __html: `${this.props.css}` }}
           />
+          <link rel="me" href="https://toot.cafe/@philpl" />
         </Head>
         <body>
           <Main />
