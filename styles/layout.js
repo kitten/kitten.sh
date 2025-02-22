@@ -14,6 +14,8 @@ const HeaderWrapper = styled('header')`
 const Title = styled('h1')`
   font-size: 4.5rem;
   padding-top: 1rem;
+  text-shadow: 0.1ch 0.1ch 0 var(--color-passive);
+  opacity: 0.96;
 
   ${tablet`
     display: inline;

@@ -71,22 +71,22 @@ export const img = ({ src, alt, width, height, layout, className }) => {
 };
 
 export const p = styled('p')`
-  line-height: 2.6ch;
+  line-height: calc(1cap + 0.833ch);
   margin-top: 0.8rem;
   color: inherit;
 
   &:first-of-type::first-letter {
     float: left;
-    font-size: 3em;
+    font-size: 3.38cap;
     font-weight: bold;
-    padding-right: 0.4rem;
-    line-height: 3rem;
+    padding-right: 0.15ch;
     margin-left: -0.07ch;
     margin-top: 0.5rem;
+    color: var(--color-pop);
   }
 
   p + & {
-    text-indent: 2ch;
+    text-indent: 1.5ch;
   }
 
   & > * {
@@ -252,20 +252,20 @@ export const inlineCode = styled(props => (
     {props.children === '\\|' ? '|' : props.children}
   </code>
 ))`
+  font-family: 'hd';
   position: relative;
   display: inline-block;
   font-size: 0.9em;
-  padding: 1px 0.5ch;
-  margin: -1px 0;
-  color: var(--color-text);
-  opacity: 0.8;
+  padding: 0.033ch 0.33ch;
+  margin: -1px -0.33ch;
+  color: white;
 
   word-break: normal;
   hyphens: initial;
   hanging-punctuation: initial;
 
   &:before {
-    opacity: 0.34;
+    opacity: 0.15;
     position: absolute;
     display: block;
     content: '';
@@ -273,8 +273,7 @@ export const inlineCode = styled(props => (
     right: 2px;
     bottom: 3px;
     left: 2px;
-    background: var(--color-box-background);
-    border-radius: 4px;
+    background: var(--color-passive);
     pointer-events: none;
   }
 `;
@@ -302,7 +301,7 @@ export const blockquote = styled(props => {
   color: var(--color-passive);
   font-weight: bold;
   letter-spacing: 0.8px;
-  padding: 1.3em 0 1.1em 2ch;
+  padding: 1.3em 2ch 1.1em 2ch;
 
   word-break: normal;
   hyphens: initial;
@@ -324,8 +323,8 @@ export const blockquote = styled(props => {
       font-size: 1.2em;
       float: right;
       max-width: 70%;
-      margin-right: calc(-0.5 * (1200px - 65ch + 10ch));
-      padding: 1.5rem 0 1rem 2ch;
+      margin-right: calc(-0.5 * (1200px - 45ch + 10ch));
+      padding: 1.5rem 2ch 1rem 2ch;
       shape-outside: padding-box;
       margin-top: 0;
     }
@@ -334,8 +333,8 @@ export const blockquote = styled(props => {
   ${tablet`
     &:not([data-quote]) {
       max-width: 50%;
-      margin-right: calc(-0.5 * (100vw - 65ch + 10ch));
-      padding-right: 1ch;
+      margin-right: calc(-0.5 * (100vw - 45ch + 10ch));
+      padding-right: 2ch;
     }
   `}
 
@@ -396,9 +395,9 @@ export const a = styled(props => {
 
   @media (hover: hover) {
     &:hover {
-      background-size: 100% 1.1em;
-      background-position: 0 0.1em;
-      color: white;
+      background-size: 100% calc(1cap + 0.833ch);
+      background-position: 0 -0.1ch;
+      color: var(--color-background);
     }
   }
 `;
@@ -484,14 +483,14 @@ export const code = styled('code')`
 
   display: block;
   color: var(--color-prism-fg);
-  background-color: var(--color-prism-bg);
 
   white-space: pre;
   word-wrap: normal;
   word-break: normal;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  line-height: 1.1;
+  scroll-snap-type: x mandatory;
+  line-height: 1.2;
 
   padding: 0.8rem 2ch;
   margin: -0.8rem -2ch;

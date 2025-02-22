@@ -123,7 +123,6 @@ const Note = styled('small')`
 
 const Handle = styled('span')`
   color: var(--color-active);
-  font-style: italic;
 `;
 
 const Excerpt = styled('p')`

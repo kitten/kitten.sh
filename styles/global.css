@@ -1,14 +1,7 @@
 @font-face {
   font-family: 'hd';
-  src: url('../assets/hd.woff2') format('woff2');
-  font-weight: bold;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'bd';
-  src: url('../assets/bd-regular.woff2') format('woff2');
+  src: url('../assets/188_Pixel-100.woff2') format('woff2');
+  font-synthesis: weight style small-caps;
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -16,23 +9,8 @@
 
 @font-face {
   font-family: 'bd';
-  src: url('../assets/bd-italic.woff2') format('woff2');
-  font-weight: normal;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'bd';
-  src: url('../assets/bd-bold.woff2') format('woff2');
-  font-weight: bold;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Dank Mono';
-  src: url('../assets/dank-regular.woff2') format('woff2');
+  src: url('../assets/188_Pixel-70.woff2') format('woff2');
+  font-synthesis: weight style small-caps;
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -40,9 +18,10 @@
 
 @font-face {
   font-family: 'Dank Mono';
-  src: url('../assets/dank-italic.woff2') format('woff2');
+  src: url('../assets/dm-regular.woff2') format('woff2');
+  font-synthesis: weight style;
   font-weight: normal;
-  font-style: italic;
+  font-style: normal;
   font-display: swap;
 }
 
@@ -60,6 +39,7 @@ html, [data-theme="light"] {
   --color-box-background: #d0d1d2;
   --color-passive: #7e736c;
   --color-active: #e972b5;
+  --color-pop: #d54f8d;
 
   --color-prism-bg: #fbfbfb;
   --color-prism-fg: #403f53;
@@ -93,14 +73,14 @@ html, [data-theme="light"] {
 }
 
 @media screen and (prefers-color-scheme: dark) { html {
-  --color-text: #eceff1;
+  --color-text: #d3d5cb;
   --color-invert: #e3e7ee;
   --color-gray-text: #cacfd3;
   --color-gray-background: #272b33;
-  --color-background: #14161a;
-  --color-box-background: #4b506b;
-  --color-passive: #7e736c;
-  --color-active: #e972b5;
+  --color-background: #16170D;
+  --color-box-background: #110c0c;
+  --color-passive: #867a72;
+  --color-active: #51ffb5;
 
   --color-prism-bg: #09121a;
   --color-prism-fg: #d6deeb;
@@ -133,14 +113,14 @@ html, [data-theme="light"] {
 }}
 
 [data-theme="dark"] {
-  --color-text: #eceff1;
+  --color-text: #d3d5cb;
   --color-invert: #e3e7ee;
   --color-gray-text: #cacfd3;
   --color-gray-background: #272b33;
-  --color-background: #14161a;
-  --color-box-background: #4b506b;
-  --color-passive: #7e736c;
-  --color-active: #e972b5;
+  --color-background: #16170D;
+  --color-box-background: #110c0c;
+  --color-passive: #867a72;
+  --color-active: #51ffb5;
 
   --color-prism-bg: #09121a;
   --color-prism-fg: #d6deeb;
@@ -183,7 +163,7 @@ body {
   line-height: 1.0;
   font-weight: normal;
   font-style: normal;
-  font-size: 21px;
+  font-size: 23px;
   width: 100vw;
   max-width: 100vw;
   overflow-x: hidden;
@@ -202,7 +182,6 @@ a {
 }
 
 h1, h2, h3 {
-  font-family: var(--font-heading);
   font-weight: bold;
   line-height: 0.9;
 }

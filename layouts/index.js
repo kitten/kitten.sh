@@ -18,7 +18,7 @@ const Article = styled('article')`
 `;
 
 const Content = styled('div')`
-  max-width: 65ch;
+  max-width: 45ch;
   width: 100%;
   margin: 2.5rem auto 0.5rem auto;
 
@@ -34,13 +34,13 @@ const Content = styled('div')`
   -ms-hyphenate-limit-chars: 7 4 3;
   hyphenate-limit-chars: 7 4 3;
   hanging-punctuation: first;
-  letter-spacing: 0.01ch;
-  line-height: 2.6ch;
+  /*letter-spacing: 0.03ch;*/
+  line-height: 2.34ch;
 `;
 
 const Sidebar = styled('aside')`
   position: absolute;
-  width: calc((${sizes.page}px - 65ch - 6ch) / 2);
+  width: calc((${sizes.page}px - 45ch - 6ch) / 2);
   margin-top: 2.8rem;
 
   ${tablet`
