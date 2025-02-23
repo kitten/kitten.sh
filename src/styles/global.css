@@ -1,0 +1,106 @@
+@import './fonts.css';
+
+:root {
+  font-size: 23px;
+
+  --color-text: #d3d5cb;
+  --color-large-text: #ccb3a3;
+  --color-invert: #e3e7ee;
+  --color-background: #16170D;
+  --color-box: #110c0c;
+  --color-passive: #867a72;
+  --color-active: #51ffb5;
+  --color-strong: #d7e2ec;
+  --color-emphasis: #d54f8d;
+
+  --size-page: 1200px;
+  --size-mobile: 700px;
+  --size-dppx: 1;
+
+  @media (min-resolution: 1.5x) {
+    --size-dppx: 1.5;
+  }
+  @media (min-resolution: 2x) {
+    --size-dppx: 2;
+  }
+  @media (min-resolution: 2.5x) {
+    --size-dppx: 2.2;
+  }
+  @media (min-resolution: 3x) {
+    --size-dppx: 3;
+  }
+  @media (min-resolution: 3.5x) {
+    --size-dppx: 3.5;
+  }
+  @media (min-resolution: 4x) {
+    --size-dppx: 4;
+  }
+
+  background-color: var(--color-box);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: var(--font-normal);
+  line-height: 1.0;
+  font-weight: normal;
+  font-style: normal;
+  width: 100vw;
+  max-width: 100vw;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  background: var(--color-background);
+  color: var(--color-text);
+  margin: 0;
+}
+
+@media (max-width: 600px) {
+  :root {
+    font-size: 20px;
+  }
+}
+
+a {
+  color: var(--color-active);
+}
+
+h1, h2, h3 {
+  font-weight: bold;
+  line-height: 1.0;
+  text-wrap: balance;
+}
+
+p code {
+  font-family: var(--font-emphasis);
+}
+
+code, pre, sup, sub {
+  font-family: var(--font-code);
+}
+
+code, pre {
+  font-size: 1em;
+}
+
+b, strong {
+  font-weight: bold;
+  color: var(--color-strong);
+}
+
+i, em {
+  font-style: oblique;
+}
+
+:where(h1, h2, h3, h4, h5, h6, dl, dd, ol, ul, menu, figure, blockquote, p, pre, form) {
+  margin: 0;
+  padding: 0;
+}

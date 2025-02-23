@@ -1,0 +1,25 @@
+.page {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  max-width: var(--size-page);
+  margin: 0 auto 0 auto;
+  color: var(--color-text);
+  min-height: 100vh;
+  line-height: 2.34ch;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  &:before {
+    position: fixed;
+    display: block;
+    content: '';
+    inset: 0;
+    border: solid var(--color-box);
+    border-width: min(1ch, 1svw);
+    user-select: none;
+    z-index: -1;
+  }
+}

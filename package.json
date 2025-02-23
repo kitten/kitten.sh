@@ -1,0 +1,55 @@
+{
+  "name": "kitten.sh",
+  "main": "expo-router/entry",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "expo start",
+    "reset-project": "node ./scripts/reset-project.js",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "test": "jest --watchAll",
+    "lint": "expo lint"
+  },
+  "jest": {
+    "preset": "jest-expo"
+  },
+  "dependencies": {
+    "@expo/metro-runtime": "4.0.2-canary-20250221-ef26fed",
+    "@react-navigation/native": "^7.0.14",
+    "expo": "53.0.0-canary-20250221-ef26fed",
+    "expo-asset": "12.0.0-canary-20250221-ef26fed",
+    "expo-constants": "18.0.0-canary-20250221-ef26fed",
+    "expo-font": "14.0.0-canary-20250221-ef26fed",
+    "expo-image": "2.1.0-canary-20250221-ef26fed",
+    "expo-linking": "7.1.0-canary-20250221-ef26fed",
+    "expo-router": "4.1.0-canary-20250221-ef26fed",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-native": "0.76.3",
+    "react-native-gesture-handler": "~2.20.2",
+    "react-native-reanimated": "~3.16.1",
+    "react-native-safe-area-context": "4.12.0",
+    "react-native-screens": "~4.4.0",
+    "react-native-web": "~0.19.13",
+    "satori": "^0.12.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.2",
+    "@babel/runtime": "^7.26.9",
+    "@expo/metro-config": "0.20.0-canary-20250221-ef26fed",
+    "@mdx-js/mdx": "^3.1.0",
+    "@shikijs/rehype": "^3.0.0",
+    "@types/react": "~18.3.12",
+    "autoprefixer": "^10.4.20",
+    "postcss-nesting": "^13.0.1",
+    "rehype-mdx-import-media": "^1.2.0",
+    "rehype-slug": "^6.0.0",
+    "rehype-unwrap-images": "^1.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-smartypants": "^3.0.2",
+    "remark-squeeze-paragraphs": "^6.0.0",
+    "typescript": "^5.3.3"
+  },
+  "private": true
+}

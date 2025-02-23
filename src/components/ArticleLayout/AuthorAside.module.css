@@ -1,0 +1,54 @@
+.aside {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  grid-area: 2 / 1;
+  padding-left: var(--padding);
+  margin-top: 0.75cap;
+  font-size: 0.8em;
+  line-height: 1.2;
+  z-index: 1;
+
+  & + * {
+    grid-row: 2;
+  }
+
+  @container (max-width: 1100px) {
+    & {
+      grid-column: 1 / -1;
+    }
+    & + * {
+      grid-row: auto;
+    }
+  }
+}
+
+.author {
+  display: flex;
+  flex-direction: column;
+  gap: 1cap;
+
+  @container (max-width: 1100px) {
+    & {
+      flex-direction: row-reverse;
+      align-items: center;
+    }
+  }
+}
+
+.author_column {
+  display: flex;
+  flex-direction: column;
+
+  & a {
+    text-decoration: none;
+  }
+}
+
+.avatar {
+  width: 4cap;
+  height: 4cap;
+  border-radius: 50%;
+  border: 2px solid var(--color-active);
+  margin-left: -2px;
+}
