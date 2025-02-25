@@ -1,6 +1,6 @@
 import satori from 'satori';
-import { getPost } from './BlogScreen';
 import { colors } from '~/styles/theme';
+import { getMetadata } from '~/lib/posts/metadata';
 import { toDateString } from '~/lib/date';
 
 interface Props {
@@ -8,8 +8,8 @@ interface Props {
 }
 
 export async function getBlogOGImage(request: Request, { postId }: Props): Promise<Response> {
-  const post = getPost(postId);
-  if (!post) {
+  const metadata = getMetadata(postId);
+  if (!metadata) {
     return new Response('Blog post not found', { status: 404 });
   }
 
@@ -37,10 +37,10 @@ export async function getBlogOGImage(request: Request, { postId }: Props): Promi
           color: colors.text,
           opacity: 0.96,
         }}>
-          {post.metadata.title}
+          {metadata.title}
         </span>
         <span style={{ fontSize: 62, color: colors.largeText }}>
-          {post.metadata.subtitle}
+          {metadata.subtitle}
         </span>
       </div>
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifySelf: 'flex-end' }}>
@@ -55,7 +55,7 @@ export async function getBlogOGImage(request: Request, { postId }: Props): Promi
           }}
         />
         <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-          <span style={{ fontSize: 43, color: colors.passive }}>{toDateString(post.metadata.createdAt)}</span>
+          <span style={{ fontSize: 43, color: colors.passive }}>{toDateString(metadata.createdAt)}</span>
           <span style={{ fontSize: 43, color: colors.active }}>Phil Pluckthun</span>
         </div>
       </div>

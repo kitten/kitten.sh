@@ -1,11 +1,12 @@
 import type { ImageSource } from 'expo-image';
-import type { JSXComponents, Metadata } from '~/lib/mdx';
+import type { JSXComponents, MarkdownFile } from '~/lib/mdx';
 
-type Props = { components?: JSXComponents };
+interface Props {
+  components?: JSXComponents
+}
 
 export namespace MarkdownFile {
   var renderMarkdown: (props: Props) => JSX.Element;
-  export var metadata: Metadata;
   export default renderMarkdown;
 }
 

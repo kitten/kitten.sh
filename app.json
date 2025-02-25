@@ -3,25 +3,28 @@
     "name": "kitten.sh",
     "slug": "kitten-sh",
     "version": "1.0.0",
-    "orientation": "portrait",
-    "scheme": "myapp",
-    "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "web": {
       "bundler": "metro",
       "output": "server"
     },
     "plugins": [
-      ["expo-router", {
-        "root": "./src/app"
-      }],
-      "expo-font"
+      [
+        "expo-router",
+        {
+          "root": "./src/app",
+          "headOrigin": "https://kitten.sh",
+          "asyncRoutes": {
+            "web": true,
+            "default": "development"
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
     },
     "extra": {
-      "router": {},
       "eas": {
         "projectId": "3bc43a73-e1ec-40eb-ae31-9b65c7e2b20d"
       }

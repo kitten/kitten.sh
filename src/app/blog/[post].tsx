@@ -1,8 +1,9 @@
 import { useLocalSearchParams } from 'expo-router';
-import { BlogScreen, blogPosts } from '~/screens/BlogScreen';
+import { postsList } from '~/lib/posts/default';
+import { BlogScreen } from '~/screens/BlogScreen';
 
 export async function generateStaticParams(): Promise<{ post: string }[]> {
-  return blogPosts.map((post) => ({ post: post.id }));
+  return postsList.map(({ id }) => ({ post: id }));
 }
 
 export default function Route() {

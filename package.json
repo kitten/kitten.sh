@@ -42,6 +42,7 @@
     "@shikijs/rehype": "^3.0.0",
     "@types/react": "~18.3.12",
     "autoprefixer": "^10.4.20",
+    "expo-atlas": "^0.4.0",
     "postcss-nesting": "^13.0.1",
     "rehype-mdx-import-media": "^1.2.0",
     "rehype-slug": "^6.0.0",

@@ -1,6 +1,35 @@
-@import './fonts.css';
+@font-face {
+  font-family: '188-100';
+  src: url('/fonts/188-100.woff2') format('woff2');
+  font-synthesis: weight style;
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: '188-70';
+  src: url('/fonts/188-70.woff2') format('woff2');
+  font-synthesis: weight style;
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'departure';
+  src: url('/fonts/departure.woff2') format('woff2');
+  font-synthesis: weight style;
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
+  --font-emphasis: '188-100';
+  --font-normal: '188-70';
+  --font-code: 'departure';
+
   font-size: 23px;
 
   --color-text: #d3d5cb;

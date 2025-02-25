@@ -1,34 +1,9 @@
 import { createElement, useMemo } from 'react';
 import Head from 'expo-router/head';
 
-import { MarkdownFile } from '../env';
+import { getPost } from '~/lib/posts/default';
+import { getMetadata } from '~/lib/posts/metadata';
 import { ArticleLayout } from '~/components/ArticleLayout/ArticleLayout';
-
-const contentRe = /([^\/]+)(?:[\/]index)\.mdx?$/i;
-const context = require.context('../../blog', true, /([^\/]+)(?:[\/]index)\.mdx?$/i);
-
-export function getPost(postId: string): typeof MarkdownFile | null {
-  const moduleName = context.keys().find((moduleName) => {
-    switch (moduleName) {
-      case `./${postId}.mdx`:
-      case `./${postId}.md`:
-      case `./${postId}/index.mdx`:
-      case `./${postId}/index.md`:
-        return true;
-      default:
-        return false;
-    }
-  });
-  return moduleName ? context(moduleName) : null;
-}
-
-export const blogPosts = context
-  .keys()
-  .map((moduleName) => {
-    const postId = moduleName.match(contentRe)?.[1];
-    return postId ? { id: postId } : null;
-  })
-  .filter((entry) => entry != null);
 
 interface Props {
   postId: string;
@@ -38,15 +13,15 @@ export function BlogScreen({ postId }: Props) {
   const ogImageUrl = `https://kitten.sh/blog/${postId}/_og-image`;
   const url = `https://kitten.sh/blog/${postId}`;
 
-  const post = useMemo(() => {
-    return getPost(postId);
-  }, [postId]);
-  return post && (
+  const post = useMemo(() => getPost(postId), [postId]);
+  const metadata = useMemo(() => getMetadata(postId), [postId]);
+
+  return post && metadata && (
     <>
       <Head>
-        <title>{post.metadata.title}</title>
+        <title>{metadata.title}</title>
         <link rel="canonical" href={url} />
-        <meta name="description" content={post.metadata.subtitle} />
+        <meta name="description" content={metadata.subtitle} />
 
         <meta property="og:site_name" content="kitten.sh" />
         <meta property="og:type" content="article" />
@@ -58,29 +33,29 @@ export function BlogScreen({ postId }: Props) {
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
 
-        <meta property="og:title" content={post.metadata.title} />
-        <meta property="og:description" content={post.metadata.subtitle} />
+        <meta property="og:title" content={metadata.title} />
+        <meta property="og:description" content={metadata.subtitle} />
 
         <meta property="og:type" content="article" />
         <meta property="og:url" content={url} />
-        <meta property="article:published_time" content={new Date(post.metadata.createdAt).toISOString()} />
+        <meta property="article:published_time" content={new Date(metadata.createdAt).toISOString()} />
         <meta property="article:author" content="https://github.com/kitten" />
 
         <meta property="twitter:url" content={url} />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={post.metadata.title} />
-        <meta name="twitter:description" content={post.metadata.subtitle} />
+        <meta name="twitter:title" content={metadata.title} />
+        <meta name="twitter:description" content={metadata.subtitle} />
         <meta name="twitter:image" content={ogImageUrl} />
 
         <script id="ld+article" type="application/ld+json">
           {JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'NewsArticle',
-            headline: post.metadata.title,
-            preview: post.metadata.subtitle,
+            headline: metadata.title,
+            preview: metadata.subtitle,
             url: url,
             image: ogImageUrl,
-            datePublished: post.metadata.createdAt,
+            datePublished: metadata.createdAt,
             author: {
               '@type': 'Person',
               name: 'Phil Pluckthun',
@@ -89,7 +64,7 @@ export function BlogScreen({ postId }: Props) {
         </script>
       </Head>
 
-      <ArticleLayout metadata={post.metadata}>
+      <ArticleLayout metadata={metadata}>
         {createElement(post.default)}
       </ArticleLayout>
     </>
