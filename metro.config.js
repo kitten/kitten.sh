@@ -14,5 +14,6 @@ config.transformer.babelTransformerPath = require.resolve('./src/lib/transformer
 
 config.resolver.unstable_enablePackageExports = true;
 config.resolver.sourceExts = [...config.resolver.sourceExts, 'md', 'mdx'];
+config.resolver.assetExts = [...config.resolver.assetExts, 'avif'];
 
 module.exports = config;

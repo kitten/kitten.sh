@@ -23,4 +23,7 @@ declare module '*.png' {
   export default source;
 }
 
-
+declare module '*.avif' {
+  var source: ImageSource;
+  export default source;
+}

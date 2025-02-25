@@ -19,9 +19,10 @@ export function BlogScreen({ postId }: Props) {
   return post && metadata && (
     <>
       <Head>
-        <title>{metadata.title}</title>
+        <meta charSet="utf-8" />
         <link rel="canonical" href={url} />
         <meta name="description" content={metadata.subtitle} />
+        <title>{metadata.title}</title>
 
         <meta property="og:site_name" content="kitten.sh" />
         <meta property="og:type" content="article" />
