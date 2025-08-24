@@ -1,46 +1,58 @@
 @font-face {
-  font-family: '188-100';
-  src: url('/fonts/188-100.woff2') format('woff2');
-  font-synthesis: weight style;
-  font-weight: normal;
-  font-style: normal;
+  font-family: tailrecursive;
+  font-weight: 300 1000;
+  font-stretch: 80% 120%;
+  font-style: oblique 0deg 14deg;
   font-display: swap;
+  src: url('/fonts/tailrecursive-subset-latin.woff2');
+  unicode-range: U+0-FF,U+131,U+152,U+153,U+2BB,U+2BC,U+2C6,U+2DA,U+2DC,U+304,U+308,U+329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
 }
 
 @font-face {
-  font-family: '188-70';
-  src: url('/fonts/188-70.woff2') format('woff2');
-  font-synthesis: weight style;
-  font-weight: normal;
-  font-style: normal;
+  font-family: tailrecursive;
+  font-weight: 300 1000;
+  font-stretch: 80% 120%;
+  font-style: oblique 0deg 14deg;
   font-display: swap;
+  src: url('/fonts/tailrecursive-subset-latin-ext.woff2');
+  unicode-range: U+100-130,U+132-151,U+154-24F,U+259,U+1E00-1EFF,U+20A0-20AB,U+20AD-20CF,U+2113,U+2C60-2C7F,U+A720-A7FF;
 }
 
 @font-face {
-  font-family: 'departure';
-  src: url('/fonts/departure.woff2') format('woff2');
-  font-synthesis: weight style;
-  font-weight: normal;
-  font-style: normal;
+  font-family: tailrecursive;
+  font-weight: 300 1000;
+  font-stretch: 80% 120%;
+  font-style: oblique 0deg 14deg;
   font-display: swap;
+  src: url('/fonts/tailrecursive-subset-greek.woff2');
+  unicode-range: U+370-3FF;
+}
+
+@font-face {
+  font-family: tailrecursive;
+  font-weight: 300 1000;
+  font-stretch: 80% 120%;
+  font-style: oblique 0deg 14deg;
+  font-display: swap;
+  src: url('/fonts/tailrecursive-subset-all.woff2');
+  unicode-range: U+250-258,U+25A-2BA,U+2BD-2C5,U+2C7-2D9,U+2DB,U+2DD-303,U+305-307,U+309-328,U+32A-36F,U+530-1C7F,U+1C89-1DFF,U+2070-209F,U+20D0-2112,U+2114,U+2115,U+2117-2121,U+2123-2190,U+2192,U+2194-2211,U+2213,U+2214,U+2216-2C5F,U+2C80-2DDF,U+2E00-A63F,U+A6A0-A71F,U+A800-FE2D,U+FE30-FEFE,U+FF00-FFFC,U+FFFE,U+FFFF;
 }
 
 :root {
-  --font-emphasis: '188-100';
-  --font-normal: '188-70';
-  --font-code: 'departure';
+  --font-normal: tailrecursive;
+  --font-code: tailrecursive;
 
-  font-size: 23px;
+  font-size: 18px;
 
-  --color-text: #d3d5cb;
-  --color-large-text: #ccb3a3;
-  --color-invert: #e3e7ee;
-  --color-background: #16170D;
-  --color-box: #110c0c;
-  --color-passive: #867a72;
-  --color-active: #51ffb5;
-  --color-strong: #d7e2ec;
-  --color-emphasis: #d54f8d;
+  --color-background: rgb(11, 14, 12);
+  --color-text: rgb(228, 223, 218);
+  --color-h1: rgb(253, 228, 211);
+  --color-h2: rgb(228, 222, 188);
+  --color-h3: rgb(249, 134, 116);
+  --color-bold: rgb(245, 236, 228);
+  --color-small: rgb(190, 178, 158);
+  --color-box: rgb(0, 20, 14);
+  --color-code: rgb(159, 176, 255);
 
   --size-page: 1200px;
   --size-mobile: 700px;
@@ -66,6 +78,18 @@
   }
 
   background-color: var(--color-box);
+}
+
+@supports (color: color(display-p3 1 1 1)) {
+  :root {
+    --color-background: color(display-p3 0.005 0.06 0.044);
+    --color-text: color(display-p3 0.92 0.9 0.88);
+    --color-h1: color(display-p3 0.975 0.898 0.834);
+    --color-h3: color(display-p3 0.965 0.597 0.536);
+    --color-bold: color(display-p3 0.995 0.944 0.886);
+    --color-box: color(display-p3 0.003 0.075 0.054);
+    --color-code: color(display-p3 0.635 0.689 0.985);
+  }
 }
 
 * {
@@ -94,12 +118,8 @@ body {
 
 @media (max-width: 600px) {
   :root {
-    font-size: 20px;
+    font-size: 18px;
   }
-}
-
-a {
-  color: var(--color-active);
 }
 
 h1, h2, h3 {
@@ -108,8 +128,30 @@ h1, h2, h3 {
   text-wrap: balance;
 }
 
+h1 {
+  color: var(--color-h1);
+}
+
+h2, a {
+  color: var(--color-h2);
+  text-decoration-color: var(--color-small);
+}
+
+h3 {
+  color: var(--color-h3);
+}
+
+figcaption {
+  text-wrap: pretty;
+}
+
+p {
+  line-height: 1.47;
+  color: inherit;
+}
+
 p code {
-  font-family: var(--font-emphasis);
+  font-family: var(--font-code);
 }
 
 code, pre, sup, sub {
@@ -117,16 +159,20 @@ code, pre, sup, sub {
 }
 
 code, pre {
+  hanging-punctuation: initial;
+  hyphens: initial;
+  word-break: normal;
   font-size: 1em;
 }
 
 b, strong {
-  font-weight: bold;
-  color: var(--color-strong);
+  font-weight: 720;
+  color: var(--color-bold);
 }
 
 i, em {
-  font-style: oblique;
+  font-style: oblique 15deg;
+  font-variation-settings: "slnt" -15, "CRSV" 1;
 }
 
 :where(h1, h2, h3, h4, h5, h6, dl, dd, ol, ul, menu, figure, blockquote, p, pre, form) {

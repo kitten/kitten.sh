@@ -41,6 +41,7 @@
   flex-direction: column;
 
   & a {
+    color: var(--color-h3);
     text-decoration: none;
   }
 }
@@ -49,6 +50,6 @@
   width: 4cap;
   height: 4cap;
   border-radius: 50%;
-  border: 2px solid var(--color-active);
+  border: 2px solid var(--color-h2);
   margin-left: -2px;
 }

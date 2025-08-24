@@ -11,15 +11,4 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-
-  &:before {
-    position: fixed;
-    display: block;
-    content: '';
-    inset: 0;
-    border: solid var(--color-box);
-    border-width: min(1ch, 1svw);
-    user-select: none;
-    z-index: -1;
-  }
 }
