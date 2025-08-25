@@ -140,7 +140,7 @@
     font-weight: 665;
   }
   
-  p > code {
+  p code, li code {
     color: var(--color-code);
     padding: 0 0.05ch;
     font-stretch: 140%;
@@ -211,7 +211,8 @@
   ol {
     list-style-type: none;
     & > li:before {
-      content: counter(list-item) '.';
+      content: counter(list-item);
+      left: -0.4ch;
     }
   }
 
@@ -229,6 +230,7 @@
 
   pre > code {
     display: block;
+    color: var(--color-small);
     max-width: var(--size-page);
     white-space: pre-wrap;
     font-size: 0.95em;
@@ -329,7 +331,7 @@
   padding: 0.1ch 0 0 calc(2 * var(--padding));
   box-sizing: content-box;
   margin-right: var(--padding);
-  margin-bottom: 1lh;
+  margin-bottom: 1cap;
   margin-left: 0;
 
   @container (max-width: 1100px) {
