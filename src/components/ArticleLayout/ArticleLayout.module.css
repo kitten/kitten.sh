@@ -328,7 +328,7 @@
   font-style: oblique 5deg;
   float: right;
   max-width: calc(var(--margin) + 12ch);
-  padding: 0.1ch 0 0 calc(2 * var(--padding));
+  padding: 0.1ch var(--padding) 0 calc(2 * var(--padding));
   box-sizing: content-box;
   margin-right: var(--padding);
   margin-bottom: 1cap;

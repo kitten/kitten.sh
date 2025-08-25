@@ -1,0 +1,37 @@
+@container (max-width: 1101px) {
+  .note {
+    color: var(--color-small);
+    font-size: inherit;
+    font-weight: inherit;
+  }
+
+  .note:before {
+    content: '(';
+  }
+
+  .note:after {
+    content: ')';
+  }
+}
+
+@container (min-width: 1101px) {
+  .note {
+    color: var(--color-small);
+    font-size: 0.8em;
+    font-weight: 350;
+    position: relative;
+    display: block;
+    left: 50%;
+    float: left;
+    width: var(--margin);
+    padding: 0.1ch calc(1.5 * var(--padding)) 0 var(--padding);
+    transform: translateY(calc(-50% + 1cap));
+    margin: 0 0 1cap -50cqw;
+    line-height: 1.5;
+    clear: both;
+  }
+
+  :not(p) > .note {
+    transform: translateY(-100%);
+  }
+}
