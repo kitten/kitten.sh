@@ -37,15 +37,25 @@
 }
 
 .heading {
-  padding: 0 var(--padding);
+  display: grid;
+  grid-template-columns: 1fr;
+  position: relative;
+  padding: 1rem var(--padding) 0 var(--padding);
   grid-row: 1;
+
+  > * {
+    grid-column: 1 / -1;
+  }
+
+  *:first-child {
+    grid-row: 1;
+  }
 
   h1 {
     font-size: 4.5em;
     font-weight: 940;
     font-variation-settings: "CRSV" 0, "CASL" 0.88;
     line-height: 0.9;
-    padding-top: 1rem;
     color: var(--color-h1);
     opacity: 0.96;
   }
@@ -59,6 +69,19 @@
     padding-right: calc((100% - var(--width)) / 4);
     margin-top: 1rem;
   }
+
+  .number {
+    font-size: 1.4em;
+    font-variant-numeric: diagonal-fractions;
+    font-variation-settings: "CASL" 0.4;
+    font-weight: 480;
+    color: var(--color-small);
+    grid-column: -1;
+    grid-row: 1;
+    justify-self: end;
+    align-self: start;
+    text-align: right;
+  }
 }
 
 @media (max-width: 1100px) {
@@ -69,6 +92,10 @@
   .heading h2 {
     font-size: 1.76em;
     margin-top: 0.5lh;
+  }
+
+  .heading .number {
+    font-size: 1.2em;
   }
 }
 

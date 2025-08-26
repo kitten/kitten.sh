@@ -1,6 +1,8 @@
 import { ReactNode, Children, cloneElement } from 'react';
+import { Link } from 'expo-router';
 
 import { Metadata, JSXComponents } from '~/lib/mdx';
+import { postsList } from '~/lib/posts/default';
 import { AuthorAside } from './AuthorAside';
 import styles from './ArticleLayout.module.css';
 
@@ -72,6 +74,9 @@ export const ArticleLayout = ({ children, metadata }: Props) => {
       <header className={styles.heading}>
         <h1>{metadata.title}</h1>
         {metadata.subtitle ? <h2>{metadata.subtitle}</h2> : null}
+        <Link href="/" className={styles.number} aria-label={`Post ${metadata.number} out of ${postsList.length}`}>
+          {`${metadata.number}/${postsList.length}`}
+        </Link>
       </header>
       <AuthorAside metadata={metadata} />
       <section className={styles.content}>

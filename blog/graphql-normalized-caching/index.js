@@ -3,5 +3,6 @@ export const metadata = {
   subtitle: "urql's normalised cache mechanisms explained.",
   ogImage: '/og/caching-relational-graphql-data.png',
   createdAt: '2020-11-30',
+  number: 2,
 };
 
