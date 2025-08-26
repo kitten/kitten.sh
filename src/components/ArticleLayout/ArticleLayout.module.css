@@ -53,10 +53,10 @@
   h2 {
     font-size: 2.2em;
     font-weight: 600;
-    margin-top: 0.5cap;
     letter-spacing: -0.03ch;
     color: var(--color-h2);
     background: var(--color-background);
+    padding-right: calc((100% - var(--width)) / 4);
     margin-top: 1rem;
   }
 }
