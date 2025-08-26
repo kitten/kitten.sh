@@ -3,6 +3,7 @@
     color: var(--color-small);
     font-size: inherit;
     font-weight: inherit;
+    opacity: 0.9;
   }
 
   .note p {
