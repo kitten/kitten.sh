@@ -42,11 +42,12 @@ only allow a package to be installed once.
 
 However, with nested package managers, like npm, this is different.
 [Node.js' module resolution](https://nodejs.org/api/esm.html#resolution-algorithm-specification)
-allows for nested `node_modules` directories. This means despite conflicts, dependencies can
-always be installed nestedly. Your app may depend on `lodash@3.0.0`, but if
-another dependency depends on `lodash@4.0.0`, the conflicting version is installed in a nested
-`node_modules` directory. This means that while all package managers treat version ranges as
-constraints, nested package managers don't outright forbid duplicated dependencies.
+allows for nested `node_modules` directories. Even if two version ranges for a package
+conflict, two versions can be installed simultaneously. For example, if you depend on
+`lodash@3.0.0`, but a dependency of yours depends on `lodash@4.0.0`, the conflicting version
+is placed into a nested `node_modules` directory. This means that while all package managers
+treat version ranges as constraints, nested package managers don't outright prevent duplicate
+versions from being installed.
 
 ![npm's package manager hoisting and resolving conflicts](./install-hoisting.png)
 
@@ -114,8 +115,8 @@ address are `react-native` and `react`, surprisingly.
 React Native depends on React as an API package, naturally, and Expo apps depend on and are
 React Native apps. These relationships are defined as `peerDependencies`. This means your
 Expo project needs to install `expo`, `react`, and `react-native`; defining them as direct
-dependencies. So far so good. These being specified as peer dependencies by other dependencies
-means they're installed once and we typically don't run into dedendency conflicts with them.
+dependencies. So far so good. These also being peer dependencies of other dependencies
+in the ecosystem means they're installed once and we typically don't run into conflicts with them.
 **But what about transitive dependencies?**
 
 `react-native` both implicitly and (currently) explicitly depends on [Metro](https://metrobundler.dev/),
