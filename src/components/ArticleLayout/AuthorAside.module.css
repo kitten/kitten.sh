@@ -7,6 +7,7 @@
   margin-top: 0.75cap;
   font-size: 0.8em;
   line-height: 1.2;
+  height: max-content;
   z-index: 1;
 
   & + * {
