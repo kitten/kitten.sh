@@ -10,9 +10,7 @@ interface Props {
 }
 
 export function BlogScreen({ postId }: Props) {
-  const ogImageUrl = `https://kitten.sh/blog/${postId}/_og-image`;
   const url = `https://kitten.sh/blog/${postId}`;
-
   const post = useMemo(() => getPost(postId), [postId]);
   const metadata = useMemo(() => getMetadata(postId), [postId]);
 
@@ -29,11 +27,6 @@ export function BlogScreen({ postId }: Props) {
         <meta property="og:locale" content="en_GB" />
 
         <meta property="og:url" content={url} />
-        <meta property="og:image" content={ogImageUrl} />
-        <meta property="og:image:secure_url" content={ogImageUrl} />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-
         <meta property="og:title" content={metadata.title} />
         <meta property="og:description" content={metadata.subtitle} />
 
@@ -43,10 +36,9 @@ export function BlogScreen({ postId }: Props) {
         <meta property="article:author" content="https://github.com/kitten" />
 
         <meta property="twitter:url" content={url} />
-        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content={metadata.title} />
         <meta name="twitter:description" content={metadata.subtitle} />
-        <meta name="twitter:image" content={ogImageUrl} />
 
         <script id="ld+article" type="application/ld+json">
           {JSON.stringify({
@@ -55,7 +47,6 @@ export function BlogScreen({ postId }: Props) {
             headline: metadata.title,
             preview: metadata.subtitle,
             url: url,
-            image: ogImageUrl,
             datePublished: metadata.createdAt,
             author: {
               '@type': 'Person',
