@@ -5,6 +5,14 @@
     font-weight: inherit;
   }
 
+  .note p {
+    display: inline;
+  }
+
+  :not(p) > .note {
+    display: block;
+  }
+
   .note:before {
     content: '(';
   }
