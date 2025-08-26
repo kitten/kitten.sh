@@ -1,6 +1,6 @@
 import { Note } from '~/components/Note/Note';
 
-What happens when you install an Expo app's dependencies? Initially, this might seem like a
+What happens when you install your Expo app's dependencies? Initially, this might seem like a
 straightforward question, but Expo and React Native are at the intersection of native
 and JavaScript development, and have to reconcile the expectations of both.
 It's become a bit of a meme that upgrading Expo SDKs is a nightmare. Between native
@@ -220,6 +220,8 @@ nested dependencies onto a flat dependency system. All while having to acccount
 for transitive dependencies and duplicates at all times. In Expo apps, this mapping —
 or rather linking — is done by Expo Autolinking.
 
+![Autolinking maps nested npm dependencies to flat native modules.](./autolinking.png)
+
 ### The first sign of autolinking trouble
 
 [Expo Autolinking](https://docs.expo.dev/modules/autolinking/) provides autolinking
@@ -425,6 +427,8 @@ they're resolve directly instead, bypassing Node resolution.
   The fallback resolver may seem weird and incorrect, but since it only applies to resolutions for a few known
   dependencies, when they'd otherwise fail, it's typically very safe.
 </Note>
+
+![The fallback resolver links failing resolutions up with the expo packages's direct dependencies.](./fallback-resolver.png)
 
 Since some packages in Expo depend on other Expo packges — for example many of our modules
 rely on `expo-asset` — the fallback resolver ensures Metro doesn't fail for these cross-Expo
