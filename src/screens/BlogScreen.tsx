@@ -10,35 +10,43 @@ interface Props {
 }
 
 export function BlogScreen({ postId }: Props) {
-  const url = `https://kitten.sh/blog/${postId}`;
   const post = useMemo(() => getPost(postId), [postId]);
   const metadata = useMemo(() => getMetadata(postId), [postId]);
+
+  const url = new URL(`https://kitten.sh/blog/${postId}`);
+  const ogImageUrl = metadata?.ogImage && new URL(metadata.ogImage, url).toString();
 
   return post && metadata && (
     <>
       <Head>
         <meta charSet="utf-8" />
-        <link rel="canonical" href={url} />
+        <link rel="canonical" href={url.toString()} />
         <meta name="description" content={metadata.subtitle} />
         <title>{metadata.title}</title>
 
         <meta property="og:site_name" content="kitten.sh" />
         <meta property="og:type" content="article" />
         <meta property="og:locale" content="en_GB" />
+        <meta property="og:url" content={url.toString()} />
 
-        <meta property="og:url" content={url} />
+        {ogImageUrl ? <meta property="og:image" content={ogImageUrl} /> : null}
+        {ogImageUrl ? <meta property="og:image:secure_url" content={ogImageUrl} /> : null}
+        {ogImageUrl ? <meta property="og:image:width" content="1000" /> : null}
+        {ogImageUrl ? <meta property="og:image:height" content="676" /> : null}
+
         <meta property="og:title" content={metadata.title} />
         <meta property="og:description" content={metadata.subtitle} />
 
         <meta property="og:type" content="article" />
-        <meta property="og:url" content={url} />
+        <meta property="og:url" content={url.toString()} />
         <meta property="article:published_time" content={new Date(metadata.createdAt).toISOString()} />
         <meta property="article:author" content="https://github.com/kitten" />
 
-        <meta property="twitter:url" content={url} />
+        <meta property="twitter:url" content={url.toString()} />
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content={metadata.title} />
         <meta name="twitter:description" content={metadata.subtitle} />
+        {ogImageUrl ? <meta name="twitter:image" content={ogImageUrl} /> : null}
 
         <script id="ld+article" type="application/ld+json">
           {JSON.stringify({
@@ -47,6 +55,7 @@ export function BlogScreen({ postId }: Props) {
             headline: metadata.title,
             preview: metadata.subtitle,
             url: url,
+            image: ogImageUrl,
             datePublished: metadata.createdAt,
             author: {
               '@type': 'Person',
