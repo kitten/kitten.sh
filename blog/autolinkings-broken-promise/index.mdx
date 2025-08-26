@@ -244,19 +244,19 @@ will output native modules to link into your app build. Autolinking crawls your 
 dependencies, filtering out dependencies that aren't native modules, and outputs results,
 which the rest of the autolinking system uses.
 
-Inheriting code from React Native's Community CLI, the **Expo modules** search algorithm
-scanned your app's `node_modules` and discovered modules by looking for `expo.module.json`
-files, and checking some preconditions. This was later expanded to include monorepo support,
-by also searching parent `../../node_modules` folders. This differs from the Community CLI's
-implementation, which scans more broadly than `node_modules`. Expo Autolinking filters
-directories based on an allowlist. Later on, support to automatically include store folders,
-created by isolated package manager installations, was added.
+The **Expo modules** search algorithm scanned your app's `node_modules` and discovered
+modules by looking for `expo.module.json` files, and checking some preconditions.
+This also included monorepo support and isolated dependencies support, by searching your
+monorepo's toplevel `../../node_modules` folder, and including any isolated dependencies
+installation's store path (such as `node_modules/.pnpm`) dynamically.
 
-Comparing this to the dependency chain issues, this missed one crucial case: **Dependency Conflicts.**
+This algorithm did however have a few edge cases when it came to **dependency conflicts.**
 
-Since npm package managers follow a nested dependency management strategy, duplicate modules
-are placed into nested `node_modules` folder when a version conflict occurs. This nested
-folder was invisible to the shallow scanning process of Expo Autolinking.
+Since npm package managers follow a nested dependency management strategy, when a version
+conflict occurs, the duplicate/conflicting modules are placed into nested `node_modules`
+folders. A nested folder isn't in the usual search paths for our search algorithm, since
+its goal wasn't to detect all duplicates. This made some duplicates invisible to the shallow
+search for Expo Modules.
 <Note>
   In monorepos, some conflicts have a chance of not interferring with autolinking,
   but this only increases confusion.
@@ -264,10 +264,9 @@ folder was invisible to the shallow scanning process of Expo Autolinking.
 
 ### Transitive-aware autolinking wasn't all that aware
 
-Meanwhile, our search algorithm for **React Native modules** gave up on directory
-scanning and instead looked at your app's `dependencies`, performing
-[Node.js' module resolution](https://nodejs.org/api/esm.html#resolution-algorithm-specification)
-for each dependency individually. Each dependency in your `package.json`, was looed up
+Meanwhile, our [search algorithm for **React Native modules**](https://expo.dev/changelog/2024-08-14-react-native-0.75#4-optional-try-out-autolinking-speed-improvements),
+instead looked at your app's `dependencies`, performing [Node.js' module resolution](https://nodejs.org/api/esm.html#resolution-algorithm-specification)
+for each dependency individually. Each dependency in your `package.json`, was looked up
 in your app's `node_modules` and all its parent directories' `node_modules` folders,
 just like Node.js would when looking up a dependency.
 
@@ -293,8 +292,7 @@ was unclear.
 In Expo SDK 54, we've addressed these issues pretty comprehensively. Starting
 with SDK 54, it should become much rarer to see dependency issues (at least
 dependency issues caused by Expo). We're also removing notes from our docs
-on which package managers we support, since all package managers are supported
-(provided their output is correct).
+to remove recommendations of any particular package manager.
 
 To show you a select few of the notable changes,
 
@@ -339,6 +337,8 @@ The `searchPaths` for Expo modules used to default to your app's local and paren
 directories, but are now empty by default. Autolinking still supports searching modules directories
 manually, and this is still used for ["local modules"](https://docs.expo.dev/modules/native-module-tutorial/),
 which by default are expected in the `./modules` directory of your app.
+This does however change its behaviour from the Community CLI's implementation of autolinking
+and what you may be used to.
 
 The transitive dependency search is recursive. When crawling dependencies,
 Expo Autolinking will resolve each dependency using the Node.js resolution algorithm separately,
@@ -367,6 +367,8 @@ and list conflicts proactively, to draw your attention to them. Since this now a
 to React Native modules as well, you'll get a full report on dependencies that
 you should deduplicate. We're also applying this to some dependencies that aren't
 strictly speaking native modules, but also need to be deduplicated, like `react`.
+When it flags duplicate dependencies, you'll be linked to our guide on
+[Resolving Dependency Issues](https://expo.fyi/resolving-dependency-issues).
 <Note>
   Autolinking already reported duplicates before SDK 54, but this
   wasn't an obvious feature and only worked for Expo modules.
