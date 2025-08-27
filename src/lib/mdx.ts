@@ -19,4 +19,5 @@ export interface Metadata {
   subtitle: string;
   createdAt: string;
   ogImage: string;
+  number: number;
 }
