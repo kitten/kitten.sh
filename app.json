@@ -19,10 +19,14 @@
             "default": "development"
           }
         }
-      ]
+      ],
+      "expo-asset",
+      "expo-font"
     ],
     "experiments": {
-      "typedRoutes": true
+      "autolinkingModuleResolution": true,
+      "typedRoutes": true,
+      "reactCompiler": true
     },
     "extra": {
       "eas": {
