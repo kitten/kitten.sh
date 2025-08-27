@@ -17,8 +17,8 @@ links a dependency's native code into your build, which the dependency's
 JavaScript code may then access and use. However, native builds have unique requirements,
 compared to bundling regular JavaScript dependencies.
 
-This is uniquely challenging, especially if you're new to Expo, but the problems
-run deeper than build errors that you may see after an Expo SDK upgrade.
+Keeping track of dependencies can be challenging, especially if you're new to Expo, and
+the problems run deeper than build errors that you may see after an Expo SDK upgrade.
 
 **How are dependencies and autolinking unique, compared to non-native web frameworks?**
 
@@ -197,19 +197,19 @@ the reliance on deduplication by the package manager is even greater.
 In fact, before SDK 54, having two Expo apps with different SDK versions in one monorepo
 could easily fail, and it was hard to keep a React app alongside an Expo app in one monorepo.
 
-Monorepo dependency issues sometimes became masked or worsened by package manager bugs.
-No package manager is perfect (except maybe pnpm; that's a note for a future blog post),
-and auto-installing peer dependencies specifically can create more duplicate installatons
-that you'll have to manually resolve.
+Altogether, this meant that with every update or upgrade, duplicates were likely.
+However, Expo wasn't always prepared for them or could flag them. The `expo install --fix`
+command aligns your app's dependencies with the SDK version, but doesn't fix or duplicates.
 
-Altogether this meant that with every update or upgrade of Expo before SDK 54, you were
-throwing dice. Maybe deduplication worked and nothing broke. Maybe it didn't.
+Upgrading a React Native or Expo app could sometimes feel like it was up to chance -
+for some apps deduplication succeeds and prevents problems without intervention.
+For other apps duplicates caused issues (or remained a hidden problem).
 
 ## Misaligned Autolinking Expectations
 
-That's a lot of problems so far already, while we've only talked about JavaScript dependencies,
-without yet touching on Autolinking and native module dependencies. But the fundamental
-problems we faced, as described above, become worse with native modules.
+That's plenty of sources for problems already, while we've only talked about JavaScript dependencies,
+without yet touching on autolinking and native module dependencies. But, **native modules
+are always sensitive to duplication and conflicts.**
 
 Fundamentally, the expectations of native modules aren't aligned with npm's dependency
 management. Cocoapods and Gradle are _flat package managers_ rather than nested ones.
@@ -217,10 +217,10 @@ Native builds typically build with linkers that are constrained to a **single pr
 namespace**, and duplicate symbols aren't allowed. This is connected to and informs
 this constraint.
 
-However, this means, in Expo and React Native's autolinking, we're trying to map
-nested dependencies onto a flat dependency system. All while having to acccount
-for transitive dependencies and duplicates at all times. In Expo apps, this mapping —
-or rather linking — is done by Expo Autolinking.
+This means, Expo and React Native's autolinking is trying to map nested dependencies
+onto a flat dependency system. All while having to acccount for transitive dependencies
+and duplicates at all times. In Expo apps, this mapping — or rather linking — is
+Expo Autolinking's responsibility.
 
 ![Autolinking maps nested npm dependencies to flat native modules.](./autolinking.png)
 
@@ -228,7 +228,7 @@ or rather linking — is done by Expo Autolinking.
 
 [Expo Autolinking](https://docs.expo.dev/modules/autolinking/) provides autolinking
 search algorithms that discover [native modules](https://docs.expo.dev/modules/overview/)
-in your dependencies. It supports being invoked for both Expo module and React Native
+in your npm dependencies. It supports being invoked for both Expo module and React Native
 module linking. Support for the latter was enabled by default since Expo SDK 52, and
 started out as a reimplementation of the Community CLI's autolinking in Expo's Autolinking.
 
@@ -239,7 +239,7 @@ expo-modules-autolinking search
 expo-modules-autolinking react-native-config
 ```
 
-The above subcommands, when run by the Expo app's native build tools (Cocoapods or Gradle)
+The above subcommands, when run by an Expo app's native build tools (Cocoapods or Gradle)
 will output native modules to link into your app build. Autolinking crawls your app's
 dependencies, filtering out dependencies that aren't native modules, and outputs results,
 which the rest of the autolinking system uses.
@@ -264,35 +264,37 @@ search for Expo Modules.
 
 ### Transitive-aware autolinking wasn't all that aware
 
-Meanwhile, our [search algorithm for **React Native modules**](https://expo.dev/changelog/2024-08-14-react-native-0.75#4-optional-try-out-autolinking-speed-improvements),
+Meanwhile, our [search algorithm for React Native modules](https://expo.dev/changelog/2024-08-14-react-native-0.75#4-optional-try-out-autolinking-speed-improvements),
 instead looked at your app's `dependencies`, performing [Node.js' module resolution](https://nodejs.org/api/esm.html#resolution-algorithm-specification)
 for each dependency individually. Each dependency in your `package.json`, was looked up
 in your app's `node_modules` and all its parent directories' `node_modules` folders,
 just like Node.js would when looking up a dependency.
 
-This is closer to being correct and consistent, but the algorithm wasn't recursive,
-which meant it avoided conflicts by ignoring autolinking transitive dependencies.
+This is closer to being correct and consistent, but this wasn't implemented recursively,
+to match the Community CLI's implementation more closely, which meant it avoided
+conflicts by excluding **transitive dependencies**.
 
 Altogether, Expo Autolinking had several problems and shortcomings:
-- Expo and React Native modules' autolinking were inconsistent
-- Expo modules' autolinking was internally inconsistent for conflicts
+- Expo and React Native modules autolinking were inconsistent
+- Expo modules autolinking could miss duplicates
 - Transitive React Native modules weren't autolinked
-- Both algorithms disagree with the bundler & Node resolution
+- Both algorithms disagreed with the bundler & Node resolution
 
 Throwing **bundling** into the mix of problems; Since autolinking makes decisions
 about native modules being linked into the app, any disagreements it caused with
-the bundler's module resolution became very confusing. If a conflict caused the
-bundler to disagree with autolinking, a module's JavaScript code may be mismatched
+the bundler's module resolution were confusing. If a conflict caused the bundler
+to disagree with autolinking, a module's JavaScript code may be mismatched
 with a different version of the module's native code. Or, if a module wasn't
 autolinked but its JavaScript code was bundled, the resulting runtime error's cause
 was unclear.
 
 ## Fixing Expo dependency issues
 
-In Expo SDK 54, we've addressed these issues pretty comprehensively. Starting
-with SDK 54, it should become much rarer to see dependency issues (at least
-dependency issues caused by Expo). We're also removing notes from our docs
-to remove recommendations of any particular package manager.
+In Expo SDK 54, we've addressed dependency issues pretty comprehensively and
+try to be more proactive about them. Starting with SDK 54, it should become
+much rarer to see dependency issues (at least dependency issues caused by Expo).
+We're also removing notes from our docs to remove recommendations of any particular
+package manager.
 
 To show you a select few of the notable changes,
 
@@ -311,20 +313,21 @@ them and taking on direct dependencies (or peer dependencies, where they're fulf
 by other dependent packages). This is validated by our internal
 [`check-packages` script](https://github.com/expo/expo/blob/main/tools/src/check-packages/checkDependenciesAsync.ts)
 that validates per-module dependencies against a package's specified dependencies.
+This avoids common sources of conflicts across internal Expo dependencies.
 
 #### 3. Where possible we're providing internal re-exports
 
 In many cases, shared dependencies cannot be internally consistent without
 peer dependencies. However, specifying a peer dependency cascades them upwards,
 potentially into your app's dependencies, meaning you'd have to install internal
-Expo dependencies directly. To work around this, many internal APIs are now tied
-to the `expo` package, providing version-stable internal API entrypoints that we
-use in other packages in Expo.
+Expo dependencies directly. To work around this, a handful of internal APIs are
+now tied to the `expo` package, providing version-stable internal API entrypoints
+that we use in other packages in Expo.
 
 ## Fixing Autolinking inconsistencies
 
 In Expo SDK 54, Expo Autolinking was completely revamped and changed
-to align it with the expectations of Node module resolution. It also resolves
+to align it with the expectations of Node.js module resolution. It also resolves
 Expo and React Native modules identically. Not only is this easier to understand,
 for the purposes of this blog post, it's also easier to explain.
 
@@ -337,8 +340,6 @@ The `searchPaths` for Expo modules used to default to your app's local and paren
 directories, but are now empty by default. Autolinking still supports searching modules directories
 manually, and this is still used for ["local modules"](https://docs.expo.dev/modules/native-module-tutorial/),
 which by default are expected in the `./modules` directory of your app.
-This does however change its behaviour from the Community CLI's implementation of autolinking
-and what you may be used to.
 
 The transitive dependency search is recursive. When crawling dependencies,
 Expo Autolinking will resolve each dependency using the Node.js resolution algorithm separately,
@@ -350,27 +351,30 @@ autolink, which is more in line with regular JavaScript dependencies.
   to be ignored by [flipping an autolinking flag](https://docs.expo.dev/modules/autolinking/#legacy_shallowreactnativelinking).
 </Note>
 
+While this is consistent with Node.js' module resolution, this does mean Expo Autolinking's
+behaviour won't align with the Community CLI's implementation anymore.
+
 ### How do we make conflicts safer?
 
-As you may have noticed, these changes now _include_ all native modules that your
-app directly or transitively depends on, as expected. But, instead of avoiding
-conflicts, this increases the chance of us encountering duplicate modules and
+As autolinking now _includes_ all native modules that your app directly or transitively
+depends on, this actually increases the chance of us encountering duplicate modules and
 conflicting module versions during autolinking. **Aren't duplicates still a problem?**
 
 In short, no, not necessarily, and they've never been a problem themselves.
 Without dependency resolution, it's less predictable which version of a native module is
 discovered during autolinking. With it, autolinking is more predictable and consistent.
-The key to avoiding problems is informing you about duplicates.
+The key to avoiding problems is informing you about duplicates, which previously
+wasn't possible, since we weren't scanning your app's dependencies exhaustively.
 
 Starting with SDK 54, `expo-doctor` will call Expo Autolinking's internal APIs
-and list conflicts proactively, to draw your attention to them. Since this now applies
-to React Native modules as well, you'll get a full report on dependencies that
-you should deduplicate. We're also applying this to some dependencies that aren't
-strictly speaking native modules, but also need to be deduplicated, like `react`.
-When it flags duplicate dependencies, you'll be linked to our guide on
+and lists conflicts proactively, to draw your attention to them. Since this applies
+to React Native modules as well, you'll receive a full report on conflicting
+dependencies that you should deduplicate. We're also applying this to a select few
+dependencies that aren't native modules, strictly speaking, but also need to be deduplicated,
+like `react`. When it flags duplicate dependencies, you'll be linked to our guide on
 [Resolving Dependency Issues](https://expo.fyi/resolving-dependency-issues).
 <Note>
-  Autolinking already reported duplicates before SDK 54, but this
+  Autolinking was able to report some duplicates before SDK 54, but this
   wasn't an obvious feature and only worked for Expo modules.
 </Note>
 
@@ -392,8 +396,8 @@ regular package installations. However, while this means modules may be hoisted 
 starts its search at your app's `dependencies`, your monorepo is safer from
 hidden conflicts.
 
-Both isolated dependency installations and workspaces will be supported properly starting
-with SDK 54, mostly enabled by our changes to Expo Autolinking.
+Starting with SDK 54, both isolated dependency installations and workspaces will
+be supported starting with SDK 54, mostly enabled by our changes to Expo Autolinking.
 
 ## Fixing Expo CLI Bundling inconsistencies
 
@@ -402,11 +406,11 @@ While we're making autolinking more aware of Node resolution, we also have to ma
 more aware of **exceptions to Node resolution**. By default, we almost always
 call the Metro resolver when resolving a package. Both autolinking and
 isolated dependencies can still cause cases in Expo that may cause a dependency
-to note resolve properly, or as you would expect.
+not to resolve properly, or as you would expect.
 
 ### SDK 53's Fallback Resolution
 
-We actually started addressing some Metro resolution issues in Expo SDK 53,
+We actually started addressing some Metro resolution edge cases in Expo SDK 53,
 by adding the **fallback resolver** to the Expo CLI.
 
 With [pnpm's](https://pnpm.io/symlinked-node-modules-structure) or [bun's](https://bun.com/docs/install/isolated)
@@ -415,7 +419,7 @@ with normal Node.js resolution if they're direct dependencies of the package a m
 This is because isolated dependencies are only selectively exposed for each package in a
 per-package `node_modules` folder that contains symlinks to a central store folder.
 
-This can become a problem for a few dependencies in Expo. One example is the `@babel/runtime` package.
+This is a problem for a few, special dependencies in Expo. One example is the `@babel/runtime` package.
 While you're not required to install this dependency directly, the Babel transformer
 may place imports to `@babel/runtime` in modules, to deduplicate a few shared utilities
 during transpilation. But, Metro's default module resolution won't be able to resolve this module,
@@ -441,16 +445,20 @@ internal implicit dependencies in SDK packages.
 
 ### SDK 54's Experimental Autolinking Resolution
 
-This is _still_ not enough to rule out problems. While we're now able to autolink consistently
-across transitive dependencies, conflicts are sometimes ignored or unresolvable. You simply
-won't be able to or want to address every dependency conflict immediately. For example,
-it's common to have a React and Expo app in a monorepo in two separate workspaces.
-What if one app in your monorepo is now upgrading to a new version of React (for example, `react@19.1.0`)
-but the other isn't ready to upgrade just yet?
+This is _still_ not enough to rule out problems for React Native apps specifically however.
+While we're autolinking is now consistent for more installations, even ones with conflicts,
+Metro won't know how to resolve these problems. While autolinking only links one version
+of a native module, Metro is still able to resolve duplicates.
+
+While duplicates flagged by `expo-doctor` should be resolved, we don't expect you to be able
+to resolve every dependency conflict immediately. For example, it's common to have an Expo app
+alongside another React app in a monorepo in two separate workspaces. What if you're upgrading
+your Expo app to a new version of React (for example, `react@19.1.0`), but your other app
+isn't ready to upgrade just yet?
 
 If you're forced to maintain any misaligned dependencies in a monorepo, a conflict may be
 unavoidable, and a shared dependency may always become duplicated. This is where **autolinking
-resolution** comes in and overlays normal Node resolution.
+resolution** comes in and overrides normal Node.js module resolution.
 
 ```json
 {
@@ -477,7 +485,8 @@ you may run into, since it aligns the Metro build with your native build. When d
 your dependencies depend on `react-native-reanimated`, for instance, Metro resolves the imports
 of Reanimated starting from the location of the source files importing it. This means that two
 versions of Reanimated's JavaScript code are bundled into your app, with one being misaligned
-with Reanimated's native module.
+with Reanimated's native module. With **autolinking resolution** enabled, Metro resolves
+`react-native-reanimated` from autolinking's path only.
 
 ### The CLI's new transformer supervisor
 
@@ -492,14 +501,14 @@ respectively to process all input code, and only a single transformer implementa
 The previously mentioned Metro dependency issues apply to transformers too. A custom transformer
 from a third-party package may import different versions of `metro-transform-worker`, `metro-babel-transformer`,
 or `@expo/metro-config`. We can't find and update all third-party transformers to fix how they depend
-on Expo or Metro packages, so instead we changed how they're loaded.
+on Expo or Metro packages, so instead we're changing how they're loaded.
 
 Starting with SDK 54, we're wrapping all custom transformers with a "supervisor", which
 [automatically force-resolves imports](https://github.com/expo/expo/blob/sdk-54/packages/%40expo/metro-config/src/transform-worker/utils/moduleMapper.ts)
 <Note>Overriding Node resolution isn't safe in most scenarios. Please don't copy this.</Note>
 to the installed Expo SDK's version of Metro and `@expo/metro-config`.
 This may lead to transformers failing when they're loaded as the Expo CLI starts up, but
-this is preferable to using misaligned versions. If transformer outputs aren't what Expo
+this is preferable to using misaligned versions of Metro. If transformer outputs aren't what Expo
 or Metro expect, this may lead to undefined behaviour and subtle, hidden bugs.
 
 ### A Quick Recap of SDK 54
