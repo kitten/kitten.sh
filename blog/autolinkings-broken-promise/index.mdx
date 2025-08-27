@@ -18,7 +18,7 @@ JavaScript code may then access and use. However, native builds have unique requ
 compared to bundling regular JavaScript dependencies.
 
 Keeping track of dependencies can be challenging, especially if you're new to Expo, and
-the problems run deeper than build errors that you may see after an Expo SDK upgrade.
+the problems run deeper than build errors that you may see after an upgrade.
 
 **How are dependencies and autolinking unique, compared to non-native web frameworks?**
 
@@ -110,14 +110,14 @@ which instructs the package manager to share a single version that the app defin
 
 ### Dependency chains in Expo
 
-Expo has to resolve extremely wide-ranging dependency requirements, of which the easiest to
-address are `react-native` and `react`, surprisingly.
+React Native build tooling have to resolve extremely wide-ranging dependency requirements,
+of which the easiest to address are `react-native` and `react`, surprisingly.
 
-React Native depends on React as an API package, naturally, and Expo apps depend on and are
-React Native apps. These relationships are defined as `peerDependencies`. This means your
-Expo project needs to install `expo`, `react`, and `react-native`; defining them as direct
-dependencies. So far so good. These also being peer dependencies of other dependencies
-in the ecosystem means they're installed once and we typically don't run into conflicts with them.
+React Native depends on React as an API package, naturally. This and similar dependent
+relationships are defined as `peerDependencies`, typically. For example, a typical Expo
+project needs to contain `expo`, `react`, and `react-native` in its dependencies;
+So far so good. These also being peer dependencies of other dependencies in the
+ecosystem means they're installed once and we typically don't run into conflicts with them.
 **But what about transitive dependencies?**
 
 `react-native` both implicitly and (currently) explicitly depends on [Metro](https://metrobundler.dev/),
@@ -143,28 +143,31 @@ problems** we have to solve and work around for the Expo SDK.
 
 ## Implicit dependencies: A solution or problem?
 
-Prior to SDK 54, we had a rather strange "solution" in place for dependencies that should be
-transitive but need to be deduplicated: We simply didn't specify any dependency on them.
-This creates an **always-implicit** dependency.
-<Note>Please **never** create an implicit dependency, just because we used to</Note>
+In React Native, many projects follow a rather strange "solution" in place for dependencies
+that should be transitive but need to be deduplicated: They simply don't specify any dependency on
+shared packages. This creates **always-implicit** dependency relationships.
+<Note>Please **never** create an implicit dependency, just because Expo used to</Note>
 For example, `react-native` depends on and
-installs `metro` via the `@react-native/community-cli-plugin` package, so we used to assume
-that it's already installed.
+installs `metro` via the `@react-native/community-cli-plugin` package, and several packages
+in the React Native ecosystem (including Expo before SDK 54) assume that it must be
+installed and accessible.
 
 > A strange game. The only winning move is not to play
 
-Provided that your package manager deduplicates and hoists this dependency, no problems
-occur. It can be loaded from `node_modules` by Expo and used like any other dependency.
-Since this version is also tied to `react-native`, and always installed via one of
-`react-native`'s dependencies, and all Expo apps must depend on `react-native`,
-problem solved... right?
+Provided that your package manager deduplicates and hoists dependencies, as expected with
+Yarn v1, for example, no problems occur. Even without an entry in `dependencies`, a package
+load any installed package from `node_modules` and use it like any other dependency.
+Since shared packages, like `metro`'s version, are also tied to `react-native`'s version,
+and always installed in a React Native apps, this works around any issues for
+shared dependencies... right?
 
 ### To be clear, never do this
 
-Did I already mention that conflicts like the above weren't limited to just `metro`?
-We had multiple implicit dependencies across Expo — some on purpose, some accidental,
-some internal from one Expo package to another — to deal with version alignment issues.
-But, **always-implicit dependencies** fail to consistently work on account of three problems.
+Not specifying dependencies ultimately doesn't prevent conflicts — and problems with
+conflicts aren't limited to just `metro`. Even in Expo, we had multiple implicit dependencies
+across our packages — some on purpose, some accidental, some internal from one Expo package
+to another — to deal with version alignment issues. But, **always-implicit dependencies**
+fail to consistently work on account of three problems.
 
 When a conflict occurs, two versions of a package can still be pulled in. Even if we don't
 directly depend on that package. It's up to mostly chance which version is then hoisted to
@@ -180,7 +183,7 @@ decides to deduplicate when updating. Every upgrade could increase conflicts.
 </Note>
 
 Lastly, implicit dependencies don't work with **isolated dependencies**.
-<Note>Expo's implicit dependencies are why create-expo-app started switching [pnpm](https://pnpm.io/) to hoisted mode automatically.</Note>
+<Note>Implicit dependencies are why create-expo-app started switching [pnpm](https://pnpm.io/) to hoisted mode automatically.</Note>
 But [Isolated Installations in pnpm](https://pnpm.io/symlinked-node-modules-structure) enforce
 and solve the problem of accidental implicit dependencies, while also providing other benefits.
 Although our implicit dependencies weren't quite accidental, this is a large part of why we
@@ -288,7 +291,7 @@ with a different version of the module's native code. Or, if a module wasn't
 autolinked but its JavaScript code was bundled, the resulting runtime error's cause
 was unclear.
 
-## Fixing Expo dependency issues
+## Our fixes for dependency issues
 
 In Expo SDK 54, we've addressed dependency issues pretty comprehensively and
 try to be more proactive about them. Starting with SDK 54, it should become
@@ -513,10 +516,10 @@ or Metro expect, this may lead to undefined behaviour and subtle, hidden bugs.
 
 ### A Quick Recap of SDK 54
 
-Whether you've learned to upgrade an Expo app before or not, dependency issues are annoying.
+Whether you've upgraded an app before or not, React Native dependency issues are annoying.
 Maybe, you'll also run into the guide I've written on ["Resolving Dependency Issues"](https://expo.fyi/resolving-dependency-issues)
-during your SDK 54 upgrade. However, there's a long list of fixes that make Expo stabler and
-upgrades & updates more reliable. In the next version of Expo...
+during your SDK 54 upgrade. However, there's a long list of fixes and improvements that will
+make Expo stabler and upgrades & updates more reliable. In the next version of Expo...
 
 - Expo depends on an exact version of Metro via `@expo/metro`
 - Expo has no more implicit dependencies on external packages
@@ -527,8 +530,10 @@ upgrades & updates more reliable. In the next version of Expo...
 - The CLI has (experimental) autolinking resolution support
 - Custom transformers are forced onto compatible Metro versions
 
-This also means that all popular package managers — Bun, npm, pnpm, and Yarn — are now officially supported.
-However, that doesn't mean your package manager is bug-free, but that's a blog post for another day.
+This means that all popular package managers — Bun, npm, pnpm, and Yarn — are now officially supported,
+and monorepos using workspaces will work as expected. Support for isolated dependency installations,
+featured in [Bun](https://bun.com/docs/install/isolated) and [pnpm](https://pnpm.io/motivation), are
+also maintained by Expo now.
 
 A lot of things have been fixed and changed behind the scenes in Expo SDK 54.
 Best case scenario, [when upgrading](https://docs.expo.dev/workflow/upgrading-expo-sdk-walkthrough/),
