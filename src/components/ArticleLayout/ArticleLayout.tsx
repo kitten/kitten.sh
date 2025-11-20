@@ -22,6 +22,9 @@ const components: JSXComponents = {
     const style = {
       aspectRatio: src.width && src.height ? src.width / src.height : undefined,
       maxHeight: `min(calc(${src.height}px / var(--size-dppx)), calc(100svh - 2cap))`,
+      maxWidth: src.width && src.height && src.height > src.width
+        ? `calc(var(--width) - 2 * var(--padding))`
+        : undefined,
     };
     return (
       <figure className={styles.article_bleed}>
