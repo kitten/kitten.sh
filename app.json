@@ -3,7 +3,6 @@
     "name": "kitten.sh",
     "slug": "kitten-sh",
     "version": "1.0.0",
-    "newArchEnabled": true,
     "web": {
       "bundler": "metro",
       "output": "server"
@@ -19,7 +18,10 @@
             "default": "development"
           }
         }
-      ]
+      ],
+      "expo-asset",
+      "expo-font",
+      "expo-image"
     ],
     "experiments": {
       "typedRoutes": true
